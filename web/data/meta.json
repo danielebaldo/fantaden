@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-19T10:38:11.291995+00:00",
+  "generated_at": "2026-08-19T11:00:42.164684+00:00",
   "season": {
     "label": "2026-27",
     "current_season_id": 21,
@@ -40,7 +40,7 @@
     "D": 177,
     "P": 62
   },
-  "no_stats_count": 507,
+  "no_stats_count": 128,
   "quotazioni_source_count": 507,
-  "statistiche_source_count": 0
+  "statistiche_source_count": 663
 }
