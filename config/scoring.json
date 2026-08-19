@@ -1,0 +1,41 @@
+{
+  "_comment": "Pesi per il calcolo dello score (0-100, percentile-based) e soglie di fascia per ruolo. Tutti i pesi di un ruolo devono sommare a 1.0. Le soglie fascia sono percentili cumulativi sul FVM all'interno del ruolo (0=miglior FVM del ruolo, 1=peggiore): un giocatore entra nella prima fascia il cui 'max_percentile' non ha ancora superato.",
+  "indices": {
+    "presenze_pct": "Pv / 38 (percentuale di partite giocate sulle disponibili)",
+    "fantamedia": "Fm, fantamedia grezza da fantacalcio.it",
+    "bonus_rate": "Fm - Mv, differenza tra fantamedia e media voto (peso netto di bonus/malus)",
+    "gol_fatti": "Gf, gol segnati (D/C/A)",
+    "assist": "Ass, assist (D/C/A)",
+    "gs_per_partita_inv": "-(Gs / max(Pv,1)), gol subiti a partita invertito (P, più alto = meglio)",
+    "rigori_parati": "Rp, rigori parati (P)"
+  },
+  "weights": {
+    "P": { "fantamedia": 0.40, "presenze_pct": 0.25, "gs_per_partita_inv": 0.20, "rigori_parati": 0.15 },
+    "D": { "fantamedia": 0.45, "presenze_pct": 0.20, "gol_fatti": 0.15, "assist": 0.10, "bonus_rate": 0.10 },
+    "C": { "fantamedia": 0.40, "presenze_pct": 0.15, "gol_fatti": 0.20, "assist": 0.15, "bonus_rate": 0.10 },
+    "A": { "fantamedia": 0.35, "presenze_pct": 0.15, "gol_fatti": 0.30, "assist": 0.15, "bonus_rate": 0.05 }
+  },
+  "fasce": {
+    "_comment": "Ordine dal prezzo più alto al più basso. max_percentile = quota cumulativa (per FVM decrescente) del ruolo che rientra in questa fascia o nelle precedenti.",
+    "labels": ["Top", "1a Fascia", "2a Fascia", "3a Fascia", "Low Cost", "Scommessa"],
+    "default_thresholds": {
+      "Top": 0.05,
+      "1a Fascia": 0.20,
+      "2a Fascia": 0.45,
+      "3a Fascia": 0.75,
+      "Low Cost": 0.95,
+      "Scommessa": 1.01
+    },
+    "per_role_thresholds": {
+      "P": { "Top": 0.08, "1a Fascia": 0.25, "2a Fascia": 0.50, "3a Fascia": 0.80, "Low Cost": 0.96, "Scommessa": 1.01 },
+      "D": { "Top": 0.04, "1a Fascia": 0.18, "2a Fascia": 0.45, "3a Fascia": 0.75, "Low Cost": 0.95, "Scommessa": 1.01 },
+      "C": { "Top": 0.05, "1a Fascia": 0.20, "2a Fascia": 0.45, "3a Fascia": 0.75, "Low Cost": 0.95, "Scommessa": 1.01 },
+      "A": { "Top": 0.06, "1a Fascia": 0.22, "2a Fascia": 0.48, "3a Fascia": 0.78, "Low Cost": 0.96, "Scommessa": 1.01 }
+    }
+  },
+  "affare_index": {
+    "_comment": "indice_affare = percentile_score - percentile_fvm nel ruolo (entrambi 0=migliore). Positivo e alto = score migliore del prezzo (affare). Negativo = prezzo migliore dello score (trappola).",
+    "affare_threshold": 0.15,
+    "trappola_threshold": -0.15
+  }
+}

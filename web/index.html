@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="it">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Fantaden — Asta Fantacalcio</title>
+  <link rel="stylesheet" href="css/app.css">
+</head>
+<body>
+  <header class="topbar">
+    <h1>⚽ Fantaden</h1>
+    <p id="metaInfo" class="meta-info">Caricamento dati…</p>
+  </header>
+
+  <p id="loadError" class="load-error" hidden></p>
+
+  <main>
+    <section class="card setup-panel">
+      <div class="setup-row">
+        <label class="budget-field">Budget Totale
+          <input type="number" id="budgetTotale" min="0">
+        </label>
+        <div class="cassa-tesoretto">
+          <span>Cassa: <strong id="cassaGlobale">—</strong></span>
+          <span>Tesoretto: <strong id="tesorettoGlobale">—</strong></span>
+        </div>
+        <div id="percWarning" class="perc-warning"></div>
+      </div>
+      <div class="role-setup-grid" id="roleSetupGrid"></div>
+    </section>
+
+    <section class="card">
+      <h2>Allocazione Budget</h2>
+      <div id="waffleBar" class="waffle-bar"></div>
+    </section>
+
+    <section class="monitor-grid" id="monitorGrid"></section>
+
+    <section class="card">
+      <div class="tabs" id="roleTabs"></div>
+      <div class="table-controls">
+        <input type="search" id="searchInput" placeholder="🔍 Cerca giocatore o squadra…">
+        <select id="fasciaFilter"></select>
+        <label class="checkbox-field"><input type="checkbox" id="onlyAvailable"> Solo disponibili</label>
+        <label class="checkbox-field"><input type="checkbox" id="onlyWishlist"> Solo wishlist</label>
+      </div>
+      <div class="table-wrap">
+        <table id="playersTable">
+          <thead><tr id="playersTableHead"></tr></thead>
+          <tbody id="playersTableBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="two-col">
+      <div class="card">
+        <h2>La mia Rosa</h2>
+        <div id="myRosterList"></div>
+      </div>
+      <div class="card">
+        <h2>Rivali</h2>
+        <div class="rival-add">
+          <input type="text" id="rivalName" placeholder="Nome rivale">
+          <input type="number" id="rivalBudget" placeholder="Budget">
+          <button type="button" id="addRivalBtn">+ Aggiungi</button>
+        </div>
+        <div id="rivalsList"></div>
+      </div>
+    </section>
+
+    <section class="card">
+      <h2>Movimenti quotazioni (ultimi 7 giorni)</h2>
+      <div class="two-col" id="movementsPanel"></div>
+    </section>
+  </main>
+
+  <footer>
+    <button type="button" id="exportStateBtn">⬇️ Esporta stato</button>
+    <label class="file-btn">⬆️ Importa stato
+      <input type="file" id="importStateInput" accept="application/json">
+    </label>
+    <button type="button" id="resetStateBtn" class="danger">🗑️ Reset totale</button>
+  </footer>
+
+  <div class="modal-overlay hidden" id="modalOverlay">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h3 id="modalTitle"></h3>
+      <div id="modalBody" class="modal-body"></div>
+      <div class="modal-actions">
+        <button type="button" id="modalCancel">Annulla</button>
+        <button type="button" id="modalConfirm">Conferma</button>
+      </div>
+    </div>
+  </div>
+
+  <script type="module" src="js/ui.js"></script>
+</body>
+</html>

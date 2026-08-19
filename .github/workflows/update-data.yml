@@ -1,0 +1,76 @@
+name: Aggiorna dati Fantacalcio
+
+on:
+  schedule:
+    - cron: '15 4 * * *'  # ogni giorno alle 04:15 UTC
+  workflow_dispatch:
+    inputs:
+      skip_statistics:
+        description: >-
+          Salta il download delle statistiche stagione precedente
+          (aggiorna solo le quotazioni: più veloce a stagione in corso)
+        required: false
+        default: false
+        type: boolean
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-data
+  cancel-in-progress: false
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ github.ref_name }}
+          fetch-depth: 0
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Installa dipendenze
+        run: pip install -r requirements.txt
+
+      - name: Scarica Excel da fantacalcio.it
+        env:
+          FANTACALCIO_COOKIE: ${{ secrets.FANTACALCIO_COOKIE }}
+        run: |
+          ARGS=""
+          if [ "${{ inputs.skip_statistics }}" = "true" ]; then
+            ARGS="--skip-statistics"
+          fi
+          python3 scripts/fetch_fantacalcio.py $ARGS
+
+      - name: Normalizza in JSON
+        run: python3 scripts/normalize.py
+
+      - name: Costruisci board (score, fasce, indice affare)
+        run: python3 scripts/build_board.py
+
+      - name: Snapshot storico quotazioni
+        run: python3 scripts/snapshot_history.py
+
+      - name: Esporta lista_asta.xlsx
+        run: python3 scripts/export_xlsx.py
+
+      - name: Commit e push se ci sono modifiche
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add data/quotazioni.json data/statistiche.json \
+                  web/data/board.json web/data/meta.json web/data/history.json \
+                  export/lista_asta.xlsx
+          if git diff --cached --quiet; then
+            echo "Nessuna modifica ai dati, salto il commit."
+          else
+            git commit -m "chore: aggiornamento automatico dati fantacalcio $(date -u +%Y-%m-%d)"
+            git push origin HEAD:${{ github.ref_name }}
+          fi

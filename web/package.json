@@ -1,0 +1,6 @@
+{
+  "name": "fantaden-web",
+  "private": true,
+  "type": "module",
+  "description": "Marker per Node: i file in web/js/ sono ES module. Non serve npm install, la dashboard non ha dipendenze."
+}

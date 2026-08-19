@@ -1,0 +1,7 @@
+{
+  "_comment": "Override manuali applicati dopo il calcolo automatico. Chiave = id giocatore (stringa, come in quotazioni). 'fascia' forza la fascia calcolata, 'note' e' testo libero mostrato in dashboard/export, 'stelle' e' un rating 1-5 personale, 'escluso' = true nasconde il giocatore dalla board (es. infortunio lungo, non convocabile).",
+  "_esempio": {
+    "0": { "fascia": "Top", "stelle": 5, "note": "Esempio: sostituire 0 con l'id reale del giocatore", "escluso": false }
+  },
+  "players": {}
+}

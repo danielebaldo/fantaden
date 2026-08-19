@@ -1,0 +1,33 @@
+# Excel grezzi scaricati da fantacalcio.it: rigenerati a ogni run della
+# pipeline, non vanno versionati. Anche le fixture di test (*_fixture.xlsx)
+# non sono versionate: sono binarie e completamente derivabili da
+# scripts/make_fixtures.py, che tests/conftest.py invoca in automatico se
+# mancano (vedi anche `python3 scripts/make_fixtures.py` per rigenerarle a mano).
+data/raw/*.xlsx
+
+# Dati generati dalla pipeline (quotazioni/board/history/export): non
+# vengono committati nella prima versione del repo per non spacciare per
+# reali le quotazioni finte usate nelle fixture di test. Il workflow
+# update-data.yml li genera e li committa lui stesso alla prima esecuzione
+# reale (con il cookie di fantacalcio.it). In locale restano su disco per
+# poter lavorare offline, semplicemente non finiscono nei commit.
+data/quotazioni.json
+data/statistiche.json
+web/data/board.json
+web/data/meta.json
+web/data/history.json
+export/lista_asta.xlsx
+
+# Python
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+venv/
+
+# Editor / OS
+.DS_Store
+*.swp
+
+# Node (solo per far girare i test in tests/*.test.mjs, nessuna dipendenza reale)
+node_modules/

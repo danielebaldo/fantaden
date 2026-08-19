@@ -1,0 +1,38 @@
+{
+  "_comment": "Configurazione stagione e fonti dati. Gli id stagione di fantacalcio.it vanno verificati/aggiornati a inizio campionato: apri la pagina 'Quotazioni' con gli strumenti sviluppatore e leggi l'id nella richiesta XHR verso /api/v1/Excel/prices/{season_id}/1.",
+  "season": {
+    "label": "2026-27",
+    "current_season_id": 21,
+    "previous_season_id": 20
+  },
+  "endpoints": {
+    "prices_url_template": "https://www.fantacalcio.it/api/v1/Excel/prices/{season_id}/1",
+    "statistics_url_template": "https://www.fantacalcio.it/api/v1/Excel/statistics/{season_id}/1",
+    "referer": "https://www.fantacalcio.it/quotazioni-fantacalcio",
+    "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
+    "image_template": "https://content.fantacalcio.it/web/campioncini/{season_id}/medium/{player_id}.png?v=640"
+  },
+  "roles": ["P", "D", "C", "A"],
+  "role_names": {
+    "P": "Portieri",
+    "D": "Difensori",
+    "C": "Centrocampisti",
+    "A": "Attaccanti"
+  },
+  "auction_defaults": {
+    "budget_totale": 500,
+    "slot": { "P": 3, "D": 8, "C": 8, "A": 6 },
+    "percentuali": { "P": 8, "D": 16, "C": 26, "A": 50 }
+  },
+  "paths": {
+    "raw_dir": "data/raw",
+    "quotazioni_json": "data/quotazioni.json",
+    "statistiche_json": "data/statistiche.json",
+    "board_json": "web/data/board.json",
+    "meta_json": "web/data/meta.json",
+    "history_json": "web/data/history.json",
+    "export_xlsx": "export/lista_asta.xlsx",
+    "overrides_json": "config/overrides.json",
+    "scoring_json": "config/scoring.json"
+  }
+}
