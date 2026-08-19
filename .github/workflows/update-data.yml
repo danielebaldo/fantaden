@@ -15,6 +15,7 @@ on:
 
 permissions:
   contents: write
+  actions: write  # per innescare a mano il deploy di pages.yml (vedi ultimo step)
 
 concurrency:
   group: update-data
@@ -62,6 +63,7 @@ jobs:
         run: python3 scripts/export_xlsx.py
 
       - name: Commit e push se ci sono modifiche
+        id: commit
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
@@ -78,7 +80,24 @@ jobs:
           done
           if git diff --cached --quiet; then
             echo "Nessuna modifica ai dati, salto il commit."
+            echo "pushed=false" >> "$GITHUB_OUTPUT"
           else
             git commit -m "chore: aggiornamento automatico dati fantacalcio $(date -u +%Y-%m-%d)"
             git push origin HEAD:${{ github.ref_name }}
+            echo "pushed=true" >> "$GITHUB_OUTPUT"
           fi
+
+      - name: Innesca il deploy della dashboard su Pages
+        if: steps.commit.outputs.pushed == 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          # Il push del commit precedente NON fa scattare da solo pages.yml:
+          # GitHub Actions non incatena automaticamente altri workflow sugli
+          # eventi generati dal GITHUB_TOKEN di default (per evitare loop
+          # infiniti). Serve un workflow_dispatch esplicito.
+          curl -sS -X POST \
+            -H "Authorization: Bearer $GH_TOKEN" \
+            -H "Accept: application/vnd.github+json" \
+            "https://api.github.com/repos/${{ github.repository }}/actions/workflows/pages.yml/dispatches" \
+            -d "{\"ref\":\"${{ github.ref_name }}\"}"
