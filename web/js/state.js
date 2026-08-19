@@ -19,6 +19,7 @@ export function createDefaultState(auctionDefaults) {
     takenByOthers: {},  // playerId -> { rivalId, costo, ruolo }
     ui: {
       activeTab: 'P',
+      rosterTab: 'mia', // 'mia' | 'rivali'
       search: '',
       fasciaFilter: 'all',
       onlyAvailable: false,

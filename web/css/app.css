@@ -177,6 +177,7 @@ button.danger { color: var(--danger); border-color: var(--danger); }
 .tab-btn.role-C { --role-color: var(--role-C); }
 .tab-btn.role-A { --role-color: var(--role-A); }
 .tab-btn.active { background: var(--role-color, var(--primary)); color: #fff; }
+.roster-panel.hidden { display: none; }
 
 .table-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; margin-bottom: 10px; }
 .table-controls input[type="search"] { flex: 1; min-width: 180px; }

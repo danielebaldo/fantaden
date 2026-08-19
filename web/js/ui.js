@@ -18,6 +18,9 @@ const els = {
   waffleBar: document.getElementById('waffleBar'),
   monitorGrid: document.getElementById('monitorGrid'),
   roleTabs: document.getElementById('roleTabs'),
+  rosterTabs: document.getElementById('rosterTabs'),
+  rosterPanelMia: document.querySelector('[data-roster-panel="mia"]'),
+  rosterPanelRivali: document.querySelector('[data-roster-panel="rivali"]'),
   searchInput: document.getElementById('searchInput'),
   fasciaFilter: document.getElementById('fasciaFilter'),
   onlyAvailable: document.getElementById('onlyAvailable'),
@@ -93,6 +96,7 @@ function rerenderAll() {
   renderWaffle(result);
   renderTabs();
   renderTable();
+  renderRosterTabs();
   renderRoster();
   rivalsMod.renderRivals(els.rivalsList, state, boardById, { onRemoveRival: handleRemoveRival });
   renderMovements();
@@ -186,6 +190,27 @@ function renderTabs() {
       rerenderAll();
     });
   });
+}
+
+const ROSTER_TABS = [
+  { key: 'mia', label: 'La mia Rosa' },
+  { key: 'rivali', label: 'Rivali' },
+];
+
+function renderRosterTabs() {
+  els.rosterTabs.innerHTML = ROSTER_TABS.map(({ key, label }) => `
+    <button type="button" class="tab-btn${state.ui.rosterTab === key ? ' active' : ''}" data-roster-tab="${key}">
+      ${label}
+    </button>
+  `).join('');
+  els.rosterTabs.querySelectorAll('button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.ui.rosterTab = btn.dataset.rosterTab;
+      rerenderAll();
+    });
+  });
+  els.rosterPanelMia.classList.toggle('hidden', state.ui.rosterTab !== 'mia');
+  els.rosterPanelRivali.classList.toggle('hidden', state.ui.rosterTab !== 'rivali');
 }
 
 function renderTable() {
@@ -295,7 +320,7 @@ function openWishlistModal(player) {
   const existing = state.wishlist[String(player.id)] || {};
   openModal(`⭐ Wishlist: ${player.name}`, `
     <label>Prezzo base (opzionale)<input type="number" id="modalBase" value="${existing.base ?? ''}"></label>
-    <label>Prezzo target (opzionale)<input type="number" id="modalTarget" value="${existing.target ?? player.qt_att}"></label>
+    <label>Prezzo target (opzionale)<input type="number" id="modalTarget" value="${existing.target ?? player.fvm_500 ?? player.qt_att}"></label>
   `, () => {
     const base = document.getElementById('modalBase').value;
     const target = document.getElementById('modalTarget').value;

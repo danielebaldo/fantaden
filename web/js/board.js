@@ -13,8 +13,10 @@ const COLUMNS = [
   { key: 'fvm', label: 'FVM', sortable: true },
   { key: 'fvm_500', label: 'FVM 500cr', sortable: true },
   { key: 'fascia', label: 'Fascia', sortable: true },
-  { key: 'score', label: 'Score', sortable: true },
-  { key: 'affare_label', label: 'Affare', sortable: true },
+  { key: 'score', label: 'Score', sortable: true,
+    title: 'Percentile di rendimento nel ruolo (0-100), calcolato su fantamedia, presenze, gol, assist e bonus/malus della stagione precedente.' },
+  { key: 'affare_label', label: 'Affare', sortable: true,
+    title: 'Confronto tra rendimento (score) e prezzo (FVM) nel ruolo: Affare = rende più di quanto costa, Trappola = il contrario, Equo = in linea.' },
   { key: 'presenze', label: 'Pv', sortable: true },
   { key: 'fantamedia', label: 'Fm', sortable: true },
   { key: 'status', label: 'Stato / Azioni' },
@@ -59,10 +61,11 @@ export function filterAndSortPlayers(board, state, role, history) {
 
 export function renderTableHead(theadRow, state, onSort) {
   theadRow.innerHTML = COLUMNS.map((col) => {
-    if (!col.sortable) return `<th>${col.label}</th>`;
+    const titleAttr = col.title ? ` title="${escapeHtml(col.title)}"` : '';
+    if (!col.sortable) return `<th${titleAttr}>${col.label}</th>`;
     const active = state.ui.sortBy === col.key;
     const arrow = active ? (state.ui.sortDir === 'asc' ? ' ▲' : ' ▼') : '';
-    return `<th class="sortable${active ? ' sorted' : ''}" data-sort="${col.key}">${col.label}${arrow}</th>`;
+    return `<th class="sortable${active ? ' sorted' : ''}"${titleAttr} data-sort="${col.key}">${col.label}${arrow}</th>`;
   }).join('');
   theadRow.querySelectorAll('[data-sort]').forEach((th) => {
     th.addEventListener('click', () => onSort(th.dataset.sort));
