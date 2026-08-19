@@ -1,0 +1,46 @@
+{
+  "generated_at": "2026-08-19T10:38:11.291995+00:00",
+  "season": {
+    "label": "2026-27",
+    "current_season_id": 21,
+    "previous_season_id": 20
+  },
+  "roles": [
+    "P",
+    "D",
+    "C",
+    "A"
+  ],
+  "role_names": {
+    "P": "Portieri",
+    "D": "Difensori",
+    "C": "Centrocampisti",
+    "A": "Attaccanti"
+  },
+  "auction_defaults": {
+    "budget_totale": 500,
+    "slot": {
+      "P": 3,
+      "D": 8,
+      "C": 8,
+      "A": 6
+    },
+    "percentuali": {
+      "P": 8,
+      "D": 16,
+      "C": 26,
+      "A": 50
+    }
+  },
+  "image_template": "https://content.fantacalcio.it/web/campioncini/{season_id}/medium/{player_id}.png?v=640",
+  "total_players": 507,
+  "counts_by_role": {
+    "A": 90,
+    "C": 178,
+    "D": 177,
+    "P": 62
+  },
+  "no_stats_count": 507,
+  "quotazioni_source_count": 507,
+  "statistiche_source_count": 0
+}
