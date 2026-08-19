@@ -31,6 +31,7 @@ BASE_COLUMNS = [
     ("team", "Squadra"),
     ("qt_att", "Qt.A"),
     ("fvm", "FVM"),
+    ("fvm_500", "FVM 500cr"),
     ("fascia", "Fascia"),
     ("score", "Score"),
     ("affare_label", "Affare"),

@@ -235,3 +235,57 @@ def test_assign_affare_index_all_no_stats_is_noop():
     players = [{"id": 1, "position": "A", "fvm": 100, "no_stats": True}]
     assign_affare_index(players, {"affare_threshold": 0.15, "trappola_threshold": -0.15})
     assert "indice_affare" not in players[0]
+
+
+# ---------------------------------------------------------------------------
+# fvm_500 (riparametrazione FVM sul budget di lega)
+# ---------------------------------------------------------------------------
+
+def test_fvm_500_is_none_without_budget_params(fixture_data, scoring):
+    # comportamento di default (nessun parametro budget passato): non deve
+    # rompersi, semplicemente non calcola la riparametrazione.
+    quotazioni, statistiche = fixture_data
+    result = build_players(quotazioni, statistiche, scoring, overrides={"players": {}})
+    assert all(p["fvm_500"] is None for p in result)
+
+
+def test_fvm_500_scales_linearly_with_budget(fixture_data, scoring):
+    quotazioni, statistiche = fixture_data
+    result = build_players(
+        quotazioni, statistiche, scoring, overrides={"players": {}},
+        budget_totale=500, fvm_reference_budget=1000,
+    )
+    for p in result:
+        assert p["fvm_500"] == round(p["fvm"] * 0.5)
+        assert p["fvm_m_500"] == round(p["fvm_m"] * 0.5)
+
+
+def test_fvm_500_does_not_change_fascia_score_or_affare(fixture_data, scoring):
+    # la riparametrazione è una trasformazione lineare uniforme: fascia,
+    # score e indice affare (percentili dentro il ruolo) devono restare
+    # identici con o senza fvm_500 calcolato.
+    quotazioni, statistiche = fixture_data
+    baseline = build_players(quotazioni, statistiche, scoring, overrides={"players": {}})
+    rescaled = build_players(
+        quotazioni, statistiche, scoring, overrides={"players": {}},
+        budget_totale=500, fvm_reference_budget=1000,
+    )
+    baseline_by_id = {p["id"]: p for p in baseline}
+    for p in rescaled:
+        b = baseline_by_id[p["id"]]
+        assert p["fascia"] == b["fascia"]
+        assert p["score"] == b["score"]
+        assert p["indice_affare"] == b["indice_affare"]
+        assert p["affare_label"] == b["affare_label"]
+
+
+def test_fvm_500_with_different_budget():
+    # budget di lega diverso da 500: la formula deve restare generica,
+    # non un /2 hardcoded.
+    quotazioni = [{"id": 1, "name": "Test", "position": "A", "team": "X",
+                   "qt_att": 10, "qt_i": 10, "diff": 0, "qt_att_m": 10, "qt_i_m": 10,
+                   "diff_m": 0, "fvm": 300, "fvm_m": 300}]
+    scoring = load_scoring()
+    result = build_players(quotazioni, [], scoring, {"players": {}},
+                            budget_totale=750, fvm_reference_budget=1000)
+    assert result[0]["fvm_500"] == 225  # 300 * 750/1000

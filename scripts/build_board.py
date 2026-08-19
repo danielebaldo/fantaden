@@ -150,10 +150,21 @@ def assign_affare_index(players: list, affare_cfg: dict) -> None:
 
 
 def build_players(quotazioni: list, statistiche: list, scoring: dict, overrides: dict,
-                   image_template: str | None = None, season_id: int | None = None) -> list:
+                   image_template: str | None = None, season_id: int | None = None,
+                   budget_totale: int | None = None, fvm_reference_budget: int | None = None) -> list:
     stats_by_id = {s["id"]: s for s in statistiche}
     weights_by_role = scoring["weights"]
     override_players = overrides.get("players", {})
+
+    # FVM di fantacalcio.it è calibrato su fvm_reference_budget (di norma una
+    # lega da 1000 crediti): fvm_500 lo riscala sul budget reale della lega
+    # (auction_defaults.budget_totale, di norma 500). È una trasformazione
+    # lineare uniforme su tutti i giocatori: non altera percentili, fasce,
+    # score o indice affare/trappola, che restano calcolati su `fvm`.
+    fvm_scale = (
+        budget_totale / fvm_reference_budget
+        if budget_totale and fvm_reference_budget else None
+    )
 
     players = []
     for q in quotazioni:
@@ -167,6 +178,8 @@ def build_players(quotazioni: list, statistiche: list, scoring: dict, overrides:
         p["affare_label"] = None
         p["stelle"] = None
         p["note"] = ""
+        p["fvm_500"] = round(q["fvm"] * fvm_scale) if fvm_scale is not None else None
+        p["fvm_m_500"] = round(q["fvm_m"] * fvm_scale) if fvm_scale is not None else None
         p["playerImage"] = (
             image_template.format(season_id=season_id, player_id=q["id"])
             if image_template and season_id else None
@@ -251,6 +264,8 @@ def main():
         quotazioni, statistiche, scoring, overrides,
         image_template=settings["endpoints"]["image_template"],
         season_id=settings["season"]["current_season_id"],
+        budget_totale=settings["auction_defaults"]["budget_totale"],
+        fvm_reference_budget=settings.get("fvm_reference_budget"),
     )
 
     board_path = repo_path(settings["paths"]["board_json"])

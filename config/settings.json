@@ -24,6 +24,8 @@
     "slot": { "P": 3, "D": 8, "C": 8, "A": 6 },
     "percentuali": { "P": 8, "D": 16, "C": 26, "A": 50 }
   },
+  "fvm_reference_budget": 1000,
+  "_fvm_reference_budget_comment": "Budget su cui fantacalcio.it calibra l'FVM nel suo Excel (lega da 1000 crediti). build_board.py lo usa per riparametrare l'FVM sul budget reale della lega (auction_defaults.budget_totale) nel campo fvm_500/fvm_m_500, affiancato all'FVM originale.",
   "paths": {
     "raw_dir": "data/raw",
     "quotazioni_json": "data/quotazioni.json",

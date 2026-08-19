@@ -138,6 +138,14 @@ Ogni giocatore ha:
   confronto tra percentile di score e percentile di prezzo: un giocatore
   con statistiche migliori di quanto costi è un "Affare", il contrario è
   una "Trappola".
+- **`fvm`** è il valore grezzo dell'Excel di fantacalcio.it, calibrato su
+  una lega da **1000 crediti** (`fvm_reference_budget` in `config/settings.json`).
+  **`fvm_500`** è lo stesso valore riparametrato sul budget di lega
+  configurato (`auction_defaults.budget_totale`, di norma 500): è quello
+  utile per leggere direttamente "quanto vale indicativamente questo
+  giocatore nella mia asta". È una semplice trasformazione lineare
+  (`fvm * budget_totale / fvm_reference_budget`): non influenza fascia,
+  score o indice affare, calcolati tutti sul valore grezzo `fvm`.
 
 ## Dashboard — asta live
 

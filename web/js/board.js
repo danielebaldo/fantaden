@@ -11,6 +11,7 @@ const COLUMNS = [
   { key: 'team', label: 'Squadra', sortable: true },
   { key: 'qt_att', label: 'Qt.A', sortable: true },
   { key: 'fvm', label: 'FVM', sortable: true },
+  { key: 'fvm_500', label: 'FVM 500cr', sortable: true },
   { key: 'fascia', label: 'Fascia', sortable: true },
   { key: 'score', label: 'Score', sortable: true },
   { key: 'affare_label', label: 'Affare', sortable: true },
@@ -119,6 +120,7 @@ export function renderTableBody(tbody, players, state, history, onAction) {
       <td>${escapeHtml(p.team)}</td>
       <td>${p.qt_att}</td>
       <td>${p.fvm}</td>
+      <td>${p.fvm_500 != null ? p.fvm_500 : '—'}</td>
       <td><span class="tag ${fasciaClass}">${p.fascia}</span></td>
       <td>${p.score != null ? p.score.toFixed(1) : '—'}</td>
       <td>${p.affare_label ? `<span class="tag ${affareClass}">${p.affare_label}</span>` : '—'}</td>
