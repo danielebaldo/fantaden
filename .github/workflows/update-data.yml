@@ -65,14 +65,16 @@ jobs:
         run: |
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
-          # data/statistiche.json può non esistere ancora (endpoint statistiche
-          # non funzionante finché non viene corretto in config/settings.json):
-          # aggiungiamo solo i file che la pipeline ha effettivamente prodotto,
-          # `git add` su un file inesistente fallirebbe l'intero step.
+          # Questi path sono in .gitignore (così un run locale della pipeline
+          # non sporca git status con dati non ancora verificati): il -f qui
+          # è intenzionale, solo questo job automatico li deve committare
+          # davvero. data/statistiche.json può anche non esistere ancora
+          # (endpoint statistiche non funzionante) quindi si aggiunge solo
+          # ciò che la pipeline ha effettivamente prodotto in questo run.
           for f in data/quotazioni.json data/statistiche.json \
                    web/data/board.json web/data/meta.json web/data/history.json \
                    export/lista_asta.xlsx; do
-            [ -f "$f" ] && git add "$f"
+            [ -f "$f" ] && git add -f "$f"
           done
           if git diff --cached --quiet; then
             echo "Nessuna modifica ai dati, salto il commit."
