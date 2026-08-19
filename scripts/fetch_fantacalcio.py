@@ -36,27 +36,40 @@ def _headers(settings, cookie):
     }
 
 
-def _download(url, headers, dest_path, label):
+def _download(url, headers, dest_path, label, fatal=True):
+    """Scarica un Excel. Se fatal=True un errore interrompe tutto lo script
+    (usato per le quotazioni, senza le quali la pipeline non ha senso). Se
+    fatal=False stampa un avviso e ritorna False, lasciando proseguire il
+    resto della pipeline con i dati disponibili (usato per le statistiche:
+    utili ma non indispensabili — meglio una board senza storico che
+    nessuna board)."""
+
+    def fail(message):
+        if fatal:
+            raise SystemExit(message)
+        print(message, file=sys.stderr)
+        return False
+
     try:
         response = requests.get(url, headers=headers, timeout=60)
     except requests.RequestException as exc:
-        raise SystemExit(
+        return fail(
             f"[fetch_fantacalcio] Errore di rete scaricando {label} da {url}: {exc}\n"
             f"Se sei in un ambiente con rete limitata, scarica il file a mano da "
             f"fantacalcio.it e salvalo in {dest_path}."
         )
 
     if response.status_code != 200:
-        raise SystemExit(
+        return fail(
             f"[fetch_fantacalcio] {label}: HTTP {response.status_code} da {url}.\n"
             f"Cause probabili: cookie scaduto (rifai il login su fantacalcio.it e "
-            f"aggiorna il secret FANTACALCIO_COOKIE) oppure endpoint cambiato."
+            f"aggiorna il secret FANTACALCIO_COOKIE) oppure endpoint cambiato/id stagione errato."
         )
 
     content = response.content
     if content[:2] != XLSX_MAGIC:
         snippet = content[:200].decode("utf-8", errors="replace")
-        raise SystemExit(
+        return fail(
             f"[fetch_fantacalcio] {label}: la risposta non è un file .xlsx valido "
             f"(probabile pagina di login scaduta). Inizio risposta:\n{snippet}"
         )
@@ -65,6 +78,7 @@ def _download(url, headers, dest_path, label):
     with open(dest_path, "wb") as f:
         f.write(content)
     print(f"[fetch_fantacalcio] {label} salvato in {dest_path} ({len(content)} byte)")
+    return True
 
 
 def main():
@@ -91,11 +105,18 @@ def main():
     raw_dir = repo_path(settings["paths"]["raw_dir"])
 
     prices_url = settings["endpoints"]["prices_url_template"].format(season_id=season)
-    _download(prices_url, headers, os.path.join(raw_dir, "quotazioni.xlsx"), "Quotazioni")
+    _download(prices_url, headers, os.path.join(raw_dir, "quotazioni.xlsx"), "Quotazioni", fatal=True)
 
     if not args.skip_statistics:
         stats_url = settings["endpoints"]["statistics_url_template"].format(season_id=prev_season)
-        _download(stats_url, headers, os.path.join(raw_dir, "statistiche.xlsx"), "Statistiche stagione precedente")
+        ok = _download(stats_url, headers, os.path.join(raw_dir, "statistiche.xlsx"),
+                        "Statistiche stagione precedente", fatal=False)
+        if not ok:
+            print(
+                "[fetch_fantacalcio] Proseguo senza statistiche: la board avrà tutti i "
+                "giocatori in modalità 'no_stats' finché l'endpoint statistiche non viene "
+                "corretto in config/settings.json (vedi README, sezione Limiti noti)."
+            )
 
 
 if __name__ == "__main__":
