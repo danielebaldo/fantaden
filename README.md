@@ -182,15 +182,16 @@ tests/     pytest (Python) + node --test (JS)
 - Gli endpoint `fantacalcio.it/api/v1/Excel/...` non sono documentati
   ufficialmente: se il sito cambia struttura, `fetch_fantacalcio.py` inizia
   a fallire con un errore esplicito (non scrive mai dati parziali).
-- **L'endpoint delle statistiche stagione precedente non è verificato**
-  (`statistics_url_template` in `config/settings.json`): al momento risponde
-  404. Il download delle quotazioni non ne risente (resta obbligatorio e
-  blocca la pipeline se fallisce), ma finché non si trova l'URL corretto la
-  board resta con tutti i giocatori in `no_stats` (niente score/fasce basate
-  su rendimento, solo su prezzo). Per sistemarlo: apri la pagina
-  "Statistiche" su fantacalcio.it da loggato, guarda negli strumenti
-  sviluppatore (tab Network) l'URL della richiesta che scarica l'Excel, e
-  aggiorna `statistics_url_template`/`previous_season_id` di conseguenza.
+- L'endpoint statistiche è `/api/v1/Excel/stats/{season_id}/1` (nota: `stats`,
+  non `statistics` come l'analoga richiesta delle quotazioni) — se
+  fantacalcio.it cambia ancora struttura e torna a rispondere 404, il
+  download delle statistiche fallisce in modo "silenzioso" (la pipeline
+  prosegue comunque, con tutti i giocatori in `no_stats`) mentre quello delle
+  quotazioni resta obbligatorio e blocca tutto. Per ritrovare l'URL corretto:
+  pagina "Statistiche" su fantacalcio.it da loggato → strumenti sviluppatore
+  → tab Network → clicca il pulsante di download → cerca la richiesta verso
+  `fantacalcio.it` (da mobile: tieni premuto sul link di download per
+  "Copia indirizzo").
 - Il pannello rivali assume che tutti seguano lo stesso regolamento di slot
   della propria lega (`config/settings.json` → `auction_defaults.slot`).
 - Lo stato dell'asta vive solo in `localStorage`: usa "Esporta stato" prima

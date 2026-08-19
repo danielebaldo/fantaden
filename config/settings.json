@@ -7,7 +7,7 @@
   },
   "endpoints": {
     "prices_url_template": "https://www.fantacalcio.it/api/v1/Excel/prices/{season_id}/1",
-    "statistics_url_template": "https://www.fantacalcio.it/api/v1/Excel/statistics/{season_id}/1",
+    "statistics_url_template": "https://www.fantacalcio.it/api/v1/Excel/stats/{season_id}/1",
     "referer": "https://www.fantacalcio.it/quotazioni-fantacalcio",
     "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36",
     "image_template": "https://content.fantacalcio.it/web/campioncini/{season_id}/medium/{player_id}.png?v=640"
