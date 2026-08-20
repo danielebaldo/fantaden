@@ -28,6 +28,7 @@ FASCIA_FILL = {
 
 BASE_COLUMNS = [
     ("name", "Nome"),
+    ("position_mantra", "Ruolo M"),
     ("team", "Squadra"),
     ("qt_att", "Qt.A"),
     ("fvm", "FVM"),

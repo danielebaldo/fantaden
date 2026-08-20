@@ -8,6 +8,8 @@ import { sparklineSVG } from './history.js';
 const COLUMNS = [
   { key: 'sparkline', label: '' },
   { key: 'name', label: 'Nome', sortable: true },
+  { key: 'position_mantra', label: 'Ruolo M', sortable: true,
+    title: 'Ruolo Mantra (dal dato Rm di fantacalcio.it).' },
   { key: 'team', label: 'Squadra', sortable: true },
   { key: 'qt_att', label: 'Qt.A', sortable: true },
   { key: 'fvm', label: 'FVM', sortable: true },
@@ -120,6 +122,7 @@ export function renderTableBody(tbody, players, state, history, onAction) {
     return `<tr class="${rowClasses.join(' ')}" data-id="${p.id}">
       <td>${sparklineSVG(history, p.id)}</td>
       <td class="cell-name">${escapeHtml(p.name)}${p.no_stats ? ' <span class="tag tag-nostats" title="Nessuna statistica stagione precedente">NEW</span>' : ''}</td>
+      <td>${escapeHtml(p.position_mantra || '—')}</td>
       <td>${escapeHtml(p.team)}</td>
       <td>${p.qt_att}</td>
       <td>${p.fvm}</td>
