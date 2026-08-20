@@ -50,9 +50,6 @@ jobs:
           fi
           python3 scripts/fetch_fantacalcio.py $ARGS
 
-      - name: "[TEMP] Diagnostica ruolo Mantra"
-        run: python3 scripts/debug_inspect_excel.py data/raw/quotazioni.xlsx
-
       - name: Normalizza in JSON
         run: python3 scripts/normalize.py
 

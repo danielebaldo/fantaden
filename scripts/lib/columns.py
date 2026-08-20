@@ -10,7 +10,7 @@ nel codice.
 PRICES_COLUMNS = {
     "id": "Id",
     "ruolo": "R",
-    "ruolo_mantra": "Rm",
+    "ruolo_mantra": "RM",
     "nome": "Nome",
     "squadra": "Squadra",
     "qt_att": "Qt.A",
@@ -27,7 +27,7 @@ PRICES_COLUMNS = {
 STATS_COLUMNS = {
     "id": "Id",
     "ruolo": "R",
-    "ruolo_mantra": "Rm",
+    "ruolo_mantra": "RM",
     "nome": "Nome",
     "squadra": "Squadra",
     "presenze": "Pv",

@@ -78,7 +78,7 @@ def build_prices_df():
         rows.append({
             "Id": pid,
             "R": role,
-            "Rm": role,
+            "RM": role,
             "Nome": name,
             "Squadra": team,
             "Qt.A": qt_att,
@@ -102,7 +102,7 @@ def build_stats_df():
         rows.append({
             "Id": pid,
             "R": role,
-            "Rm": role,
+            "RM": role,
             "Nome": name,
             "Squadra": team,
             "Pv": s["pv"],
