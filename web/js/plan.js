@@ -3,6 +3,7 @@
 // Funzioni pure, nessuna dipendenza su state.js: statusOf è iniettato da ui.js.
 
 import { FASCIA_ORDER } from './board.js';
+import { deltaRecent } from './history.js';
 
 /**
  * Alternative automatiche per un giocatore: stessi ruolo/reparto, status
@@ -122,12 +123,12 @@ export function computeWishlistCoveragePerRole(
     ? { label: maxFasciaLabel, quota: (maxFasciaCount / obiettiviDisponibili.length * 100).toFixed(0) }
     : null;
 
-  // pressione mercato: obiettivi con delta7d positivo
+  // pressione mercato: obiettivi la cui quotazione è in salita nella finestra recente
   const pressione = [];
   for (const w of obiettiviDisponibili) {
-    const delta7d = history[w.id]?.delta7d;
-    if (delta7d != null && delta7d > 0) {
-      pressione.push({ id: w.id, delta7d });
+    const d = deltaRecent(history, w.id);
+    if (d && d.deltaQt > 0) {
+      pressione.push({ id: w.id, deltaQt: d.deltaQt });
     }
   }
   const pressioneDetectato = pressione.length > 0;

@@ -278,10 +278,11 @@ function renderRoster() {
 function renderMovements() {
   const { rialzi, ribassi } = historyMod.topMovements(history, board, 6);
   const daysAvailable = historyMod.daysOfHistoryAvailable(history);
-  const emptyHint = daysAvailable < 7
+  const windowDays = historyMod.MOVEMENT_WINDOW_DAYS;
+  const emptyHint = daysAvailable < windowDays
     ? `<p class="empty-hint">Storico disponibile: ${daysAvailable} ${daysAvailable === 1 ? 'giorno' : 'giorni'}. `
-      + `Servono almeno 7 giorni di snapshot per calcolare i movimenti.</p>`
-    : '<p class="empty-hint">Nessun movimento significativo negli ultimi 7 giorni.</p>';
+      + `Servono almeno ${windowDays} giorni di snapshot per calcolare i movimenti.</p>`
+    : `<p class="empty-hint">Nessun movimento significativo negli ultimi ${windowDays} giorni.</p>`;
   const renderList = (rows, cls) => rows.length
     ? `<ul class="list">${rows.map((r) => `
         <li>
@@ -391,6 +392,7 @@ function renderPlan(auctionState) {
       <span class="${coverageClass}">${coverageLabel}</span>
       ${activeRoleCov.slotScoperti > 0 ? `<span class="warn">⚠️ ${activeRoleCov.slotScoperti} slot scoperti</span>` : ''}
       ${activeRoleCov.concentrazioneFascia ? `<span class="warn">⚠️ ${activeRoleCov.concentrazioneFascia.quota}% in ${activeRoleCov.concentrazioneFascia.label}</span>` : ''}
+      ${activeRoleCov.pressioneDetectato ? `<span class="warn">📈 Quotazioni in salita tra gli obiettivi</span>` : ''}
     </div>
   `;
 
