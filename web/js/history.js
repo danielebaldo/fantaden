@@ -38,6 +38,26 @@ export function delta7d(history, playerId) {
 }
 
 /**
+ * Numero di giorni di storico effettivamente disponibili (differenza tra
+ * la data più vecchia e quella più recente su tutti i giocatori), utile
+ * per spiegare in UI perché il pannello movimenti (che richiede ≥7 giorni)
+ * è ancora vuoto a inizio pipeline.
+ */
+export function daysOfHistoryAvailable(history) {
+  let minDate = null;
+  let maxDate = null;
+  for (const series of Object.values(history)) {
+    for (const point of series) {
+      const t = new Date(point[0] + 'T00:00:00Z').getTime();
+      if (minDate === null || t < minDate) minDate = t;
+      if (maxDate === null || t > maxDate) maxDate = t;
+    }
+  }
+  if (minDate === null) return 0;
+  return Math.round((maxDate - minDate) / (24 * 60 * 60 * 1000)) + 1;
+}
+
+/**
  * Top N rialzi e top N ribassi di quotazione a 7 giorni tra i giocatori
  * ancora disponibili (board già filtrata da chi chiama, se serve).
  */

@@ -277,13 +277,18 @@ function renderRoster() {
 
 function renderMovements() {
   const { rialzi, ribassi } = historyMod.topMovements(history, board, 6);
+  const daysAvailable = historyMod.daysOfHistoryAvailable(history);
+  const emptyHint = daysAvailable < 7
+    ? `<p class="empty-hint">Storico disponibile: ${daysAvailable} ${daysAvailable === 1 ? 'giorno' : 'giorni'}. `
+      + `Servono almeno 7 giorni di snapshot per calcolare i movimenti.</p>`
+    : '<p class="empty-hint">Nessun movimento significativo negli ultimi 7 giorni.</p>';
   const renderList = (rows, cls) => rows.length
     ? `<ul class="list">${rows.map((r) => `
         <li>
           <span>${escapeHtml(r.player.name)} <span class="tag">${r.player.position}</span></span>
           <span class="${cls}">${r.deltaQt > 0 ? '+' : ''}${r.deltaQt}</span>
         </li>`).join('')}</ul>`
-    : '<p class="empty-hint">Serve più di uno snapshot giornaliero per calcolare i movimenti.</p>';
+    : emptyHint;
 
   els.movementsPanel.innerHTML = `
     <div><h3>📈 Rialzi</h3>${renderList(rialzi, 'positive')}</div>
