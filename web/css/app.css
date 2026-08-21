@@ -70,8 +70,8 @@ main {
 }
 
 /* affianca setup budget + allocazione (waffle) su desktop, setup più stretto */
-.top-row { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; }
-.top-row > .card { margin: 0; } /* la spaziatura la dà il gap del contenitore, non i margini della card */
+.top-row { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; min-width: 0; }
+.top-row > .card { margin: 0; min-width: 0; } /* la spaziatura la dà il gap del contenitore, non i margini della card */
 @media (min-width: 1100px) {
   .top-row {
     display: grid;
@@ -88,16 +88,20 @@ main {
     gap: 16px;
     grid-auto-flow: dense;
   }
-  main > :nth-child(-n+2) { /* top-row (setup+waffle), monitor: piena larghezza */
+  main > .top-row { /* setup+waffle+monitor: piena larghezza */
     grid-column: 1 / -1;
   }
   main > #planCard { /* piano d'asta: colonna 1 */
     grid-column: 1;
   }
-  main > :nth-child(4) { /* tabella: colonna 2 */
+  main > :nth-child(3) { /* tabella: colonna 2 */
     grid-column: 2;
+    min-width: 0; /* impedisce alla card di forzare la colonna a espandersi oltre la traccia
+                     assegnata dal grid quando la tabella interna è larga: .table-wrap gestisce
+                     già lo scroll orizzontale, ma senza questo la card si comporta come se
+                     dovesse contenere la tabella per intero, sforando la larghezza pagina */
   }
-  main > :nth-child(n+5) { /* rosa, movimenti: piena larghezza */
+  main > :nth-child(n+4) { /* rosa, movimenti: piena larghezza */
     grid-column: 1 / -1;
   }
 }
@@ -198,6 +202,7 @@ button.danger { color: var(--danger); border-color: var(--danger); }
   box-shadow: var(--shadow);
   padding: 12px 14px;
   border-top: 4px solid var(--role-color, var(--primary));
+  min-width: 0; /* impedisce alla card di espandersi oltre la colonna quando il contenuto (es. "€ 476") è più largo di 220px */
 }
 .monitor-card.role-P { --role-color: var(--role-P); }
 .monitor-card.role-D { --role-color: var(--role-D); }
