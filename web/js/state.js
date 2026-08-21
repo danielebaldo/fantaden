@@ -21,6 +21,7 @@ export function createDefaultState(auctionDefaults) {
     ui: {
       activeTab: 'P',
       rosterTab: 'mia', // 'mia' | 'rivali'
+      planCollapsed: false,
       search: '',
       fasciaFilter: 'all',
       onlyAvailable: false,

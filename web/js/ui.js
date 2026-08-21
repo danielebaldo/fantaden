@@ -336,6 +336,16 @@ function renderPlan(auctionState) {
     { cassaGlobale: auctionState.cassaGlobale, history }
   );
 
+  // header con button collapse
+  const header = `
+    <div class="plan-header">
+      <h2>📋 Piano d'Asta</h2>
+      <button type="button" id="planToggle" class="plan-toggle" title="${state.ui.planCollapsed ? 'Espandi' : 'Collassa'}">
+        ${state.ui.planCollapsed ? '▶' : '▼'}
+      </button>
+    </div>
+  `;
+
   // banner obiettivi persi
   const lostBanner = lostEntries.length > 0 ? `
     <div class="lost-banner">
@@ -423,6 +433,9 @@ function renderPlan(auctionState) {
       </ul>`
     : '<p class="empty-hint">Nessun obiettivo per questo ruolo</p>';
 
+  // classe di collasso se stato.planCollapsed
+  const collapsedClass = state.ui.planCollapsed ? 'plan-collapsed' : '';
+
   els.planContent.innerHTML = `
     ${lostBanner}
     ${globalLine}
@@ -430,6 +443,14 @@ function renderPlan(auctionState) {
     <h3>Obiettivi per ${meta.role_names[activeRole]}</h3>
     ${wishlistList}
   `;
+
+  // aggiungi classe al card e header
+  els.planCard.className = `card ${collapsedClass}`;
+  const planCardH2 = els.planCard.querySelector('h2');
+  if (planCardH2) {
+    planCardH2.remove();
+  }
+  els.planContent.insertAdjacentHTML('beforebegin', header);
 
   // collega event listener
   els.planContent.querySelectorAll('.lost-dismiss').forEach((btn) => {
@@ -508,6 +529,15 @@ function renderPlan(auctionState) {
       rerenderAll();
     });
   });
+
+  // listener al button toggle collapse
+  const toggleBtn = document.getElementById('planToggle');
+  if (toggleBtn) {
+    toggleBtn.addEventListener('click', () => {
+      state.ui.planCollapsed = !state.ui.planCollapsed;
+      rerenderAll();
+    });
+  }
 }
 
 // --- azioni riga / modale ------------------------------------------------
