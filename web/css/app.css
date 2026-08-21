@@ -62,18 +62,53 @@ body {
   line-height: 1.4;
 }
 
-main { max-width: 1200px; margin: 0 auto; padding: 0 16px 48px; }
+main {
+  width: 95vw;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 16px 48px;
+}
+
+/* layout per affiancare piano d'asta + tabella a desktop */
+@media (min-width: 1400px) {
+  main {
+    display: grid;
+    grid-template-columns: minmax(350px, 1fr) 1.2fr;
+    gap: 16px;
+    grid-auto-flow: dense;
+  }
+  main > :nth-child(-n+3) { /* setup, waffle, monitor: piena larghezza */
+    grid-column: 1 / -1;
+  }
+  main > #planCard { /* piano d'asta: colonna 1 */
+    grid-column: 1;
+  }
+  main > :nth-child(5) { /* tabella: colonna 2 */
+    grid-column: 2;
+  }
+  main > :nth-child(n+6) { /* rosa, movimenti: piena larghezza */
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 1399px) {
+  main {
+    max-width: 1200px;
+  }
+}
 
 .topbar {
   padding: 20px 16px 12px;
-  max-width: 1200px;
+  width: 95vw;
+  max-width: 1600px;
   margin: 0 auto;
 }
 .topbar h1 { margin: 0 0 4px; font-size: 1.5rem; }
 .meta-info { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
 
 .load-error {
-  max-width: 1200px;
+  width: 95vw;
+  max-width: 1600px;
   margin: 12px auto;
   padding: 12px 16px;
   background: color-mix(in srgb, var(--danger) 15%, var(--surface));
@@ -305,7 +340,7 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 .roster-panel.hidden { display: none; }
 
 /* --- footer --- */
-footer { max-width: 1200px; margin: 0 auto; padding: 8px 16px 40px; }
+footer { width: 95vw; max-width: 1600px; margin: 0 auto; padding: 8px 16px 40px; }
 .footer-actions { display: flex; gap: 10px; flex-wrap: wrap; }
 .file-btn { position: relative; overflow: hidden; display: inline-flex; align-items: center; cursor: pointer; }
 .file-btn input[type="file"] { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
