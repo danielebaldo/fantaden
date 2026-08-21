@@ -21,6 +21,8 @@ const COLUMNS = [
     title: 'Confronto tra rendimento (score) e prezzo (FVM) nel ruolo: Affare = rende più di quanto costa, Trappola = il contrario, Equo = in linea.' },
   { key: 'presenze', label: 'Pv', sortable: true },
   { key: 'fantamedia', label: 'Fm', sortable: true },
+  { key: 'ammonizioni', label: 'Amm', sortable: true,
+    title: 'Ammonizioni nella stagione precedente.' },
   { key: 'status', label: 'Stato / Azioni' },
 ];
 
@@ -135,6 +137,7 @@ export function renderTableBody(tbody, players, state, history, onAction) {
       <td>${p.affare_label ? `<span class="tag ${affareClass}">${p.affare_label}</span>` : '—'}</td>
       <td>${p.presenze != null ? p.presenze : '—'}</td>
       <td>${p.fantamedia != null ? p.fantamedia.toFixed(2) : '—'}</td>
+      <td>${p.ammonizioni != null ? p.ammonizioni : '—'}</td>
       <td>${statusCell(p, state)}</td>
     </tr>`;
   }).join('');
