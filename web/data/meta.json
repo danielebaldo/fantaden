@@ -1,9 +1,15 @@
 {
-  "generated_at": "2026-08-21T09:09:45.960824+00:00",
+  "generated_at": "2026-08-21T14:46:35.310780+00:00",
   "season": {
     "label": "2026-27",
     "current_season_id": 21,
-    "previous_season_id": 20
+    "previous_season_id": 20,
+    "stats_season_ids": [
+      20,
+      19,
+      18
+    ],
+    "_stats_season_ids_comment": "Stagioni statistiche per lo score multi-stagione (config/scoring.json -> multi_season), dalla più recente. previous_season_id resta usato quando multi_season.enabled=false, per compatibilita totale col comportamento esistente."
   },
   "roles": [
     "P",
@@ -33,14 +39,14 @@
     }
   },
   "image_template": "https://content.fantacalcio.it/web/campioncini/{season_id}/medium/{player_id}.png?v=640",
-  "total_players": 508,
+  "total_players": 512,
   "counts_by_role": {
-    "A": 89,
-    "C": 180,
-    "D": 176,
+    "A": 88,
+    "C": 182,
+    "D": 179,
     "P": 63
   },
-  "no_stats_count": 129,
-  "quotazioni_source_count": 508,
+  "no_stats_count": 132,
+  "quotazioni_source_count": 512,
   "statistiche_source_count": 663
 }

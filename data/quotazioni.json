@@ -2340,6 +2340,21 @@
     "fvm_m": 11
   },
   {
+    "id": 7069,
+    "name": "Fortini",
+    "position": "D",
+    "position_mantra": "E",
+    "team": "Torino",
+    "qt_att": 5,
+    "qt_i": 5,
+    "diff": 0,
+    "qt_att_m": 4,
+    "qt_i_m": 4,
+    "diff_m": 0,
+    "fvm": 13,
+    "fvm_m": 11
+  },
+  {
     "id": 4461,
     "name": "Zappa",
     "position": "D",
@@ -3570,11 +3585,41 @@
     "fvm_m": 1
   },
   {
+    "id": 7154,
+    "name": "Odenthal",
+    "position": "D",
+    "position_mantra": "Dc",
+    "team": "Sassuolo",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 1,
+    "fvm_m": 1
+  },
+  {
     "id": 7553,
     "name": "Omar Fayed",
     "position": "D",
     "position_mantra": "Dc",
     "team": "Frosinone",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 1,
+    "fvm_m": 1
+  },
+  {
+    "id": 7573,
+    "name": "Cinquegrano",
+    "position": "D",
+    "position_mantra": "Dd;E",
+    "team": "Sassuolo",
     "qt_att": 1,
     "qt_i": 1,
     "diff": 0,
@@ -6285,6 +6330,36 @@
     "fvm_m": 1
   },
   {
+    "id": 7571,
+    "name": "Laerke",
+    "position": "C",
+    "position_mantra": "W;A",
+    "team": "Lecce",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 1,
+    "fvm_m": 1
+  },
+  {
+    "id": 7572,
+    "name": "Comotto",
+    "position": "C",
+    "position_mantra": "M;C",
+    "team": "Milan",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 1,
+    "fvm_m": 1
+  },
+  {
     "id": 2764,
     "name": "Martinez L.",
     "position": "A",
@@ -7528,21 +7603,6 @@
     "diff_m": 0,
     "fvm": 4,
     "fvm_m": 3
-  },
-  {
-    "id": 7158,
-    "name": "Moro L.",
-    "position": "A",
-    "position_mantra": "Pc",
-    "team": "Sassuolo",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 1,
-    "fvm_m": 1
   },
   {
     "id": 7161,
