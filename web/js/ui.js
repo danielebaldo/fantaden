@@ -35,7 +35,9 @@ const els = {
   addRivalBtn: document.getElementById('addRivalBtn'),
   rivalsList: document.getElementById('rivalsList'),
   movementsPanel: document.getElementById('movementsPanel'),
+  planCard: document.getElementById('planCard'),
   planContent: document.getElementById('planContent'),
+  planToggle: document.getElementById('planToggle'),
   modalOverlay: document.getElementById('modalOverlay'),
   modalTitle: document.getElementById('modalTitle'),
   modalBody: document.getElementById('modalBody'),
@@ -336,16 +338,6 @@ function renderPlan(auctionState) {
     { cassaGlobale: auctionState.cassaGlobale, history }
   );
 
-  // header con button collapse
-  const header = `
-    <div class="plan-header">
-      <h2>📋 Piano d'Asta</h2>
-      <button type="button" id="planToggle" class="plan-toggle" title="${state.ui.planCollapsed ? 'Espandi' : 'Collassa'}">
-        ${state.ui.planCollapsed ? '▶' : '▼'}
-      </button>
-    </div>
-  `;
-
   // banner obiettivi persi
   const lostBanner = lostEntries.length > 0 ? `
     <div class="lost-banner">
@@ -433,9 +425,6 @@ function renderPlan(auctionState) {
       </ul>`
     : '<p class="empty-hint">Nessun obiettivo per questo ruolo</p>';
 
-  // classe di collasso se stato.planCollapsed
-  const collapsedClass = state.ui.planCollapsed ? 'plan-collapsed' : '';
-
   els.planContent.innerHTML = `
     ${lostBanner}
     ${globalLine}
@@ -444,13 +433,12 @@ function renderPlan(auctionState) {
     ${wishlistList}
   `;
 
-  // aggiungi classe al card e header
-  els.planCard.className = `card ${collapsedClass}`;
-  const planCardH2 = els.planCard.querySelector('h2');
-  if (planCardH2) {
-    planCardH2.remove();
+  // stato collassato: classe sul card + freccia/tooltip sul button statico
+  els.planCard.classList.toggle('plan-collapsed', state.ui.planCollapsed);
+  if (els.planToggle) {
+    els.planToggle.textContent = state.ui.planCollapsed ? '▶' : '▼';
+    els.planToggle.title = state.ui.planCollapsed ? 'Espandi' : 'Collassa';
   }
-  els.planContent.insertAdjacentHTML('beforebegin', header);
 
   // collega event listener
   els.planContent.querySelectorAll('.lost-dismiss').forEach((btn) => {
@@ -529,15 +517,6 @@ function renderPlan(auctionState) {
       rerenderAll();
     });
   });
-
-  // listener al button toggle collapse
-  const toggleBtn = document.getElementById('planToggle');
-  if (toggleBtn) {
-    toggleBtn.addEventListener('click', () => {
-      state.ui.planCollapsed = !state.ui.planCollapsed;
-      rerenderAll();
-    });
-  }
 }
 
 // --- azioni riga / modale ------------------------------------------------
@@ -734,6 +713,13 @@ function wireStaticListeners() {
     renderTable();
     stateMod.saveState(state);
   });
+
+  if (els.planToggle) {
+    els.planToggle.addEventListener('click', () => {
+      state.ui.planCollapsed = !state.ui.planCollapsed;
+      rerenderAll();
+    });
+  }
 
   els.addRivalBtn.addEventListener('click', () => {
     const name = els.rivalName.value.trim();
