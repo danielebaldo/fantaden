@@ -279,6 +279,38 @@ def test_fvm_500_does_not_change_fascia_score_or_affare(fixture_data, scoring):
         assert p["affare_label"] == b["affare_label"]
 
 
+def test_fvm_500_never_zero_for_positive_fvm():
+    # bug reale sui dati di produzione: 56 giocatori con fvm=1 finivano con
+    # fvm_500=0 (round(1*0.5) == 0), proposto come prezzo target in wishlist.
+    quotazioni = [
+        {"id": 1, "name": "Uno", "position": "A", "team": "X",
+         "qt_att": 1, "qt_i": 1, "diff": 0, "qt_att_m": 1, "qt_i_m": 1,
+         "diff_m": 0, "fvm": 1, "fvm_m": 1},
+        {"id": 2, "name": "Due", "position": "A", "team": "X",
+         "qt_att": 1, "qt_i": 1, "diff": 0, "qt_att_m": 1, "qt_i_m": 1,
+         "diff_m": 0, "fvm": 2, "fvm_m": 2},
+    ]
+    scoring = load_scoring()
+    result = build_players(quotazioni, [], scoring, {"players": {}},
+                            budget_totale=500, fvm_reference_budget=1000)
+    for p in result:
+        assert p["fvm_500"] >= 1
+        assert p["fvm_m_500"] >= 1
+
+
+def test_fvm_500_zero_stays_zero():
+    # fvm=0 è un dato mancante/degenere, non un giocatore quotato: deve
+    # restare 0, non essere forzato a 1.
+    quotazioni = [{"id": 1, "name": "Zero", "position": "A", "team": "X",
+                   "qt_att": 1, "qt_i": 1, "diff": 0, "qt_att_m": 1, "qt_i_m": 1,
+                   "diff_m": 0, "fvm": 0, "fvm_m": 0}]
+    scoring = load_scoring()
+    result = build_players(quotazioni, [], scoring, {"players": {}},
+                            budget_totale=500, fvm_reference_budget=1000)
+    assert result[0]["fvm_500"] == 0
+    assert result[0]["fvm_m_500"] == 0
+
+
 def test_fvm_500_with_different_budget():
     # budget di lega diverso da 500: la formula deve restare generica,
     # non un /2 hardcoded.

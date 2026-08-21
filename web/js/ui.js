@@ -25,6 +25,7 @@ const els = {
   fasciaFilter: document.getElementById('fasciaFilter'),
   onlyAvailable: document.getElementById('onlyAvailable'),
   onlyWishlist: document.getElementById('onlyWishlist'),
+  onlyRigoristi: document.getElementById('onlyRigoristi'),
   playersTableHead: document.getElementById('playersTableHead'),
   playersTableBody: document.getElementById('playersTableBody'),
   myRosterList: document.getElementById('myRosterList'),
@@ -320,7 +321,7 @@ function openWishlistModal(player) {
   const existing = state.wishlist[String(player.id)] || {};
   openModal(`⭐ Wishlist: ${player.name}`, `
     <label>Prezzo base (opzionale)<input type="number" id="modalBase" value="${existing.base ?? ''}"></label>
-    <label>Prezzo target (opzionale)<input type="number" id="modalTarget" value="${existing.target ?? player.fvm_500 ?? player.qt_att}"></label>
+    <label>Prezzo target (opzionale)<input type="number" id="modalTarget" value="${existing.target ?? (player.fvm_500 || player.qt_att)}"></label>
   `, () => {
     const base = document.getElementById('modalBase').value;
     const target = document.getElementById('modalTarget').value;
@@ -395,6 +396,11 @@ function wireStaticListeners() {
   });
   els.onlyWishlist.addEventListener('change', () => {
     state.ui.onlyWishlist = els.onlyWishlist.checked;
+    renderTable();
+    stateMod.saveState(state);
+  });
+  els.onlyRigoristi.addEventListener('change', () => {
+    state.ui.onlyRigoristi = els.onlyRigoristi.checked;
     renderTable();
     stateMod.saveState(state);
   });

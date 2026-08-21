@@ -22,6 +22,11 @@ from lib.config import load_settings, repo_path
 
 MAX_POINTS_PER_PLAYER = 400  # ~ più di una stagione di snapshot giornalieri
 
+# Sotto questa soglia di giocatori in board, il pruning viene saltato: una
+# board anomala/parziale (es. endpoint quotazioni mezzo rotto) non deve
+# poter cancellare mesi di storico irrecuperabile per un guasto temporaneo.
+MIN_BOARD_FOR_PRUNE = 50
+
 
 def update_history(history: dict, board: list, date_str: str) -> dict:
     for p in board:
@@ -34,6 +39,15 @@ def update_history(history: dict, board: list, date_str: str) -> dict:
         series.sort(key=lambda pt: pt[0])
         if len(series) > MAX_POINTS_PER_PLAYER:
             del series[: len(series) - MAX_POINTS_PER_PLAYER]
+
+    if len(board) >= MIN_BOARD_FOR_PRUNE:
+        current_ids = {str(p["id"]) for p in board}
+        orphans = [pid for pid in history if pid not in current_ids]
+        for pid in orphans:
+            del history[pid]
+        if orphans:
+            print(f"[snapshot_history] rimossi {len(orphans)} id non più in board")
+
     return history
 
 

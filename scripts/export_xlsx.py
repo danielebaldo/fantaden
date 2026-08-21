@@ -41,8 +41,10 @@ BASE_COLUMNS = [
     ("fantamedia", "Fm"),
     ("gol_fatti", "Gf"),
     ("assist", "Ass"),
+    ("rigori_calciati", "Rc"),
 ]
 GK_COLUMNS = [("gol_subiti", "Gs"), ("rigori_parati", "Rp")]
+OUTFIELD_COLUMNS = [("ammonizioni", "Amm"), ("espulsioni", "Esp")]
 EXTRA_COLUMNS = [("stelle", "Stelle"), ("note", "Note")]
 
 
@@ -50,6 +52,8 @@ def _columns_for_role(role: str):
     cols = list(BASE_COLUMNS)
     if role == "P":
         cols += GK_COLUMNS
+    else:
+        cols += OUTFIELD_COLUMNS
     cols += EXTRA_COLUMNS
     return cols
 

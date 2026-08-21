@@ -24,6 +24,7 @@ export function createDefaultState(auctionDefaults) {
       fasciaFilter: 'all',
       onlyAvailable: false,
       onlyWishlist: false,
+      onlyRigoristi: false,
       sortBy: 'fvm',
       sortDir: 'desc',
     },

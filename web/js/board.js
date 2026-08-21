@@ -47,6 +47,9 @@ export function filterAndSortPlayers(board, state, role, history) {
   if (state.ui.onlyWishlist) {
     rows = rows.filter((p) => getPlayerStatus(state, p.id) === 'wishlist');
   }
+  if (state.ui.onlyRigoristi) {
+    rows = rows.filter((p) => p.rigorista);
+  }
 
   const { sortBy, sortDir } = state.ui;
   const dir = sortDir === 'asc' ? 1 : -1;
@@ -121,7 +124,7 @@ export function renderTableBody(tbody, players, state, history, onAction) {
     const affareClass = p.affare_label ? (AFFARE_CLASS[p.affare_label] || '') : '';
     return `<tr class="${rowClasses.join(' ')}" data-id="${p.id}">
       <td>${sparklineSVG(history, p.id)}</td>
-      <td class="cell-name">${escapeHtml(p.name)}${p.no_stats ? ' <span class="tag tag-nostats" title="Nessuna statistica stagione precedente">NEW</span>' : ''}</td>
+      <td class="cell-name">${escapeHtml(p.name)}${p.no_stats ? ' <span class="tag tag-nostats" title="Nessuna statistica stagione precedente">NEW</span>' : ''}${p.rigorista ? ` <span class="tag tag-rigorista" title="Rigorista: ${p.rigori_calciati ?? '?'} rigori calciati, ${p.rigori_segnati ?? '?'} segnati">🎯</span>` : ''}</td>
       <td>${escapeHtml(p.position_mantra || '—')}</td>
       <td>${escapeHtml(p.team)}</td>
       <td>${p.qt_att}</td>

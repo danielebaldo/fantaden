@@ -31,6 +31,15 @@ from lib.config import load_settings, load_scoring, load_overrides, repo_path
 
 FASCIA_LABELS_DEFAULT = ["Top", "1a Fascia", "2a Fascia", "3a Fascia", "Low Cost", "Scommessa"]
 
+# Campi statistici copiati as-is dal record normalizzato (data/statistiche.json)
+# nel record finale di board.json, quando il giocatore ha statistiche. Per i
+# no_stats ognuno di questi campi resta None (vedi build_players).
+STAT_FIELDS = (
+    "presenze", "media_voto", "fantamedia", "gol_fatti", "gol_subiti", "assist",
+    "rigori_parati", "rigori_calciati", "rigori_segnati", "rigori_sbagliati",
+    "ammonizioni", "espulsioni", "autogol",
+)
+
 
 def _percentile_rank(values: dict) -> dict:
     """Percentile (0..1] di ogni valore in `values` (id -> numero), dove 1.0
@@ -52,6 +61,21 @@ def _percentile_rank(values: dict) -> dict:
             ranks[items[k][0]] = pct
         i = j + 1
     return ranks
+
+
+def _scale_price(value: int, scale: float | None) -> int | None:
+    """FVM riparametrato sul budget di lega (vedi commento su `fvm_scale` in
+    `build_players`). Il minimo d'asta è 1 credito: un giocatore quotato
+    (fvm > 0) non può valere 0 dopo il riscalamento, quindi il risultato è
+    clampato a 1. `max(1, round(...))` resta comunque una trasformazione
+    monotòna non decrescente: cambia solo il fondo scala, non altera
+    l'ordinamento né, a valle, fasce/score/indice_affare (calcolati sempre
+    su `fvm` grezzo, mai su questo valore)."""
+    if scale is None:
+        return None
+    if not value:
+        return 0
+    return max(1, round(value * scale))
 
 
 def compute_raw_indices(role: str, stat: dict) -> dict:
@@ -178,26 +202,20 @@ def build_players(quotazioni: list, statistiche: list, scoring: dict, overrides:
         p["affare_label"] = None
         p["stelle"] = None
         p["note"] = ""
-        p["fvm_500"] = round(q["fvm"] * fvm_scale) if fvm_scale is not None else None
-        p["fvm_m_500"] = round(q["fvm_m"] * fvm_scale) if fvm_scale is not None else None
+        p["fvm_500"] = _scale_price(q["fvm"], fvm_scale)
+        p["fvm_m_500"] = _scale_price(q["fvm_m"], fvm_scale)
         p["playerImage"] = (
             image_template.format(season_id=season_id, player_id=q["id"])
             if image_template and season_id else None
         )
 
         if not no_stats:
-            p["presenze"] = stat["presenze"]
-            p["media_voto"] = stat["media_voto"]
-            p["fantamedia"] = stat["fantamedia"]
-            p["gol_fatti"] = stat["gol_fatti"]
-            p["gol_subiti"] = stat["gol_subiti"]
-            p["assist"] = stat["assist"]
-            p["rigori_parati"] = stat["rigori_parati"]
+            for key in STAT_FIELDS:
+                p[key] = stat[key]
             p["rigorista"] = stat["rigori_calciati"] > 0
             p["_raw_indices"] = compute_raw_indices(q["position"], stat)
         else:
-            for key in ("presenze", "media_voto", "fantamedia", "gol_fatti",
-                        "gol_subiti", "assist", "rigori_parati"):
+            for key in STAT_FIELDS:
                 p[key] = None
             p["rigorista"] = False
             p["_raw_indices"] = {}
