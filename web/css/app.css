@@ -262,6 +262,11 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 .tag-affare { background: var(--success); color: #fff; }
 .tag-trappola { background: var(--danger); color: #fff; }
 .tag-equo { background: var(--border); color: var(--text-muted); }
+.stagioni-sup { color: var(--text-muted); font-size: 0.65rem; cursor: help; }
+.trend-arrow { font-size: 0.75rem; cursor: help; }
+.trend-up { color: var(--up); }
+.trend-down { color: var(--down); }
+.trend-flat { color: var(--text-muted); }
 .fascia-top { background: var(--fascia-top); color: #1b2430; }
 .fascia-1 { background: var(--fascia-1); color: #fff; }
 .fascia-2 { background: var(--fascia-2); color: #fff; }

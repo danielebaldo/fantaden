@@ -70,6 +70,26 @@ STATS = {
     # 9001, 1500, 9002: nessuna riga statistiche -> giocatori "no_stats"
 }
 
+# Seconda fixture statistiche, per una stagione più vecchia (N-2): usata dai
+# test del multi-stagione (tests/test_multi_season.py). Deliberatamente
+# diversa da STATS per verificare la combinazione pesata e i campi derivati:
+# - id sovrapposti con STATS per testare media pesata/rinormalizzazione/trend
+# - 9001 ("Rossi Portiere") ha statistiche SOLO qui: è no_stats nella
+#   stagione più recente ma non complessivamente, con multi-stagione attivo
+#   (caso "rientro da prestito estero", copre no_stats_recent=True)
+# - 5522 (Kalulu) ha 3 presenze, sotto min_presenze_per_season (5): deve
+#   restare escluso dalla combinazione anche qui, non solo nella stagione
+#   più recente (dove ha comunque presenze sufficienti)
+STATS_PREV = {
+    5841: dict(pv=30, mv=6.00, fm=6.05, gf=0, gs=38, rp=1, rc=0, ass=0, amm=2, esp=0, au=0),
+    4210: dict(pv=28, mv=6.00, fm=6.20, gf=1, gs=0, rp=0, rc=0, ass=2, amm=6, esp=0, au=0),
+    1200: dict(pv=30, mv=6.10, fm=7.00, gf=5, gs=0, rp=0, rc=4, ass=5, amm=4, esp=0, au=0),
+    2100: dict(pv=32, mv=6.40, fm=7.30, gf=18, gs=0, rp=0, rc=2, ass=4, amm=3, esp=0, au=0),
+    9001: dict(pv=20, mv=5.95, fm=6.05, gf=0, gs=22, rp=1, rc=0, ass=0, amm=2, esp=0, au=0),
+    6011: dict(pv=18, mv=5.90, fm=6.00, gf=0, gs=0, rp=0, rc=0, ass=1, amm=3, esp=0, au=0),
+    5522: dict(pv=3, mv=5.80, fm=5.85, gf=0, gs=0, rp=0, rc=0, ass=0, amm=1, esp=0, au=0),
+}
+
 
 def build_prices_df():
     rows = []
@@ -93,12 +113,12 @@ def build_prices_df():
     return pd.DataFrame(rows)
 
 
-def build_stats_df():
+def build_stats_df(stats=STATS):
     rows = []
     for pid, name, role, team, *_ in PLAYERS:
-        if pid not in STATS:
+        if pid not in stats:
             continue
-        s = STATS[pid]
+        s = stats[pid]
         rows.append({
             "Id": pid,
             "R": role,
@@ -134,12 +154,16 @@ def main():
     os.makedirs(RAW_DIR, exist_ok=True)
     prices_path = os.path.join(RAW_DIR, "quotazioni_fixture.xlsx")
     stats_path = os.path.join(RAW_DIR, "statistiche_fixture.xlsx")
+    stats_prev_path = os.path.join(RAW_DIR, "statistiche_fixture_prev.xlsx")
 
     write_with_banner_row(build_prices_df(), prices_path, "Quotazioni Fantacalcio - FIXTURE DI TEST")
     write_with_banner_row(build_stats_df(), stats_path, "Statistiche Fantacalcio - FIXTURE DI TEST")
+    write_with_banner_row(build_stats_df(STATS_PREV), stats_prev_path,
+                           "Statistiche Fantacalcio (stagione precedente) - FIXTURE DI TEST")
 
     print(f"Scritto {prices_path}")
     print(f"Scritto {stats_path}")
+    print(f"Scritto {stats_prev_path}")
 
 
 if __name__ == "__main__":

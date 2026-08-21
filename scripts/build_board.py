@@ -95,6 +95,82 @@ def compute_raw_indices(role: str, stat: dict) -> dict:
     return idx
 
 
+def _combine_multi_season(role: str, player_id: int, seasons_by_id: list,
+                           weights: list, min_presenze: int) -> dict | None:
+    """Combina gli indici grezzi di un giocatore su più stagioni (Fase 3,
+    config/scoring.json -> multi_season). `seasons_by_id` è
+    [(season_id, {id: stat}), ...] dalla più recente (posizione 0); `weights`
+    è nello stesso ordine. Ritorna None se il giocatore non ha nessuna
+    stagione con un record statistico (equivalente al no_stats di oggi),
+    altrimenti un dict con gli indici combinati (media pesata sui soli
+    indici, non sulle statistiche grezze; pesi rinormalizzati sulle sole
+    stagioni usate nella media) più i campi derivati (trend, continuità...).
+
+    Una stagione con presenze < min_presenze (cameo, es. 2 presenze per
+    infortunio) conta comunque in stagioni_disponibili/continuità/
+    fantamedia_by_season, ma è esclusa dalla media pesata degli indici — a
+    meno che sia l'UNICA stagione disponibile: un segnale debole (poche
+    presenze) resta comunque meglio di nessun segnale, e soprattutto non
+    deve mai far regredire un giocatore da "ha statistiche" (il ramo a
+    singola stagione non applica alcun filtro presenze) a no_stats quando
+    si attiva il multi-stagione."""
+    all_available = []
+    for position, (season_id, stats_by_id) in enumerate(seasons_by_id):
+        stat = stats_by_id.get(player_id)
+        if stat is None:
+            continue
+        all_available.append({
+            "season_id": season_id,
+            "position": position,
+            "stat": stat,
+            "raw_indices": compute_raw_indices(role, stat),
+        })
+    if not all_available:
+        return None
+
+    for_avg = [a for a in all_available if a["stat"]["presenze"] >= min_presenze]
+    if not for_avg:
+        for_avg = all_available  # nessuna stagione sopra soglia: meglio usarle tutte che niente
+
+    def weight_of(entry):
+        return weights[entry["position"]] if entry["position"] < len(weights) else 0.0
+
+    index_keys = set()
+    for a in for_avg:
+        index_keys.update(a["raw_indices"].keys())
+    combined_raw = {}
+    for key in index_keys:
+        contributions = [(weight_of(a), a["raw_indices"][key]) for a in for_avg if key in a["raw_indices"]]
+        denom = sum(w for w, _ in contributions)
+        combined_raw[key] = sum(w * v for w, v in contributions) / denom if denom else 0.0
+
+    # trend: stagione più recente disponibile (anche se cameo) contro la
+    # media pesata delle altre; null se ne è disponibile una sola
+    trend_fantamedia = None
+    if len(all_available) >= 2:
+        recent, *previous = all_available
+        prev_weights = [weight_of(a) for a in previous]
+        prev_total = sum(prev_weights)
+        if prev_total > 0:
+            weighted_prev_fm = sum(w * a["stat"]["fantamedia"] for a, w in zip(previous, prev_weights)) / prev_total
+            trend_fantamedia = round(recent["stat"]["fantamedia"] - weighted_prev_fm, 2)
+
+    return {
+        "raw_indices": combined_raw,
+        "display_stat": all_available[0]["stat"],  # stagione più recente TRA quelle disponibili
+        "stagioni_disponibili": len(all_available),
+        "stagioni_ids": [a["season_id"] for a in all_available],
+        "fantamedia_by_season": {str(a["season_id"]): a["stat"]["fantamedia"] for a in all_available},
+        "presenze_medie": round(sum(a["stat"]["presenze"] for a in all_available) / len(all_available), 1),
+        "continuita": round(sum(a["stat"]["presenze"] / 38.0 for a in all_available) / len(all_available), 3),
+        "trend_fantamedia": trend_fantamedia,
+        # assente nella stagione più recente in assoluto (posizione 0), non solo
+        # in quelle che ha: e' il flag corretto per il badge "NEW" in board.js,
+        # diverso da no_stats (che ora significa "nessuna stagione disponibile").
+        "no_stats_recent": all_available[0]["position"] != 0,
+    }
+
+
 def compute_scores(players: list, weights_by_role: dict) -> None:
     """Aggiunge in-place `score` (0-100) e `_score_pct` (0-1) ai giocatori
     con statistiche. I giocatori no_stats restano a score=None."""
@@ -175,7 +251,8 @@ def assign_affare_index(players: list, affare_cfg: dict) -> None:
 
 def build_players(quotazioni: list, statistiche: list, scoring: dict, overrides: dict,
                    image_template: str | None = None, season_id: int | None = None,
-                   budget_totale: int | None = None, fvm_reference_budget: int | None = None) -> list:
+                   budget_totale: int | None = None, fvm_reference_budget: int | None = None,
+                   seasons_stats: list | None = None) -> list:
     stats_by_id = {s["id"]: s for s in statistiche}
     weights_by_role = scoring["weights"]
     override_players = overrides.get("players", {})
@@ -190,13 +267,22 @@ def build_players(quotazioni: list, statistiche: list, scoring: dict, overrides:
         if budget_totale and fvm_reference_budget else None
     )
 
+    # Doppio interruttore volutamente ridondante per la Fase 3 (score
+    # multi-stagione): seasons_stats=None è il default di questa funzione
+    # (nessuna chiamata esistente lo passa), e multi_season.enabled=false è
+    # il default di config/scoring.json. Quando anche solo uno dei due è
+    # "spento" si esegue esattamente lo stesso ramo a singola stagione di
+    # sempre (sotto, else) — è il gate di non-regressione per i test esistenti.
+    multi_cfg = scoring.get("multi_season", {})
+    use_multi_season = bool(seasons_stats) and multi_cfg.get("enabled", False)
+    if use_multi_season:
+        ms_weights = multi_cfg.get("weights", [1.0])
+        ms_min_presenze = multi_cfg.get("min_presenze_per_season", 5)
+        seasons_by_id = [(sid, {s["id"]: s for s in stats}) for sid, stats in seasons_stats]
+
     players = []
     for q in quotazioni:
-        stat = stats_by_id.get(q["id"])
-        no_stats = stat is None
-
         p = dict(q)
-        p["no_stats"] = no_stats
         p["score"] = None
         p["indice_affare"] = None
         p["affare_label"] = None
@@ -209,16 +295,52 @@ def build_players(quotazioni: list, statistiche: list, scoring: dict, overrides:
             if image_template and season_id else None
         )
 
-        if not no_stats:
-            for key in STAT_FIELDS:
-                p[key] = stat[key]
-            p["rigorista"] = stat["rigori_calciati"] > 0
-            p["_raw_indices"] = compute_raw_indices(q["position"], stat)
+        if use_multi_season:
+            combo = _combine_multi_season(q["position"], q["id"], seasons_by_id, ms_weights, ms_min_presenze)
+            if combo is None:
+                p["no_stats"] = True
+                p["no_stats_recent"] = True
+                for key in STAT_FIELDS:
+                    p[key] = None
+                p["rigorista"] = False
+                p["_raw_indices"] = {}
+                p["stagioni_disponibili"] = 0
+                p["stagioni_ids"] = []
+                p["fantamedia_by_season"] = {}
+                p["presenze_medie"] = None
+                p["trend_fantamedia"] = None
+                p["continuita"] = None
+            else:
+                stat = combo["display_stat"]
+                p["no_stats"] = False
+                p["no_stats_recent"] = combo["no_stats_recent"]
+                for key in STAT_FIELDS:
+                    p[key] = stat[key]
+                p["rigorista"] = stat["rigori_calciati"] > 0
+                p["_raw_indices"] = combo["raw_indices"]
+                p["stagioni_disponibili"] = combo["stagioni_disponibili"]
+                p["stagioni_ids"] = combo["stagioni_ids"]
+                p["fantamedia_by_season"] = combo["fantamedia_by_season"]
+                p["presenze_medie"] = combo["presenze_medie"]
+                p["trend_fantamedia"] = combo["trend_fantamedia"]
+                p["continuita"] = combo["continuita"]
         else:
-            for key in STAT_FIELDS:
-                p[key] = None
-            p["rigorista"] = False
-            p["_raw_indices"] = {}
+            stat = stats_by_id.get(q["id"])
+            no_stats = stat is None
+            p["no_stats"] = no_stats
+            # a singola stagione "recente" e "assoluto" coincidono: nessuna
+            # stagione più vecchia da cui essere eventualmente recuperati
+            p["no_stats_recent"] = no_stats
+            if not no_stats:
+                for key in STAT_FIELDS:
+                    p[key] = stat[key]
+                p["rigorista"] = stat["rigori_calciati"] > 0
+                p["_raw_indices"] = compute_raw_indices(q["position"], stat)
+            else:
+                for key in STAT_FIELDS:
+                    p[key] = None
+                p["rigorista"] = False
+                p["_raw_indices"] = {}
 
         players.append(p)
 
@@ -278,12 +400,33 @@ def main():
         with open(statistiche_path, "r", encoding="utf-8") as f:
             statistiche = json.load(f)
 
+    # Statistiche multi-stagione: lette solo se multi_season è abilitato in
+    # config/scoring.json (altrimenti restano None, secondo interruttore del
+    # gate di non-regressione — vedi build_players). Una stagione mancante
+    # viene semplicemente saltata, mai un errore: build_players usa quelle
+    # che trova.
+    seasons_stats = None
+    if scoring.get("multi_season", {}).get("enabled"):
+        template = settings["paths"].get("statistiche_season_json_template")
+        stats_season_ids = settings["season"].get("stats_season_ids", [])
+        if template and stats_season_ids:
+            loaded = []
+            for sid in stats_season_ids:
+                season_path = repo_path(template.format(season_id=sid))
+                if os.path.exists(season_path):
+                    with open(season_path, "r", encoding="utf-8") as f:
+                        loaded.append((sid, json.load(f)))
+                else:
+                    print(f"[build_board] statistiche stagione {sid} non trovate ({season_path}), la salto")
+            seasons_stats = loaded or None
+
     board = build_players(
         quotazioni, statistiche, scoring, overrides,
         image_template=settings["endpoints"]["image_template"],
         season_id=settings["season"]["current_season_id"],
         budget_totale=settings["auction_defaults"]["budget_totale"],
         fvm_reference_budget=settings.get("fvm_reference_budget"),
+        seasons_stats=seasons_stats,
     )
 
     board_path = repo_path(settings["paths"]["board_json"])
@@ -294,10 +437,13 @@ def main():
 
     counts_by_role = {}
     no_stats_count = 0
+    no_stats_recent_count = 0
     for p in board:
         counts_by_role[p["position"]] = counts_by_role.get(p["position"], 0) + 1
         if p["no_stats"]:
             no_stats_count += 1
+        if p.get("no_stats_recent"):
+            no_stats_recent_count += 1
 
     meta = {
         "generated_at": datetime.now(timezone.utc).isoformat(),
@@ -309,8 +455,14 @@ def main():
         "total_players": len(board),
         "counts_by_role": counts_by_role,
         "no_stats_count": no_stats_count,
+        "no_stats_recent_count": no_stats_recent_count,
         "quotazioni_source_count": len(quotazioni),
         "statistiche_source_count": len(statistiche),
+        "multi_season_enabled": bool(seasons_stats),
+        "seasons_used": [sid for sid, _ in seasons_stats] if seasons_stats else [],
+        "stats_source_counts_by_season": (
+            {str(sid): len(stats) for sid, stats in seasons_stats} if seasons_stats else {}
+        ),
     }
     meta_path = repo_path(settings["paths"]["meta_json"])
     with open(meta_path, "w", encoding="utf-8") as f:

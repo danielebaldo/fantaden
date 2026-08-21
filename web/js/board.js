@@ -126,7 +126,7 @@ export function renderTableBody(tbody, players, state, history, onAction) {
     const affareClass = p.affare_label ? (AFFARE_CLASS[p.affare_label] || '') : '';
     return `<tr class="${rowClasses.join(' ')}" data-id="${p.id}">
       <td>${sparklineSVG(history, p.id)}</td>
-      <td class="cell-name">${escapeHtml(p.name)}${p.no_stats ? ' <span class="tag tag-nostats" title="Nessuna statistica stagione precedente">NEW</span>' : ''}${p.rigorista ? ` <span class="tag tag-rigorista" title="Rigorista: ${p.rigori_calciati ?? '?'} rigori calciati, ${p.rigori_segnati ?? '?'} segnati">🎯</span>` : ''}</td>
+      <td class="cell-name">${escapeHtml(p.name)}${p.no_stats_recent ? ' <span class="tag tag-nostats" title="Nessuna statistica nella stagione più recente">NEW</span>' : ''}${p.rigorista ? ` <span class="tag tag-rigorista" title="Rigorista: ${p.rigori_calciati ?? '?'} rigori calciati, ${p.rigori_segnati ?? '?'} segnati">🎯</span>` : ''}</td>
       <td>${escapeHtml(p.position_mantra || '—')}</td>
       <td>${escapeHtml(p.team)}</td>
       <td>${p.qt_att}</td>
@@ -135,8 +135,8 @@ export function renderTableBody(tbody, players, state, history, onAction) {
       <td><span class="tag ${fasciaClass}">${p.fascia}</span></td>
       <td>${p.score != null ? p.score.toFixed(1) : '—'}</td>
       <td>${p.affare_label ? `<span class="tag ${affareClass}">${p.affare_label}</span>` : '—'}</td>
-      <td>${p.presenze != null ? p.presenze : '—'}</td>
-      <td>${p.fantamedia != null ? p.fantamedia.toFixed(2) : '—'}</td>
+      <td>${p.presenze != null ? p.presenze : '—'}${stagioniSup(p)}</td>
+      <td>${p.fantamedia != null ? p.fantamedia.toFixed(2) : '—'}${trendArrow(p)}</td>
       <td>${p.ammonizioni != null ? p.ammonizioni : '—'}</td>
       <td>${statusCell(p, state)}</td>
     </tr>`;
@@ -145,6 +145,31 @@ export function renderTableBody(tbody, players, state, history, onAction) {
   tbody.querySelectorAll('[data-action]').forEach((btn) => {
     btn.addEventListener('click', () => onAction(btn.dataset.action, btn.dataset.id));
   });
+}
+
+// Apice accanto a Pv con il numero di stagioni su cui è mediata la
+// statistica (score multi-stagione, Fase 3): assente se il campo non c'è
+// (multi_season disabilitato in config/scoring.json) o se è una sola
+// stagione (nessuna informazione aggiuntiva da mostrare).
+function stagioniSup(p) {
+  if (!p.stagioni_disponibili || p.stagioni_disponibili <= 1) return '';
+  const seasons = p.stagioni_ids ? p.stagioni_ids.join(', ') : '';
+  return ` <sup class="stagioni-sup" title="Media su ${p.stagioni_disponibili} stagioni (${seasons})">×${p.stagioni_disponibili}</sup>`;
+}
+
+// Freccia di trend accanto a Fm: confronta la fantamedia più recente con la
+// media pesata delle stagioni precedenti (null se ne è disponibile una sola,
+// vedi trend_fantamedia in build_board.py). Tooltip col dettaglio per stagione.
+function trendArrow(p) {
+  if (p.trend_fantamedia == null) return '';
+  const up = p.trend_fantamedia > 0;
+  const flat = p.trend_fantamedia === 0;
+  const arrow = flat ? '▬' : (up ? '▲' : '▼');
+  const cls = flat ? 'trend-flat' : (up ? 'trend-up' : 'trend-down');
+  const bySeasons = p.fantamedia_by_season
+    ? Object.entries(p.fantamedia_by_season).map(([s, fm]) => `${s}: ${fm.toFixed(2)}`).join(' · ')
+    : '';
+  return ` <span class="trend-arrow ${cls}" title="Trend fantamedia: ${p.trend_fantamedia > 0 ? '+' : ''}${p.trend_fantamedia.toFixed(2)} rispetto alle stagioni precedenti (${bySeasons})">${arrow}</span>`;
 }
 
 export function populateFasciaFilter(select, fasciaLabels, current) {

@@ -13,6 +13,7 @@ import make_fixtures  # noqa: E402
 FIXTURES = [
     os.path.join(SCRIPTS_DIR, "..", "data", "raw", "quotazioni_fixture.xlsx"),
     os.path.join(SCRIPTS_DIR, "..", "data", "raw", "statistiche_fixture.xlsx"),
+    os.path.join(SCRIPTS_DIR, "..", "data", "raw", "statistiche_fixture_prev.xlsx"),
 ]
 if not all(os.path.exists(p) for p in FIXTURES):
     make_fixtures.main()

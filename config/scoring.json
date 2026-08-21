@@ -40,7 +40,7 @@
   },
   "multi_season": {
     "_comment": "Score costruito su più stagioni invece della sola precedente. Doppio interruttore volutamente ridondante con il kwarg seasons_stats=None di build_players: enabled=false (default) mantiene identico il comportamento a una sola stagione, gate di non-regressione per i test esistenti. weights sono nell'ordine di season.stats_season_ids (dalla piu recente); una stagione mancante o con presenze < min_presenze_per_season viene esclusa e i pesi delle rimanenti sono rinormalizzati.",
-    "enabled": false,
+    "enabled": true,
     "weights": [0.60, 0.25, 0.15],
     "min_presenze_per_season": 5
   }

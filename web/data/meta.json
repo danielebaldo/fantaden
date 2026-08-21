@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-21T14:46:35.310780+00:00",
+  "generated_at": "2026-08-21T15:06:29.190025+00:00",
   "season": {
     "label": "2026-27",
     "current_season_id": 21,
@@ -46,7 +46,19 @@
     "D": 179,
     "P": 63
   },
-  "no_stats_count": 132,
+  "no_stats_count": 87,
+  "no_stats_recent_count": 132,
   "quotazioni_source_count": 512,
-  "statistiche_source_count": 663
+  "statistiche_source_count": 663,
+  "multi_season_enabled": true,
+  "seasons_used": [
+    20,
+    19,
+    18
+  ],
+  "stats_source_counts_by_season": {
+    "20": 663,
+    "19": 679,
+    "18": 664
+  }
 }

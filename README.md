@@ -147,6 +147,34 @@ Ogni giocatore ha:
   (`fvm * budget_totale / fvm_reference_budget`): non influenza fascia,
   score o indice affare, calcolati tutti sul valore grezzo `fvm`.
 
+### Score multi-stagione
+
+Con `config/scoring.json` → `multi_season.enabled: true` (attivo di default),
+lo `score` non si basa più sulla sola stagione precedente ma su una media
+pesata delle stagioni in `config/settings.json` → `season.stats_season_ids`
+(dalla più recente, pesi in `multi_season.weights`, es. `[0.60, 0.25, 0.15]`
+= ultima stagione dominante ma non sola). Una stagione con presenze sotto
+`min_presenze_per_season` (cameo per infortunio) conta come "disponibile" ma
+è esclusa dalla media — a meno che sia l'unica che il giocatore ha, nel
+qual caso si usa comunque quella piuttosto che dichiararlo senza statistiche.
+
+Campi aggiuntivi sul giocatore quando è attivo:
+- **`stagioni_disponibili`** / **`stagioni_ids`** — quante e quali stagioni
+  hanno contribuito (mostrato come apice `×N` accanto a Pv in dashboard).
+- **`trend_fantamedia`** — fantamedia più recente meno la media pesata delle
+  precedenti (freccia ▲/▼/▬ accanto a Fm); `null` con una sola stagione.
+- **`fantamedia_by_season`**, **`presenze_medie`**, **`continuita`** (media
+  presenze/38 sulle stagioni disponibili).
+- **`no_stats`** ora significa "nessuna statistica in nessuna stagione
+  configurata" (prima: solo nell'ultima). **`no_stats_recent`** copre invece
+  il vecchio significato (assente solo nell'ultima) ed è il campo che pilota
+  il badge "NEW" in tabella — un giocatore rientrato da un prestito estero
+  con storico solo più vecchio ha `no_stats: false` ma `no_stats_recent: true`.
+
+Per tornare al comportamento a singola stagione: `multi_season.enabled: false`
+in `config/scoring.json` (il resto della pipeline non cambia, i campi sopra
+spariscono semplicemente dalla board).
+
 ## Dashboard — asta live
 
 - Tabella filtrabile/ordinabile per ruolo, con sparkline della quotazione.
@@ -157,8 +185,8 @@ Ogni giocatore ha:
   azione.
 - Pannello rivali: budget/slot residui e puntata massima teorica di ogni
   avversario, ricavati dai giocatori che segni come "presi da altri".
-- Pannello movimenti: rialzi/ribassi di quotazione negli ultimi 7 giorni,
-  dagli snapshot storici.
+- Pannello movimenti: rialzi/ribassi di quotazione negli ultimi 3 giorni
+  (`MOVEMENT_WINDOW_DAYS` in `web/js/history.js`), dagli snapshot storici.
 - **Esporta/Importa stato** in JSON per fare backup o passare da un
   dispositivo all'altro (lo stato normalmente vive solo nel browser).
 
@@ -169,8 +197,8 @@ Ogni giocatore ha:
 pip install -r requirements.txt
 pytest
 
-# motore budget d'asta e storico movimenti (Node, richiede Node 18+)
-node --test tests/auction.test.mjs tests/history.test.mjs
+# motore budget d'asta, storico movimenti e piano d'asta (Node, richiede Node 18+)
+node --test tests/*.mjs
 ```
 
 ## Struttura del repo
