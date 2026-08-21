@@ -18,24 +18,26 @@
   <p id="loadError" class="load-error" hidden></p>
 
   <main>
-    <section class="card setup-panel">
-      <div class="setup-row">
-        <label class="budget-field">Budget Totale
-          <input type="number" id="budgetTotale" min="0">
-        </label>
-        <div class="cassa-tesoretto">
-          <span>Cassa: <strong id="cassaGlobale">—</strong></span>
-          <span>Tesoretto: <strong id="tesorettoGlobale">—</strong></span>
+    <div class="top-row">
+      <section class="card setup-panel">
+        <div class="setup-row">
+          <label class="budget-field">Budget Totale
+            <input type="number" id="budgetTotale" min="0">
+          </label>
+          <div class="cassa-tesoretto">
+            <span>Cassa: <strong id="cassaGlobale">—</strong></span>
+            <span>Tesoretto: <strong id="tesorettoGlobale">—</strong></span>
+          </div>
+          <div id="percWarning" class="perc-warning"></div>
         </div>
-        <div id="percWarning" class="perc-warning"></div>
-      </div>
-      <div class="role-setup-grid" id="roleSetupGrid"></div>
-    </section>
+        <div class="role-setup-grid" id="roleSetupGrid"></div>
+      </section>
 
-    <section class="card">
-      <h2>Allocazione Budget</h2>
-      <div id="waffleBar" class="waffle-bar"></div>
-    </section>
+      <section class="card">
+        <h2>Allocazione Budget</h2>
+        <div id="waffleBar" class="waffle-bar"></div>
+      </section>
+    </div>
 
     <section class="monitor-grid" id="monitorGrid"></section>
 
