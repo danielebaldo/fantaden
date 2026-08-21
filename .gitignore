@@ -13,6 +13,7 @@ data/raw/*.xlsx
 # poter lavorare offline, semplicemente non finiscono nei commit.
 data/quotazioni.json
 data/statistiche.json
+data/statistiche_*.json
 web/data/board.json
 web/data/meta.json
 web/data/history.json

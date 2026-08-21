@@ -3,7 +3,9 @@
   "season": {
     "label": "2026-27",
     "current_season_id": 21,
-    "previous_season_id": 20
+    "previous_season_id": 20,
+    "stats_season_ids": [20, 19, 18],
+    "_stats_season_ids_comment": "Stagioni statistiche per lo score multi-stagione (config/scoring.json -> multi_season), dalla più recente. previous_season_id resta usato quando multi_season.enabled=false, per compatibilita totale col comportamento esistente."
   },
   "endpoints": {
     "prices_url_template": "https://www.fantacalcio.it/api/v1/Excel/prices/{season_id}/1",
@@ -30,6 +32,7 @@
     "raw_dir": "data/raw",
     "quotazioni_json": "data/quotazioni.json",
     "statistiche_json": "data/statistiche.json",
+    "statistiche_season_json_template": "data/statistiche_{season_id}.json",
     "board_json": "web/data/board.json",
     "meta_json": "web/data/meta.json",
     "history_json": "web/data/history.json",

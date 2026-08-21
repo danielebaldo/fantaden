@@ -73,7 +73,7 @@ jobs:
           # davvero. data/statistiche.json può anche non esistere ancora
           # (endpoint statistiche non funzionante) quindi si aggiunge solo
           # ciò che la pipeline ha effettivamente prodotto in questo run.
-          for f in data/quotazioni.json data/statistiche.json \
+          for f in data/quotazioni.json data/statistiche.json data/statistiche_*.json \
                    web/data/board.json web/data/meta.json web/data/history.json \
                    export/lista_asta.xlsx; do
             [ -f "$f" ] && git add -f "$f"

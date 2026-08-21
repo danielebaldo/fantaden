@@ -120,6 +120,19 @@ def main():
         print(f"[normalize] File statistiche non trovato ({args.stats_file}): salto, "
               f"la board userà solo le quotazioni (tutti i giocatori 'no_stats').")
 
+    # statistiche_{season_id}.xlsx per ogni stagione scaricata da fetch_fantacalcio.py
+    # (score multi-stagione, config/scoring.json -> multi_season): oltre a
+    # statistiche.json (comportamento esistente, invariato sopra), scrive un JSON
+    # per ogni file trovato. Nessun errore se manca qualche stagione: build_board.py
+    # userà solo quelle disponibili.
+    template = settings["paths"].get("statistiche_season_json_template")
+    if template:
+        for stats_season in settings["season"].get("stats_season_ids", []):
+            season_file = os.path.join(raw_dir, f"statistiche_{stats_season}.xlsx")
+            if os.path.exists(season_file):
+                season_stats = normalize_stats(season_file)
+                _write_json(season_stats, repo_path(template.format(season_id=stats_season)))
+
 
 if __name__ == "__main__":
     main()

@@ -100,7 +100,7 @@ def main():
         )
 
     season = settings["season"]["current_season_id"]
-    prev_season = settings["season"]["previous_season_id"]
+    stats_season_ids = settings["season"].get("stats_season_ids") or [settings["season"]["previous_season_id"]]
     headers = _headers(settings, cookie)
     raw_dir = repo_path(settings["paths"]["raw_dir"])
 
@@ -108,10 +108,25 @@ def main():
     _download(prices_url, headers, os.path.join(raw_dir, "quotazioni.xlsx"), "Quotazioni", fatal=True)
 
     if not args.skip_statistics:
-        stats_url = settings["endpoints"]["statistics_url_template"].format(season_id=prev_season)
-        ok = _download(stats_url, headers, os.path.join(raw_dir, "statistiche.xlsx"),
-                        "Statistiche stagione precedente", fatal=False)
-        if not ok:
+        # scarica ogni stagione configurata per lo score multi-stagione
+        # (config/settings.json -> season.stats_season_ids), ciascuna fatal=False:
+        # una stagione vecchia irraggiungibile non deve fermare le altre. La più
+        # recente viene salvata anche come statistiche.xlsx per compatibilità con
+        # normalize.py/build_board.py quando multi_season è disabilitato.
+        any_ok = False
+        for i, stats_season in enumerate(stats_season_ids):
+            stats_url = settings["endpoints"]["statistics_url_template"].format(season_id=stats_season)
+            label = f"Statistiche stagione {stats_season}"
+            dest = os.path.join(raw_dir, f"statistiche_{stats_season}.xlsx")
+            ok = _download(stats_url, headers, dest, label, fatal=False)
+            if ok:
+                any_ok = True
+                if i == 0:
+                    # copia byte-per-byte, non un secondo download: stesso contenuto,
+                    # nessuna richiesta HTTP aggiuntiva verso fantacalcio.it
+                    with open(dest, "rb") as src, open(os.path.join(raw_dir, "statistiche.xlsx"), "wb") as dst:
+                        dst.write(src.read())
+        if not any_ok:
             print(
                 "[fetch_fantacalcio] Proseguo senza statistiche: la board avrà tutti i "
                 "giocatori in modalità 'no_stats' finché l'endpoint statistiche non viene "
