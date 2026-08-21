@@ -3285,21 +3285,6 @@
     "fvm_m": 1
   },
   {
-    "id": 7468,
-    "name": "Gelli J.",
-    "position": "D",
-    "position_mantra": "Dc",
-    "team": "Frosinone",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 1,
-    "fvm_m": 1
-  },
-  {
     "id": 7470,
     "name": "Oyono J.",
     "position": "D",
