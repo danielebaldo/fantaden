@@ -6,6 +6,7 @@ import * as boardMod from './board.js';
 import * as historyMod from './history.js';
 import * as rivalsMod from './rivals.js';
 import * as stateMod from './state.js';
+import * as planMod from './plan.js';
 
 const els = {
   loadError: document.getElementById('loadError'),
@@ -34,6 +35,7 @@ const els = {
   addRivalBtn: document.getElementById('addRivalBtn'),
   rivalsList: document.getElementById('rivalsList'),
   movementsPanel: document.getElementById('movementsPanel'),
+  planContent: document.getElementById('planContent'),
   modalOverlay: document.getElementById('modalOverlay'),
   modalTitle: document.getElementById('modalTitle'),
   modalBody: document.getElementById('modalBody'),
@@ -95,6 +97,7 @@ function rerenderAll() {
   renderSetupPanel(result);
   renderMonitorGrid(result);
   renderWaffle(result);
+  renderPlan(result);
   renderTabs();
   renderTable();
   renderRosterTabs();
@@ -286,6 +289,227 @@ function renderMovements() {
   `;
 }
 
+function renderPlan(auctionState) {
+  // prepara wishlist attiva + lostTargets per computeWishlistCoverage
+  const wishlistEntries = Object.entries(state.wishlist)
+    .map(([id, w]) => {
+      const player = boardById[id];
+      if (!player) return null;
+      return {
+        id: String(id),
+        position: player.position,
+        team: player.team,
+        target: w.target || player.fvm_500 || player.qt_att,
+        priority: w.priority,
+        nota: w.nota,
+        fascia: player.fascia,
+        status: 'available',
+      };
+    })
+    .filter((e) => e);
+
+  // aggiungi lostTargets con status 'lost'
+  const lostEntries = Object.entries(state.lostTargets)
+    .map(([id, l]) => {
+      const player = boardById[id];
+      if (!player) return null;
+      return {
+        id: String(id),
+        position: player.position,
+        team: player.team,
+        target: l.target || player.fvm_500 || player.qt_att,
+        priority: l.priority,
+        nota: l.nota,
+        fascia: player.fascia,
+        status: 'lost',
+      };
+    })
+    .filter((e) => e);
+
+  const allEntries = [...wishlistEntries, ...lostEntries];
+
+  // calcola la copertura
+  const coverage = planMod.computeWishlistCoverage(
+    meta.roles,
+    auctionState.perRole,
+    allEntries,
+    { cassaGlobale: auctionState.cassaGlobale, history }
+  );
+
+  // banner obiettivi persi
+  const lostBanner = lostEntries.length > 0 ? `
+    <div class="lost-banner">
+      <strong>⚠️ ${lostEntries.length} obiettivo${lostEntries.length > 1 ? 'i' : ''} perso${lostEntries.length > 1 ? 'i' : ''}</strong>
+      <ul class="lost-list">
+        ${lostEntries.map((l) => `
+          <li>
+            <span>${escapeHtml(boardById[l.id].name)}</span>
+            <button type="button" class="lost-dismiss" data-lost-id="${l.id}" title="Rimuovi">✕</button>
+          </li>
+        `).join('')}
+      </ul>
+    </div>
+  ` : '';
+
+  // riga di sintesi globale
+  const globalLine = `
+    <div class="plan-global">
+      <span>Spesa target totale: <strong class="${coverage.globale.deltaGlobale >= 0 ? 'positive' : 'negative'}">€ ${coverage.globale.costoTargetPianoTotale}</strong></span>
+      <span>Cassa disponibile: <strong>€ ${Math.round(coverage.globale.cassaGlobale)}</strong></span>
+      <span class="${coverage.globale.deltaGlobale >= 0 ? 'positive' : 'negative'}">
+        Delta: ${coverage.globale.deltaGlobale >= 0 ? '+' : ''}€ ${Math.round(coverage.globale.deltaGlobale)}
+      </span>
+      ${coverage.globale.concentrazioneSquadre ? `<span class="warn">⚠️ Concentrazione squadre (${coverage.globale.concentrazioneSquadre.maxCount} giocatori)</span>` : ''}
+    </div>
+  `;
+
+  // strip di copertura del ruolo attivo
+  const activeRole = state.ui.activeTab;
+  const activeRoleCov = coverage.perRole[activeRole];
+  const coverageClass = `cov-${activeRoleCov.copertura}`;
+  const coverageLabel = {
+    vuoto: '🔴 Nessun obiettivo',
+    scoperto: '🟠 Slot scoperti',
+    sfondamento: '⛔ Sfondamento budget',
+    stretto: '🟡 Margin stretto',
+    ok: '✅ Coperto',
+  }[activeRoleCov.copertura] || '—';
+
+  const roleStrip = `
+    <div class="plan-role-strip ${coverageClass}">
+      <strong>${meta.role_names[activeRole]}</strong>
+      <span>Obiettivi: ${activeRoleCov.obiettiviDisponibili}/${activeRoleCov.mancanti}</span>
+      <span>Costo: €${activeRoleCov.costoTargetPiano} / €${activeRoleCov.disponibile}</span>
+      <span>Media: €${activeRoleCov.mediaTargetPiano}</span>
+      <span class="${coverageClass}">${coverageLabel}</span>
+      ${activeRoleCov.slotScoperti > 0 ? `<span class="warn">⚠️ ${activeRoleCov.slotScoperti} slot scoperti</span>` : ''}
+      ${activeRoleCov.concentrazioneFascia ? `<span class="warn">⚠️ ${activeRoleCov.concentrazioneFascia.quota}% in ${activeRoleCov.concentrazioneFascia.label}</span>` : ''}
+    </div>
+  `;
+
+  // lista obiettivi del ruolo attivo
+  const roleWishlist = wishlistEntries.filter((w) => w.position === activeRole);
+  roleWishlist.sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    return (b.target || 0) - (a.target || 0);
+  });
+
+  const wishlistList = roleWishlist.length > 0
+    ? `<ul class="plan-wishlist">
+        ${roleWishlist.map((w) => {
+          const alt = planMod.findAlternatives(
+            boardById[w.id],
+            board,
+            (id) => stateMod.getPlayerStatus(state, id),
+            { limit: 1 }
+          );
+          return `
+            <li class="plan-item prio-${w.priority}">
+              <div class="plan-item-header">
+                <span>${escapeHtml(boardById[w.id].name)}</span>
+                <span class="tag">${boardById[w.id].fascia}</span>
+                <span class="prio-badge">P${w.priority}</span>
+                <span class="target-price">€${w.target}</span>
+              </div>
+              <div class="plan-item-actions">
+                <button type="button" class="plan-buy" data-id="${w.id}" title="Segna comprato">🛒</button>
+                <button type="button" class="plan-edit" data-id="${w.id}" title="Modifica">✏️</button>
+                <button type="button" class="plan-alt" data-id="${w.id}" title="Alternative">${alt.length > 0 ? '🔁' : '❌'}</button>
+                <button type="button" class="plan-remove" data-id="${w.id}" title="Rimuovi">✕</button>
+              </div>
+            </li>
+          `;
+        }).join('')}
+      </ul>`
+    : '<p class="empty-hint">Nessun obiettivo per questo ruolo</p>';
+
+  els.planContent.innerHTML = `
+    ${lostBanner}
+    ${globalLine}
+    ${roleStrip}
+    <h3>Obiettivi per ${meta.role_names[activeRole]}</h3>
+    ${wishlistList}
+  `;
+
+  // collega event listener
+  els.planContent.querySelectorAll('.lost-dismiss').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      stateMod.dismissLostTarget(state, btn.dataset.lostId);
+      rerenderAll();
+    });
+  });
+
+  els.planContent.querySelectorAll('.plan-buy').forEach((btn) => {
+    btn.addEventListener('click', () => handleRowAction('buy', btn.dataset.id));
+  });
+
+  els.planContent.querySelectorAll('.plan-edit').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const player = boardById[btn.dataset.id];
+      if (player) openWishlistModal(player);
+    });
+  });
+
+  els.planContent.querySelectorAll('.plan-alt').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const player = boardById[btn.dataset.id];
+      if (player) {
+        const alternatives = planMod.findAlternatives(
+          player,
+          board,
+          (id) => stateMod.getPlayerStatus(state, id),
+          { limit: 3 }
+        );
+        if (alternatives.length === 0) {
+          alert(`Nessuna alternativa disponibile per ${player.name}.`);
+          return;
+        }
+        // visualizza le alternative (stesso codice di openAlternativesModal)
+        const altHtml = alternatives.map((alt) => `
+          <div class="alt-card">
+            <div class="alt-header">
+              <strong>${escapeHtml(alt.player.name)}</strong>
+              <span class="tag">${alt.player.position}</span>
+              <span class="tag">${alt.player.fascia}</span>
+            </div>
+            <div class="alt-stats">
+              <span>Score: ${alt.player.score != null ? alt.player.score.toFixed(1) : '—'}</span>
+              <span>FVM 500cr: €${alt.player.fvm_500 || '—'}</span>
+            </div>
+            <button type="button" class="alt-btn" data-alt-id="${alt.player.id}">⭐ Sostituisci</button>
+          </div>
+        `).join('');
+        openModal(`🔁 Alternative per ${player.name}`, altHtml, () => null);
+        els.modalBody.querySelectorAll('.alt-btn').forEach((altBtn) => {
+          altBtn.addEventListener('click', () => {
+            const altId = altBtn.dataset.altId;
+            const altPlayer = boardById[altId];
+            if (altPlayer) {
+              const wish = state.wishlist[String(player.id)];
+              stateMod.removeFromWishlist(state, player.id);
+              stateMod.setWishlist(state, altPlayer.id, {
+                base: wish?.base || null,
+                target: wish?.target || null,
+                priority: wish?.priority || 2,
+                nota: wish?.nota || '',
+              });
+              closeModal();
+              rerenderAll();
+            }
+          });
+        });
+      }
+    });
+  });
+
+  els.planContent.querySelectorAll('.plan-remove').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      stateMod.removeFromWishlist(state, btn.dataset.id);
+      rerenderAll();
+    });
+  });
+}
+
 // --- azioni riga / modale ------------------------------------------------
 
 function handleRowAction(action, id) {
@@ -318,16 +542,28 @@ function closeModal() {
 }
 
 function openWishlistModal(player) {
-  const existing = state.wishlist[String(player.id)] || {};
+  const existing = state.wishlist[String(player.id)] || { priority: 2, nota: '' };
   openModal(`⭐ Wishlist: ${player.name}`, `
     <label>Prezzo base (opzionale)<input type="number" id="modalBase" value="${existing.base ?? ''}"></label>
     <label>Prezzo target (opzionale)<input type="number" id="modalTarget" value="${existing.target ?? (player.fvm_500 || player.qt_att)}"></label>
+    <label>Priorità
+      <select id="modalPriority">
+        <option value="1"${existing.priority === 1 ? ' selected' : ''}>1 — Must-have</option>
+        <option value="2"${existing.priority === 2 ? ' selected' : ''}>2 — Piace</option>
+        <option value="3"${existing.priority === 3 ? ' selected' : ''}>3 — Ripiego</option>
+      </select>
+    </label>
+    <label>Note<input type="text" id="modalNota" value="${escapeHtml(existing.nota || '')}"></label>
   `, () => {
     const base = document.getElementById('modalBase').value;
     const target = document.getElementById('modalTarget').value;
+    const priority = Number(document.getElementById('modalPriority').value);
+    const nota = document.getElementById('modalNota').value;
     stateMod.setWishlist(state, player.id, {
       base: base === '' ? null : Number(base),
       target: target === '' ? null : Number(target),
+      priority,
+      nota,
     });
     rerenderAll();
   });
@@ -366,8 +602,72 @@ function openTakenModal(player) {
     }
     const price = Number(document.getElementById('modalPrice').value);
     if (!price || price < 1) { alert('Inserisci un prezzo valido.'); return false; }
+
+    // segna come preso da altri (sposta in lostTargets se era in wishlist)
+    const wasInWishlist = !!state.wishlist[String(player.id)];
     stateMod.markTakenByOther(state, player.id, rivalId, price, player.position);
+
+    // se era in wishlist, mostra alternative
+    if (wasInWishlist) {
+      rerenderAll();
+      openAlternativesModal(player);
+      return;
+    }
+
     rerenderAll();
+  });
+}
+
+function openAlternativesModal(player) {
+  const alternatives = planMod.findAlternatives(
+    player,
+    board,
+    (id) => stateMod.getPlayerStatus(state, id),
+    { limit: 3 }
+  );
+
+  if (alternatives.length === 0) {
+    alert(`Nessuna alternativa disponibile per ${player.name}.`);
+    return;
+  }
+
+  const altHtml = alternatives.map((alt) => `
+    <div class="alt-card">
+      <div class="alt-header">
+        <strong>${escapeHtml(alt.player.name)}</strong>
+        <span class="tag">${alt.player.position}</span>
+        <span class="tag">${alt.player.fascia}</span>
+      </div>
+      <div class="alt-stats">
+        <span>Score: ${alt.player.score != null ? alt.player.score.toFixed(1) : '—'}</span>
+        <span>FVM 500cr: €${alt.player.fvm_500 || '—'}</span>
+      </div>
+      <button type="button" class="alt-btn" data-alt-id="${alt.player.id}">⭐ Aggiungi a wishlist</button>
+    </div>
+  `).join('');
+
+  openModal(`🔁 Alternative per ${player.name}`, altHtml, () => {
+    const pressed = document.querySelector('.alt-btn:focus')?.closest('.alt-card');
+    if (!pressed) return;
+  });
+
+  // aggiungi listener ai bottoni delle alternative
+  els.modalBody.querySelectorAll('.alt-btn').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const altId = btn.dataset.altId;
+      const altPlayer = boardById[altId];
+      if (altPlayer) {
+        const lostEntry = state.lostTargets[String(player.id)];
+        stateMod.setWishlist(state, altPlayer.id, {
+          base: lostEntry?.base || null,
+          target: lostEntry?.target || null,
+          priority: lostEntry?.priority || 2,
+          nota: lostEntry?.nota || '',
+        });
+        closeModal();
+        rerenderAll();
+      }
+    });
   });
 }
 

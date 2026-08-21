@@ -255,6 +255,55 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 .modal-body .hint { color: var(--text-muted); font-size: 0.8rem; }
 .modal-actions { display: flex; justify-content: flex-end; gap: 8px; margin-top: 8px; }
 
+/* --- piano d'asta --- */
+#planCard { display: none; } /* nascosto di default, mostra solo se pieno */
+#planCard:has(#planContent:not(:empty)) { display: block; }
+
+.lost-banner { background: color-mix(in srgb, var(--warning) 15%, var(--surface)); border: 1px solid var(--warning); border-radius: var(--radius); padding: 10px 12px; margin-bottom: 12px; }
+.lost-banner strong { color: var(--warning); display: block; margin-bottom: 8px; }
+.lost-list { list-style: none; padding: 0; margin: 0; display: flex; flex-wrap: wrap; gap: 8px; }
+.lost-list li { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 4px 8px; background: var(--surface-2); border-radius: 6px; font-size: 0.8rem; }
+.lost-dismiss { padding: 0; background: none; border: none; cursor: pointer; color: var(--danger); font-size: 1rem; }
+
+.plan-global { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem; padding: 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
+.plan-global .warn { color: var(--warning); font-weight: 600; }
+
+.plan-role-strip { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 12px; font-size: 0.9rem; }
+.plan-role-strip strong { font-size: 1rem; }
+.plan-role-strip .warn { color: var(--warning); font-weight: 600; }
+.cov-ok { background: color-mix(in srgb, var(--success) 8%, transparent); }
+.cov-stretto { background: color-mix(in srgb, var(--warning) 10%, transparent); }
+.cov-scoperto { background: color-mix(in srgb, var(--danger) 10%, transparent); }
+.cov-sfondamento { background: color-mix(in srgb, var(--danger) 15%, transparent); }
+
+.plan-wishlist { list-style: none; padding: 0; margin: 8px 0 0; }
+.plan-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; background: var(--surface-2); }
+.plan-item.prio-1 { border-left: 3px solid var(--danger); }
+.plan-item.prio-2 { border-left: 3px solid var(--warning); }
+.plan-item.prio-3 { border-left: 3px solid var(--text-muted); }
+
+.plan-item-header { display: flex; gap: 6px; align-items: center; flex: 1; }
+.plan-item-header > span:first-child { font-weight: 600; }
+.prio-badge { background: var(--primary); color: #fff; padding: 1px 6px; border-radius: 4px; font-size: 0.7rem; font-weight: 600; }
+.target-price { font-weight: 600; margin-left: auto; }
+
+.plan-item-actions { display: flex; gap: 4px; }
+.plan-buy, .plan-edit, .plan-alt, .plan-remove { padding: 4px 8px; font-size: 0.75rem; background: var(--surface); border: 1px solid var(--border); border-radius: 4px; cursor: pointer; }
+.plan-buy:hover { background: color-mix(in srgb, var(--success) 20%, var(--surface)); }
+.plan-edit:hover { background: color-mix(in srgb, var(--primary) 20%, var(--surface)); }
+.plan-alt:hover { background: color-mix(in srgb, var(--warning) 20%, var(--surface)); }
+.plan-remove:hover { background: color-mix(in srgb, var(--danger) 20%, var(--surface)); }
+
+/* alternative modal */
+.alt-card { border: 1px solid var(--border); border-radius: 6px; padding: 10px; margin-bottom: 10px; background: var(--surface-2); }
+.alt-header { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
+.alt-header strong { flex: 1; }
+.alt-stats { display: flex; gap: 12px; font-size: 0.8rem; color: var(--text-muted); margin-bottom: 8px; }
+.alt-btn { width: 100%; padding: 6px; background: var(--primary); color: #fff; border: none; border-radius: 4px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+.alt-btn:hover { background: var(--primary-dark); }
+
+.roster-panel.hidden { display: none; }
+
 /* --- footer --- */
 footer { max-width: 1200px; margin: 0 auto; padding: 8px 16px 40px; }
 .footer-actions { display: flex; gap: 10px; flex-wrap: wrap; }
