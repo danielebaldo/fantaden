@@ -2,12 +2,13 @@
 // (wishlist / preso da me / preso da altri / reset). Nessuna logica di
 // business qui: le mutazioni di stato passano sempre dai callback forniti
 // da ui.js, board.js si limita a leggere `state` e disegnare.
-import { getPlayerStatus } from './state.js';
+import { getPlayerStatus, ALL_ROLES_TAB } from './state.js';
 import { sparklineSVG } from './history.js';
 
 const COLUMNS = [
   { key: 'sparkline', label: '' },
   { key: 'name', label: 'Nome', sortable: true },
+  { key: 'position', label: 'Ruolo', sortable: true },
   { key: 'position_mantra', label: 'Ruolo M', sortable: true,
     title: 'Ruolo Mantra (dal dato Rm di fantacalcio.it).' },
   { key: 'team', label: 'Squadra', sortable: true },
@@ -35,7 +36,7 @@ export const FASCIA_ORDER = Object.keys(FASCIA_CLASS);
 
 export function filterAndSortPlayers(board, state, role, history) {
   const q = state.ui.search.trim().toLowerCase();
-  let rows = board.filter((p) => p.position === role);
+  let rows = role === ALL_ROLES_TAB ? board.slice() : board.filter((p) => p.position === role);
 
   if (q) {
     rows = rows.filter((p) => p.name.toLowerCase().includes(q) || p.team.toLowerCase().includes(q));
@@ -127,6 +128,7 @@ export function renderTableBody(tbody, players, state, history, onAction, onRowC
     return `<tr class="${rowClasses.join(' ')}" data-id="${p.id}">
       <td>${sparklineSVG(history, p.id)}</td>
       <td class="cell-name">${escapeHtml(p.name)}${p.no_stats_recent ? ' <span class="tag tag-nostats" title="Nessuna statistica nella stagione più recente">NEW</span>' : ''}${p.rigorista ? ` <span class="tag tag-rigorista" title="Rigorista: ${p.rigori_calciati ?? '?'} rigori calciati, ${p.rigori_segnati ?? '?'} segnati">🎯</span>` : ''}</td>
+      <td>${escapeHtml(p.position)}</td>
       <td>${escapeHtml(p.position_mantra || '—')}</td>
       <td>${escapeHtml(p.team)}</td>
       <td>${p.qt_att}</td>

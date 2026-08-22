@@ -405,6 +405,10 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 .plan-global .warn { color: var(--warning); font-weight: 600; }
 
 .plan-role-strip { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 12px; font-size: 0.9rem; }
+/* separa i blocchi ruolo impilati nel tab "Tutti i ruoli": ogni blocco è
+   roleStrip + h3 + (wishlist|empty-hint), lo strip successivo segue sempre
+   uno di questi due */
+.plan-wishlist + .plan-role-strip, .empty-hint + .plan-role-strip { margin-top: 20px; }
 .plan-role-strip strong { font-size: 1rem; }
 .plan-role-strip .warn { color: var(--warning); font-weight: 600; }
 .cov-ok { background: color-mix(in srgb, var(--success) 8%, transparent); }

@@ -80,7 +80,9 @@ async function init() {
 
   boardById = Object.fromEntries(board.map((p) => [String(p.id), p]));
   state = stateMod.loadState(meta.auction_defaults);
-  if (!meta.roles.includes(state.ui.activeTab)) state.ui.activeTab = meta.roles[0];
+  if (state.ui.activeTab !== stateMod.ALL_ROLES_TAB && !meta.roles.includes(state.ui.activeTab)) {
+    state.ui.activeTab = meta.roles[0];
+  }
 
   wireStaticListeners();
   rerenderAll();
@@ -207,7 +209,12 @@ function renderWaffle(result) {
 }
 
 function renderTabs() {
-  els.roleTabs.innerHTML = meta.roles.map((r) => `
+  const allBtn = `
+    <button type="button" class="tab-btn${state.ui.activeTab === stateMod.ALL_ROLES_TAB ? ' active' : ''}" data-role="${stateMod.ALL_ROLES_TAB}">
+      Tutti i ruoli
+    </button>
+  `;
+  els.roleTabs.innerHTML = allBtn + meta.roles.map((r) => `
     <button type="button" class="tab-btn role-${r}${state.ui.activeTab === r ? ' active' : ''}" data-role="${r}">
       ${meta.role_names[r]}
     </button>
@@ -319,6 +326,76 @@ function renderMovements() {
   `;
 }
 
+// Blocco copertura + lista obiettivi per un singolo ruolo (strip + h3 +
+// wishlist ordinata per priorità). Estratto da renderPlan così può essere
+// chiamato una volta sola (un ruolo attivo) o in loop su meta.roles (tab
+// "Tutti i ruoli") senza duplicare markup/logica.
+function renderRoleBlock(role, coverage, wishlistEntries) {
+  const roleCov = coverage.perRole[role];
+  const coverageClass = `cov-${roleCov.copertura}`;
+  const coverageLabel = {
+    vuoto: '🔴 Nessun obiettivo',
+    scoperto: '🟠 Slot scoperti',
+    sfondamento: '⛔ Sfondamento budget',
+    stretto: '🟡 Margin stretto',
+    ok: '✅ Coperto',
+  }[roleCov.copertura] || '—';
+
+  const roleStrip = `
+    <div class="plan-role-strip ${coverageClass}">
+      <strong>${meta.role_names[role]}</strong>
+      <span>Obiettivi: ${roleCov.obiettiviDisponibili}/${roleCov.mancanti}</span>
+      <span>Costo: €${roleCov.costoTargetPiano} / €${roleCov.disponibile}</span>
+      <span>Media: €${roleCov.mediaTargetPiano}</span>
+      <span class="${coverageClass}">${coverageLabel}</span>
+      ${roleCov.slotScoperti > 0 ? `<span class="warn">⚠️ ${roleCov.slotScoperti} slot scoperti</span>` : ''}
+      ${roleCov.concentrazioneFascia ? `<span class="warn">⚠️ ${roleCov.concentrazioneFascia.quota}% in ${roleCov.concentrazioneFascia.label}</span>` : ''}
+      ${roleCov.pressioneDetectato ? `<span class="warn">📈 Quotazioni in salita tra gli obiettivi</span>` : ''}
+    </div>
+  `;
+
+  const roleWishlist = wishlistEntries.filter((w) => w.position === role);
+  roleWishlist.sort((a, b) => {
+    if (a.priority !== b.priority) return a.priority - b.priority;
+    return (b.target || 0) - (a.target || 0);
+  });
+
+  const wishlistList = roleWishlist.length > 0
+    ? `<ul class="plan-wishlist">
+        ${roleWishlist.map((w) => {
+          const alt = planMod.findAlternatives(
+            boardById[w.id],
+            board,
+            (id) => stateMod.getPlayerStatus(state, id),
+            { limit: 1 }
+          );
+          return `
+            <li class="plan-item prio-${w.priority}">
+              <div class="plan-item-header">
+                <span>${escapeHtml(boardById[w.id].name)}</span>
+                <span class="tag">${boardById[w.id].fascia}</span>
+                <span class="prio-badge">P${w.priority}</span>
+                <span class="target-price">€${w.target}</span>
+              </div>
+              <div class="plan-item-actions">
+                <button type="button" class="plan-buy" data-id="${w.id}" title="Segna comprato">🛒</button>
+                <button type="button" class="plan-edit" data-id="${w.id}" title="Modifica">✏️</button>
+                <button type="button" class="plan-alt" data-id="${w.id}" title="Alternative">${alt.length > 0 ? '🔁' : '❌'}</button>
+                <button type="button" class="plan-remove" data-id="${w.id}" title="Rimuovi">✕</button>
+              </div>
+            </li>
+          `;
+        }).join('')}
+      </ul>`
+    : '<p class="empty-hint">Nessun obiettivo per questo ruolo</p>';
+
+  return `
+    ${roleStrip}
+    <h3>Obiettivi per ${meta.role_names[role]}</h3>
+    ${wishlistList}
+  `;
+}
+
 function renderPlan(auctionState) {
   // prepara wishlist attiva + lostTargets per computeWishlistCoverage
   const wishlistEntries = Object.entries(state.wishlist)
@@ -393,73 +470,14 @@ function renderPlan(auctionState) {
     </div>
   `;
 
-  // strip di copertura del ruolo attivo
-  const activeRole = state.ui.activeTab;
-  const activeRoleCov = coverage.perRole[activeRole];
-  const coverageClass = `cov-${activeRoleCov.copertura}`;
-  const coverageLabel = {
-    vuoto: '🔴 Nessun obiettivo',
-    scoperto: '🟠 Slot scoperti',
-    sfondamento: '⛔ Sfondamento budget',
-    stretto: '🟡 Margin stretto',
-    ok: '✅ Coperto',
-  }[activeRoleCov.copertura] || '—';
-
-  const roleStrip = `
-    <div class="plan-role-strip ${coverageClass}">
-      <strong>${meta.role_names[activeRole]}</strong>
-      <span>Obiettivi: ${activeRoleCov.obiettiviDisponibili}/${activeRoleCov.mancanti}</span>
-      <span>Costo: €${activeRoleCov.costoTargetPiano} / €${activeRoleCov.disponibile}</span>
-      <span>Media: €${activeRoleCov.mediaTargetPiano}</span>
-      <span class="${coverageClass}">${coverageLabel}</span>
-      ${activeRoleCov.slotScoperti > 0 ? `<span class="warn">⚠️ ${activeRoleCov.slotScoperti} slot scoperti</span>` : ''}
-      ${activeRoleCov.concentrazioneFascia ? `<span class="warn">⚠️ ${activeRoleCov.concentrazioneFascia.quota}% in ${activeRoleCov.concentrazioneFascia.label}</span>` : ''}
-      ${activeRoleCov.pressioneDetectato ? `<span class="warn">📈 Quotazioni in salita tra gli obiettivi</span>` : ''}
-    </div>
-  `;
-
-  // lista obiettivi del ruolo attivo
-  const roleWishlist = wishlistEntries.filter((w) => w.position === activeRole);
-  roleWishlist.sort((a, b) => {
-    if (a.priority !== b.priority) return a.priority - b.priority;
-    return (b.target || 0) - (a.target || 0);
-  });
-
-  const wishlistList = roleWishlist.length > 0
-    ? `<ul class="plan-wishlist">
-        ${roleWishlist.map((w) => {
-          const alt = planMod.findAlternatives(
-            boardById[w.id],
-            board,
-            (id) => stateMod.getPlayerStatus(state, id),
-            { limit: 1 }
-          );
-          return `
-            <li class="plan-item prio-${w.priority}">
-              <div class="plan-item-header">
-                <span>${escapeHtml(boardById[w.id].name)}</span>
-                <span class="tag">${boardById[w.id].fascia}</span>
-                <span class="prio-badge">P${w.priority}</span>
-                <span class="target-price">€${w.target}</span>
-              </div>
-              <div class="plan-item-actions">
-                <button type="button" class="plan-buy" data-id="${w.id}" title="Segna comprato">🛒</button>
-                <button type="button" class="plan-edit" data-id="${w.id}" title="Modifica">✏️</button>
-                <button type="button" class="plan-alt" data-id="${w.id}" title="Alternative">${alt.length > 0 ? '🔁' : '❌'}</button>
-                <button type="button" class="plan-remove" data-id="${w.id}" title="Rimuovi">✕</button>
-              </div>
-            </li>
-          `;
-        }).join('')}
-      </ul>`
-    : '<p class="empty-hint">Nessun obiettivo per questo ruolo</p>';
+  // uno o tutti i ruoli, a seconda del tab attivo (condiviso col listone)
+  const rolesToShow = state.ui.activeTab === stateMod.ALL_ROLES_TAB ? meta.roles : [state.ui.activeTab];
+  const roleBlocks = rolesToShow.map((role) => renderRoleBlock(role, coverage, wishlistEntries)).join('');
 
   els.planContent.innerHTML = `
     ${lostBanner}
     ${globalLine}
-    ${roleStrip}
-    <h3>Obiettivi per ${meta.role_names[activeRole]}</h3>
-    ${wishlistList}
+    ${roleBlocks}
   `;
 
   // stato collassato: classe sul card + freccia/tooltip sul button statico

@@ -5,6 +5,11 @@
 
 const STORAGE_KEY = 'fantaden_state_v1';
 
+// Sentinel condiviso da board.js/ui.js per il tab "Tutti i ruoli" (listone +
+// Piano d'Asta): distinto dai codici ruolo reali (P/D/C/A) come già fa 'all'
+// per il filtro fascia. Non è mai il default di ui.activeTab.
+export const ALL_ROLES_TAB = 'ALL';
+
 export function createDefaultState(auctionDefaults) {
   return {
     version: 1,
