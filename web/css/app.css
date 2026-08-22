@@ -118,9 +118,30 @@ main {
   width: 95vw;
   max-width: 1600px;
   margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
 }
-.topbar h1 { margin: 0 0 4px; font-size: 1.5rem; }
+.topbar h1 { margin: 0 0 4px; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
+.topbar h1 img.logo { height: 1.4em; width: auto; display: block; }
 .meta-info { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
+.topbar-nav { display: flex; align-items: center; gap: 8px; padding-top: 4px; }
+.topbar-nav a {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 6px 12px;
+  border-radius: 8px;
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  color: var(--text);
+  text-decoration: none;
+  font-size: 0.86rem;
+  font-weight: 600;
+}
+.topbar-nav a:hover { filter: brightness(1.08); }
 
 .load-error {
   width: 95vw;
