@@ -124,8 +124,20 @@ main {
   gap: 16px;
   flex-wrap: wrap;
 }
-.topbar h1 { margin: 0 0 4px; font-size: 1.5rem; display: flex; align-items: center; gap: 8px; }
-.topbar h1 img.logo { height: 1.4em; width: auto; display: block; }
+.topbar h1 { margin: 0 0 4px; }
+/* il logo ha uno sfondo bianco pieno nell'artwork originale (non ritagliabile
+   in trasparenza senza rompere la scritta, che ha un riquadro bianco dietro
+   alle lettere sovrapposte all'orso): lo mostriamo su una card bianca dedicata
+   invece che a sfondo libero, così regge anche sul tema scuro */
+.logo-image {
+  display: block;
+  height: 44px;
+  width: auto;
+  padding: 6px 10px;
+  background: #fff;
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+}
 .meta-info { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
 .topbar-nav { display: flex; align-items: center; gap: 8px; padding-top: 4px; }
 .topbar-nav a {
