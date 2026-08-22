@@ -404,20 +404,34 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 .plan-global { display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.9rem; padding: 10px 0; border-bottom: 1px solid var(--border); margin-bottom: 12px; }
 .plan-global .warn { color: var(--warning); font-weight: 600; }
 
-.plan-role-strip { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 10px; border-radius: var(--radius); border: 1px solid var(--border); margin-bottom: 12px; font-size: 0.9rem; }
-/* separa i blocchi ruolo impilati nel tab "Tutti i ruoli": ogni blocco è
-   roleStrip + h3 + (wishlist|empty-hint), lo strip successivo segue sempre
-   uno di questi due */
-.plan-wishlist + .plan-role-strip, .empty-hint + .plan-role-strip { margin-top: 20px; }
-.plan-role-strip strong { font-size: 1rem; }
+/* card per singolo ruolo nel Piano d'Asta: bordo sinistro sul codice colore
+   del ruolo (stesso --role-P/D/C/A dei tab/monitor budget), separa
+   nettamente i blocchi quando sono impilati tutti insieme ("Tutti i ruoli")
+   invece di lasciarli scorrere uno nell'altro. */
+.plan-role-block {
+  border: 1px solid var(--border);
+  border-left: 4px solid var(--role-color, var(--border));
+  border-radius: var(--radius);
+  padding: 12px;
+  margin-bottom: 12px;
+  background: var(--surface-2);
+}
+.plan-role-block:last-child { margin-bottom: 0; }
+.plan-role-block.role-P { --role-color: var(--role-P); }
+.plan-role-block.role-D { --role-color: var(--role-D); }
+.plan-role-block.role-C { --role-color: var(--role-C); }
+.plan-role-block.role-A { --role-color: var(--role-A); }
+
+.plan-role-strip { display: flex; flex-wrap: wrap; gap: 12px; align-items: center; padding: 4px 2px; border-radius: 6px; font-size: 0.9rem; margin-bottom: 10px; }
+.plan-role-strip strong { font-size: 1rem; color: var(--role-color, var(--text)); }
 .plan-role-strip .warn { color: var(--warning); font-weight: 600; }
-.cov-ok { background: color-mix(in srgb, var(--success) 8%, transparent); }
-.cov-stretto { background: color-mix(in srgb, var(--warning) 10%, transparent); }
-.cov-scoperto { background: color-mix(in srgb, var(--danger) 10%, transparent); }
-.cov-sfondamento { background: color-mix(in srgb, var(--danger) 15%, transparent); }
+.cov-ok { background: color-mix(in srgb, var(--success) 15%, transparent); }
+.cov-stretto { background: color-mix(in srgb, var(--warning) 18%, transparent); }
+.cov-scoperto { background: color-mix(in srgb, var(--danger) 18%, transparent); }
+.cov-sfondamento { background: color-mix(in srgb, var(--danger) 25%, transparent); }
 
 .plan-wishlist { list-style: none; padding: 0; margin: 8px 0 0; }
-.plan-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; background: var(--surface-2); }
+.plan-item { display: flex; justify-content: space-between; align-items: center; gap: 12px; padding: 8px; border: 1px solid var(--border); border-radius: 6px; margin-bottom: 8px; font-size: 0.85rem; background: var(--surface); }
 .plan-item.prio-1 { border-left: 3px solid var(--danger); }
 .plan-item.prio-2 { border-left: 3px solid var(--warning); }
 .plan-item.prio-3 { border-left: 3px solid var(--text-muted); }

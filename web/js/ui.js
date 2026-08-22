@@ -326,10 +326,13 @@ function renderMovements() {
   `;
 }
 
-// Blocco copertura + lista obiettivi per un singolo ruolo (strip + h3 +
-// wishlist ordinata per priorità). Estratto da renderPlan così può essere
-// chiamato una volta sola (un ruolo attivo) o in loop su meta.roles (tab
-// "Tutti i ruoli") senza duplicare markup/logica.
+// Blocco copertura + lista obiettivi per un singolo ruolo (strip + wishlist
+// ordinata per priorità), racchiuso in una card con bordo/nome colorati sul
+// codice colore del ruolo (stesso --role-P/D/C/A usato su tab e monitor
+// budget) — separa visivamente i ruoli quando sono impilati tutti insieme
+// ("Tutti i ruoli") ed evita di ripetere il nome ruolo due volte. Estratto
+// da renderPlan così può essere chiamato una volta sola (un ruolo attivo) o
+// in loop su meta.roles senza duplicare markup/logica.
 function renderRoleBlock(role, coverage, wishlistEntries) {
   const roleCov = coverage.perRole[role];
   const coverageClass = `cov-${roleCov.copertura}`;
@@ -390,9 +393,10 @@ function renderRoleBlock(role, coverage, wishlistEntries) {
     : '<p class="empty-hint">Nessun obiettivo per questo ruolo</p>';
 
   return `
-    ${roleStrip}
-    <h3>Obiettivi per ${meta.role_names[role]}</h3>
-    ${wishlistList}
+    <div class="plan-role-block role-${role}">
+      ${roleStrip}
+      ${wishlistList}
+    </div>
   `;
 }
 
