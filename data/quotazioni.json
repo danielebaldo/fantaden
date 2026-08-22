@@ -2355,6 +2355,21 @@
     "fvm_m": 11
   },
   {
+    "id": 7564,
+    "name": "Leysen F.",
+    "position": "D",
+    "position_mantra": "Ds;Dc",
+    "team": "Sassuolo",
+    "qt_att": 5,
+    "qt_i": 5,
+    "diff": 0,
+    "qt_att_m": 6,
+    "qt_i_m": 6,
+    "diff_m": 0,
+    "fvm": 12,
+    "fvm_m": 14
+  },
+  {
     "id": 4461,
     "name": "Zappa",
     "position": "D",
@@ -3255,6 +3270,21 @@
     "fvm_m": 5
   },
   {
+    "id": 5812,
+    "name": "Terracciano F.",
+    "position": "D",
+    "position_mantra": "B;Dd;Ds",
+    "team": "Milan",
+    "qt_att": 2,
+    "qt_i": 2,
+    "diff": 0,
+    "qt_att_m": 3,
+    "qt_i_m": 3,
+    "diff_m": 0,
+    "fvm": 4,
+    "fvm_m": 7
+  },
+  {
     "id": 487,
     "name": "De Silvestri",
     "position": "D",
@@ -4017,6 +4047,21 @@
     "qt_i_m": 12,
     "diff_m": 0,
     "fvm": 52,
+    "fvm_m": 48
+  },
+  {
+    "id": 5172,
+    "name": "Jones C.",
+    "position": "C",
+    "position_mantra": "C",
+    "team": "Inter",
+    "qt_att": 12,
+    "qt_i": 12,
+    "diff": 0,
+    "qt_att_m": 12,
+    "qt_i_m": 12,
+    "diff_m": 0,
+    "fvm": 48,
     "fvm_m": 48
   },
   {
@@ -5899,7 +5944,7 @@
     "name": "Fadera",
     "position": "C",
     "position_mantra": "W",
-    "team": "Como",
+    "team": "Cagliari",
     "qt_att": 2,
     "qt_i": 2,
     "diff": 0,
