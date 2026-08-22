@@ -80,7 +80,7 @@ export function renderTableHead(theadRow, state, onSort) {
   });
 }
 
-function statusCell(player, state) {
+export function statusCell(player, state) {
   const status = getPlayerStatus(state, player.id);
   if (status === 'mine') {
     const entry = state.myTeam[String(player.id)];

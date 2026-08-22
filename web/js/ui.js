@@ -586,12 +586,15 @@ function handleRowClick(id) {
   if (player) openPlayerDetailModal(player);
 }
 
-// Popup di sola lettura al click sulla riga: fantamedia/gol/assist della
-// stagione in corso (meta.season.label, es. "2026-27") — se il campionato
-// non è ancora iniziato o l'update giornaliero non li ha ancora scaricati,
-// i campi *_corrente sono null e si mostra un messaggio onesto invece di
-// finti zeri. Sotto, per confronto immediato, gli stessi valori della
-// stagione precedente già mostrati in tabella.
+// Popup al click sulla riga: fantamedia/gol/assist della stagione in corso
+// (meta.season.label, es. "2026-27") — se il campionato non è ancora
+// iniziato o l'update giornaliero non li ha ancora scaricati, i campi
+// *_corrente sono null e si mostra un messaggio onesto invece di finti
+// zeri. Sotto, per confronto immediato, gli stessi valori della stagione
+// precedente già mostrati in tabella. In cima, gli stessi bottoni azione
+// della cella "Stato/Azioni" del listone (⭐/🛒/🚫/↩️, da boardMod.statusCell),
+// così l'utente può agire sul giocatore senza chiudere il popup e tornare
+// alla tabella.
 function openPlayerDetailModal(player) {
   const hasCurrent = player.fantamedia_corrente != null || player.gol_fatti_corrente != null
     || player.assist_corrente != null || player.presenze_corrente != null;
@@ -602,6 +605,7 @@ function openPlayerDetailModal(player) {
     : `<p class="hint">Dati non ancora disponibili: la stagione non è ancora iniziata o l'aggiornamento non è ancora arrivato.</p>`;
 
   const bodyHtml = `
+    <div class="popup-status">${boardMod.statusCell(player, state)}</div>
     <div class="stat-block">
       <h4>Stagione ${escapeHtml(meta.season.label)} (in corso)</h4>
       ${currentBlock}
@@ -616,6 +620,14 @@ function openPlayerDetailModal(player) {
   `;
 
   openModal(`${player.name} · ${player.team} (${player.position})`, bodyHtml, () => {});
+
+  els.modalBody.querySelectorAll('[data-action]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const action = btn.dataset.action;
+      if (action === 'remove') { stateMod.resetPlayer(state, player.id); closeModal(); rerenderAll(); }
+      else handleRowAction(action, String(player.id));
+    });
+  });
 }
 
 function statRow(label, value) {

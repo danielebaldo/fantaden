@@ -455,6 +455,9 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 
 /* --- popup dettaglio giocatore (click sulla riga) --- */
 .player-row { cursor: pointer; }
+.popup-status { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
+.popup-status .status-cell { font-size: 0.9rem; }
+.popup-status .icon-btn { padding: 4px 10px; font-size: 0.95rem; }
 .stat-block { margin-bottom: 14px; }
 .stat-block h4 { margin: 0 0 8px; font-size: 0.85rem; }
 .stat-block-prev { color: var(--text-muted); }
