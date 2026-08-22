@@ -46,6 +46,7 @@ const els = {
   exportStateBtn: document.getElementById('exportStateBtn'),
   importStateInput: document.getElementById('importStateInput'),
   resetStateBtn: document.getElementById('resetStateBtn'),
+  themeToggle: document.getElementById('themeToggle'),
 };
 
 let board = [];
@@ -776,6 +777,32 @@ function wireStaticListeners() {
     state = stateMod.createDefaultState(meta.auction_defaults);
     rerenderAll();
   });
+
+  els.themeToggle.addEventListener('click', () => {
+    const next = currentTheme() === 'dark' ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try {
+      localStorage.setItem('fantaden_theme', next);
+    } catch (err) {
+      console.warn('[ui] impossibile salvare il tema:', err);
+    }
+    syncThemeToggleLabel();
+  });
+  syncThemeToggleLabel();
+}
+
+// tema attivo: scelta esplicita salvata, altrimenti quello di sistema
+// (stessa logica del piccolo script anti-flash in index.html <head>)
+function currentTheme() {
+  const explicit = document.documentElement.getAttribute('data-theme');
+  if (explicit === 'light' || explicit === 'dark') return explicit;
+  return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+}
+
+function syncThemeToggleLabel() {
+  const isDark = currentTheme() === 'dark';
+  els.themeToggle.textContent = isDark ? '☀️ Tema chiaro' : '🌙 Tema scuro';
+  els.themeToggle.title = isDark ? 'Passa al tema chiaro' : 'Passa al tema scuro';
 }
 
 function escapeHtml(str) {

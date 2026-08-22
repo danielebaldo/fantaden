@@ -9,6 +9,16 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="css/app.css">
+  <script>
+    // applica subito il tema salvato (se scelto esplicitamente), prima del
+    // primo paint: evita un lampo del tema sbagliato al caricamento
+    (function () {
+      try {
+        var t = localStorage.getItem('fantaden_theme');
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t);
+      } catch (e) { /* localStorage non disponibile: resta il tema di sistema */ }
+    })();
+  </script>
 </head>
 <body>
   <header class="topbar">
@@ -101,6 +111,7 @@
         <input type="file" id="importStateInput" accept="application/json">
       </label>
       <button type="button" id="resetStateBtn" class="danger">🗑️ Reset totale</button>
+      <button type="button" id="themeToggle" class="link-btn" title="Cambia tema chiaro/scuro">🌓 Tema</button>
     </div>
     <p class="credits">
       Fatto da <a href="https://www.instagram.com/dnlbld" target="_blank" rel="noopener noreferrer">Daniele Baldo</a>

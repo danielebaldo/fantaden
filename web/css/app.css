@@ -34,8 +34,12 @@
   --shadow: 0 1px 3px rgba(20, 30, 40, 0.08), 0 1px 2px rgba(20, 30, 40, 0.06);
 }
 
+/* tema scuro: di sistema (nessuna scelta esplicita salvata) o forzato dal
+   toggle in footer. :not([data-theme="light"]) fa vincere una scelta
+   esplicita "chiaro" sopra il tema scuro di sistema; [data-theme="dark"]
+   sotto fa vincere il toggle anche quando il sistema è chiaro. */
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --bg: #12161c;
     --surface: #1a2029;
     --surface-2: #212836;
@@ -44,6 +48,15 @@
     --border: #2c3441;
     --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
   }
+}
+:root[data-theme="dark"] {
+  --bg: #12161c;
+  --surface: #1a2029;
+  --surface-2: #212836;
+  --text: #e7ecf2;
+  --text-muted: #9aa5b3;
+  --border: #2c3441;
+  --shadow: 0 1px 3px rgba(0, 0, 0, 0.4), 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 * { box-sizing: border-box; }
