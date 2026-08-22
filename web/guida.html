@@ -1,0 +1,661 @@
+<!doctype html>
+<html lang="it">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Guida Fantaden</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Figtree:wght@400;500;600;700;800&family=JetBrains+Mono:wght@500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #f6f8f5;
+    --surface: #ffffff;
+    --surface-2: #edf2ed;
+    --surface-3: #e2eae2;
+    --text: #17211b;
+    --text-muted: #5e6f63;
+    --border: #dce6dd;
+    --accent: #0072b2;
+    --accent-dark: #045282;
+
+    --role-p: #f7aa11;
+    --role-d: #64c723;
+    --role-c: #136af6;
+    --role-a: #f21c3d;
+
+    --fascia-top: #f0c419;
+    --fascia-1: #009e73;
+    --fascia-2: #0072b2;
+    --fascia-3: #8c9aa8;
+    --fascia-4: #cc79a7;
+    --fascia-5: #d55e00;
+
+    --success: #009e73;
+    --warning: #e69f00;
+    --danger: #d55e00;
+
+    --radius: 12px;
+    --shadow: 0 1px 2px rgba(20, 30, 24, 0.05), 0 4px 16px rgba(20, 30, 24, 0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --bg: #0f1712;
+      --surface: #16201a;
+      --surface-2: #1d2922;
+      --surface-3: #243428;
+      --text: #e9f1ea;
+      --text-muted: #9dafa2;
+      --border: #293a2e;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.25);
+    }
+  }
+  :root[data-theme="dark"] {
+    --bg: #0f1712;
+    --surface: #16201a;
+    --surface-2: #1d2922;
+    --surface-3: #243428;
+    --text: #e9f1ea;
+    --text-muted: #9dafa2;
+    --border: #293a2e;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 4px 20px rgba(0, 0, 0, 0.25);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Figtree', system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .mono {
+    font-family: 'JetBrains Mono', ui-monospace, 'SFMono-Regular', Menlo, monospace;
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible, button:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+  /* ---------- back link ---------- */
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 7px;
+    font-size: 0.86rem;
+    font-weight: 600;
+    text-decoration: none;
+    color: var(--text-muted);
+    margin-bottom: 18px;
+  }
+  .back-link:hover { color: var(--accent); }
+
+  /* ---------- layout ---------- */
+  .shell {
+    display: grid;
+    grid-template-columns: 220px minmax(0, 760px);
+    justify-content: center;
+    gap: 56px;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 40px 24px 96px;
+  }
+  @media (max-width: 900px) {
+    .shell { grid-template-columns: 1fr; padding: 24px 18px 72px; gap: 28px; }
+  }
+
+  nav.rail {
+    position: sticky;
+    top: 32px;
+    align-self: start;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+  @media (max-width: 900px) {
+    nav.rail {
+      position: static;
+      flex-direction: row;
+      flex-wrap: wrap;
+      gap: 8px;
+      padding-bottom: 8px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 4px;
+    }
+  }
+  nav.rail a {
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    padding: 7px 10px;
+    border-radius: 8px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-size: 0.86rem;
+    font-weight: 600;
+    transition: background 0.15s, color 0.15s;
+  }
+  nav.rail a:hover { background: var(--surface-2); color: var(--text); }
+  nav.rail .dot {
+    width: 8px; height: 8px; border-radius: 50%;
+    background: var(--dot, var(--accent));
+    flex: none;
+  }
+  @media (max-width: 900px) {
+    nav.rail a { padding: 6px 10px; border: 1px solid var(--border); border-radius: 999px; }
+  }
+
+  main { min-width: 0; }
+
+  header.hero {
+    margin-bottom: 44px;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    letter-spacing: 0.09em;
+    text-transform: uppercase;
+    color: var(--accent);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 14px;
+  }
+  .eyebrow::before {
+    content: "";
+    width: 22px; height: 2px;
+    background: var(--accent);
+    display: inline-block;
+  }
+  h1 {
+    font-size: clamp(2rem, 5vw, 2.7rem);
+    line-height: 1.05;
+    letter-spacing: -0.02em;
+    font-weight: 800;
+    margin: 0 0 14px;
+    text-wrap: balance;
+  }
+  .lede {
+    font-size: 1.08rem;
+    color: var(--text-muted);
+    max-width: 56ch;
+    margin: 0;
+  }
+  .role-strip {
+    display: flex;
+    gap: 6px;
+    margin-top: 22px;
+  }
+  .role-strip span {
+    height: 5px;
+    flex: 1;
+    border-radius: 3px;
+  }
+
+  section { margin-bottom: 52px; scroll-margin-top: 24px; }
+  section > h2 {
+    font-size: 1.4rem;
+    font-weight: 800;
+    letter-spacing: -0.01em;
+    margin: 0 0 6px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+  section > h2 .num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.72rem;
+    font-weight: 500;
+    color: var(--text-muted);
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 2px 7px;
+  }
+  section > .section-intro {
+    color: var(--text-muted);
+    margin: 0 0 20px;
+    max-width: 64ch;
+    font-size: 0.98rem;
+  }
+  h3 {
+    font-size: 0.95rem;
+    font-weight: 700;
+    margin: 26px 0 10px;
+  }
+  p { margin: 0 0 12px; }
+  .card-block {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px 22px;
+  }
+
+  /* ---------- legend grids ---------- */
+  .legend-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 10px;
+    margin: 16px 0 4px;
+  }
+  .legend-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 9px;
+    padding: 9px 12px;
+    font-size: 0.86rem;
+  }
+  .legend-item .swatch {
+    width: 14px; height: 14px;
+    border-radius: 4px;
+    flex: none;
+    background: var(--c);
+  }
+  .legend-item .swatch.round { border-radius: 50%; }
+  .legend-item strong { font-weight: 700; }
+  .legend-item small { display: block; color: var(--text-muted); font-size: 0.76rem; }
+
+  /* ---------- tag pills, matching the live app ---------- */
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    padding: 2px 9px;
+    border-radius: 10px;
+    font-size: 0.72rem;
+    font-weight: 700;
+  }
+  .tag-top { background: var(--fascia-top); color: #1b2430; }
+  .tag-f1 { background: var(--fascia-1); color: #fff; }
+  .tag-f2 { background: var(--fascia-2); color: #fff; }
+  .tag-f3 { background: var(--fascia-3); color: #fff; }
+  .tag-f4 { background: var(--fascia-4); color: #fff; }
+  .tag-f5 { background: var(--fascia-5); color: #fff; }
+  .tag-affare { background: var(--success); color: #fff; }
+  .tag-trappola { background: var(--danger); color: #fff; }
+  .tag-equo { background: var(--surface-3); color: var(--text-muted); }
+  .tag-new { background: var(--text-muted); color: var(--surface); }
+  .tag-rigorista { background: var(--warning); color: #1b2430; }
+
+  /* ---------- feature rows (icon + text) ---------- */
+  .feature-list { display: flex; flex-direction: column; gap: 14px; margin-top: 14px; }
+  .feature {
+    display: grid;
+    grid-template-columns: 40px 1fr;
+    gap: 14px;
+    align-items: start;
+  }
+  .feature .icon {
+    width: 40px; height: 40px;
+    border-radius: 10px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.1rem;
+  }
+  .feature strong { display: block; margin-bottom: 2px; }
+  .feature p { margin: 0; color: var(--text-muted); font-size: 0.92rem; }
+
+  /* ---------- mock table row for the players table legend ---------- */
+  .mock-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.82rem;
+    margin: 14px 0 4px;
+  }
+  .mock-table th {
+    text-align: left;
+    font-size: 0.68rem;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 700;
+    padding: 6px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .mock-table td {
+    padding: 8px 10px;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+  }
+  .mock-table .name-cell { font-weight: 700; }
+  .table-scroll { overflow-x: auto; border: 1px solid var(--border); border-radius: 10px; }
+  sup.stag { color: var(--text-muted); font-size: 0.65rem; margin-left: 2px; }
+  .trend-up { color: var(--success); font-size: 0.78rem; margin-left: 3px; }
+  .trend-down { color: var(--danger); font-size: 0.78rem; margin-left: 3px; }
+
+  /* ---------- formula callout ---------- */
+  .formula {
+    background: var(--surface-2);
+    border: 1px dashed var(--border);
+    border-radius: 9px;
+    padding: 12px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--text-muted);
+    margin: 12px 0;
+    overflow-x: auto;
+  }
+  .formula b { color: var(--text); }
+
+  /* ---------- glossary key/value ---------- */
+  .kv-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+    gap: 12px 20px;
+    margin-top: 14px;
+  }
+  .kv {
+    padding: 10px 0;
+    border-top: 1px solid var(--border);
+  }
+  .kv .term {
+    font-weight: 700;
+    font-size: 0.88rem;
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+  }
+  .kv .term .mono { font-size: 0.72rem; color: var(--accent); }
+  .kv .def { color: var(--text-muted); font-size: 0.86rem; margin-top: 2px; }
+
+  footer.page-footer {
+    margin-top: 64px;
+    padding-top: 20px;
+    border-top: 1px solid var(--border);
+    color: var(--text-muted);
+    font-size: 0.82rem;
+  }
+
+  ::selection { background: color-mix(in srgb, var(--accent) 30%, transparent); }
+</style>
+</head>
+<body>
+
+<div class="shell">
+  <nav class="rail">
+    <a href="index.html" class="back-link" style="margin-bottom:10px">← Torna alla dashboard</a>
+    <a href="#legenda" style="--dot:var(--accent)"><span class="dot"></span>Legenda colori</a>
+    <a href="#budget" style="--dot:var(--role-p)"><span class="dot"></span>Budget e allocazione</a>
+    <a href="#piano" style="--dot:var(--role-c)"><span class="dot"></span>Piano d'asta</a>
+    <a href="#tabella" style="--dot:var(--role-d)"><span class="dot"></span>Tabella giocatori</a>
+    <a href="#rosa" style="--dot:var(--role-a)"><span class="dot"></span>Rosa e rivali</a>
+    <a href="#movimenti" style="--dot:var(--fascia-2)"><span class="dot"></span>Movimenti</a>
+    <a href="#stato" style="--dot:var(--text-muted)"><span class="dot"></span>Stato e backup</a>
+  </nav>
+
+  <main>
+    <header class="hero">
+      <div class="eyebrow">Guida rapida</div>
+      <h1>Come si usa Fantaden</h1>
+      <p class="lede">
+        Fantaden è il tuo comando centrale per l'asta: quotazioni e statistiche
+        aggiornate ogni giorno, un motore di budget che si ricalcola a ogni
+        acquisto, e un piano d'asta che tiene la wishlist in ordine di priorità.
+        Questa pagina spiega ogni colore, sigla e bottone che trovi in dashboard.
+      </p>
+      <div class="role-strip">
+        <span style="background:var(--role-p)"></span>
+        <span style="background:var(--role-d)"></span>
+        <span style="background:var(--role-c)"></span>
+        <span style="background:var(--role-a)"></span>
+      </div>
+    </header>
+
+    <section id="legenda">
+      <h2><span class="num">§1</span>Legenda colori</h2>
+      <p class="section-intro">
+        Quattro famiglie di colore ricorrono in tutta la dashboard: il ruolo del
+        giocatore, la fascia di prezzo, il giudizio "affare/trappola" e qualche
+        badge speciale. Impararle una volta vuol dire leggere tutta la board a colpo d'occhio.
+      </p>
+
+      <h3>Ruoli</h3>
+      <div class="legend-grid">
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-p)"></span><div><strong>Portiere</strong><small>bordo arancione</small></div></div>
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-d)"></span><div><strong>Difensore</strong><small>bordo verde</small></div></div>
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-c)"></span><div><strong>Centrocampista</strong><small>bordo blu</small></div></div>
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-a)"></span><div><strong>Attaccante</strong><small>bordo rosso</small></div></div>
+      </div>
+
+      <h3>Fasce di prezzo</h3>
+      <p class="section-intro" style="margin-bottom:10px;">
+        Calcolate sul percentile di FVM <em>dentro il ruolo</em>: un difensore in "Top"
+        e un attaccante in "Top" non costano uguale, ma sono ugualmente ai vertici del proprio reparto.
+      </p>
+      <div class="legend-grid">
+        <div class="legend-item"><span class="tag tag-top">Top</span></div>
+        <div class="legend-item"><span class="tag tag-f1">1ª Fascia</span></div>
+        <div class="legend-item"><span class="tag tag-f2">2ª Fascia</span></div>
+        <div class="legend-item"><span class="tag tag-f3">3ª Fascia</span></div>
+        <div class="legend-item"><span class="tag tag-f4">Low Cost</span></div>
+        <div class="legend-item"><span class="tag tag-f5">Scommessa</span></div>
+      </div>
+
+      <h3>Indice Affare</h3>
+      <p class="section-intro" style="margin-bottom:10px;">
+        Confronta il percentile di rendimento (Score) con quello di prezzo (FVM), stesso ruolo.
+      </p>
+      <div class="legend-grid">
+        <div class="legend-item"><span class="tag tag-affare">Affare</span><small style="margin-left:2px">rende più di quanto costa</small></div>
+        <div class="legend-item"><span class="tag tag-equo">Equo</span><small style="margin-left:2px">prezzo in linea</small></div>
+        <div class="legend-item"><span class="tag tag-trappola">Trappola</span><small style="margin-left:2px">costa più di quanto rende</small></div>
+      </div>
+
+      <h3>Badge speciali</h3>
+      <div class="legend-grid">
+        <div class="legend-item"><span class="tag tag-new">NEW</span><small style="margin-left:2px">nessuna statistica nell'ultima stagione</small></div>
+        <div class="legend-item"><span class="tag tag-rigorista">🎯</span><small style="margin-left:2px">rigorista della squadra</small></div>
+        <div class="legend-item"><span class="mono" style="font-weight:700">×3</span><small style="margin-left:2px">score mediato su 3 stagioni</small></div>
+        <div class="legend-item"><span class="trend-up" style="font-size:1rem">▲</span><small style="margin-left:2px">fantamedia in crescita</small></div>
+      </div>
+    </section>
+
+    <section id="budget">
+      <h2><span class="num">§2</span>Budget e allocazione</h2>
+      <p class="section-intro">
+        In cima alla pagina imposti il budget totale e gli slot/percentuali per
+        reparto: da lì in poi tutto il resto — cassa, tesoretto, budget per
+        ruolo — si ricalcola da solo a ogni acquisto o correzione.
+      </p>
+
+      <div class="card-block">
+        <div class="kv-grid">
+          <div class="kv">
+            <div class="term">Cassa</div>
+            <div class="def">Budget totale meno quanto hai già speso, in tempo reale.</div>
+          </div>
+          <div class="kv">
+            <div class="term">Tesoretto</div>
+            <div class="def">Somma di surplus e deficit tra reparti: un reparto già completo versa quello che gli avanza, uno sforato lo attinge dagli altri.</div>
+          </div>
+          <div class="kv">
+            <div class="term">Budget Dinamico</div>
+            <div class="def">Quanto puoi ragionevolmente spendere in quel reparto adesso, tesoretto già incluso.</div>
+          </div>
+          <div class="kv">
+            <div class="term">Media</div>
+            <div class="def">Budget dinamico diviso gli slot ancora da riempire in quel reparto.</div>
+          </div>
+          <div class="kv">
+            <div class="term">Max Strategica</div>
+            <div class="def">Il tetto oltre il quale, se spendi, non riesci più a coprire gli slot rimasti al minimo di un credito l'uno.</div>
+          </div>
+          <div class="kv">
+            <div class="term">Max ALL-IN</div>
+            <div class="def">Il vero limite assoluto: tutta la cassa residua, meno un credito per ogni slot ancora vuoto in tutta la rosa.</div>
+          </div>
+        </div>
+        <div class="formula">disponibile = <b>budget dinamico</b> − speso&nbsp;&nbsp;·&nbsp;&nbsp;max strategica = disponibile − mancanti + 1</div>
+      </div>
+
+      <h3>Allocazione Budget</h3>
+      <p>
+        La barra a blocchi sotto il setup mostra, reparto per reparto, quanto
+        spazio hai già riempito (blocco pieno, col tuo prezzo pagato) e quanto
+        resta libero (blocco tratteggiato con "?"). Sotto la barra trovi le
+        stesse quattro card per ruolo, sempre visibili mentre scorri la board.
+      </p>
+    </section>
+
+    <section id="piano">
+      <h2><span class="num">§3</span>Piano d'asta</h2>
+      <p class="section-intro">
+        È la wishlist con criterio: ogni obiettivo ha una priorità, e la card
+        ti dice se il piano regge il budget prima che l'asta cominci — non dopo.
+      </p>
+
+      <div class="feature-list">
+        <div class="feature">
+          <div class="icon">⭐</div>
+          <div>
+            <strong>Aggiungere un obiettivo</strong>
+            <p>Dalla tabella giocatori: prezzo target (precompilato con FVM 500cr), priorità 1–3 e una nota libera.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="icon">P1</div>
+          <div>
+            <strong>Priorità</strong>
+            <p><span class="mono">1 · Must-have</span> — <span class="mono">2 · Piace</span> — <span class="mono">3 · Ripiego</span>. Decide solo l'ordine con cui il piano conta i tuoi obiettivi più realistici, non esclude nulla.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="icon">📊</div>
+          <div>
+            <strong>Copertura del reparto</strong>
+            <p>Per il ruolo aperto nella tabella sotto, la card confronta il costo dei migliori obiettivi (quanti te ne servono) con il budget dinamico: <span class="tag tag-affare" style="font-size:0.68rem">Coperto</span>, <span class="tag" style="background:var(--warning);color:#1b2430;font-size:0.68rem">Margine stretto</span> o <span class="tag tag-trappola" style="font-size:0.68rem">Sfondamento</span>.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="icon">🔁</div>
+          <div>
+            <strong>Alternative automatiche</strong>
+            <p>Se un rivale ti soffia un obiettivo, Fantaden propone da solo i giocatori più simili per rendimento e fascia, ancora disponibili.</p>
+          </div>
+        </div>
+        <div class="feature">
+          <div class="icon">▼</div>
+          <div>
+            <strong>Collassa la card</strong>
+            <p>La freccia in alto a destra nasconde il piano quando serve solo la tabella: lo stato resta salvato al prossimo giro.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="tabella">
+      <h2><span class="num">§4</span>Tabella giocatori</h2>
+      <p class="section-intro">
+        Il cuore della dashboard: filtrabile per ruolo, fascia, ricerca testuale
+        e tre interruttori (solo disponibili / solo wishlist / solo rigoristi).
+        Ogni intestazione cliccabile ordina la colonna.
+      </p>
+
+      <div class="table-scroll">
+        <table class="mock-table">
+          <thead>
+            <tr>
+              <th>Nome</th><th>Ruolo M</th><th>Squadra</th><th>Qt.A</th><th>FVM</th>
+              <th>FVM 500cr</th><th>Fascia</th><th>Score</th><th>Affare</th><th>Pv</th><th>Fm</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="name-cell">Lautaro Martinez <span class="tag tag-rigorista" style="font-size:0.6rem">🎯</span></td>
+              <td>A</td><td>Inter</td><td>34</td><td>340</td><td>170</td>
+              <td><span class="tag tag-f1">1ª Fascia</span></td>
+              <td>97.9<sup class="stag">×2</sup></td>
+              <td><span class="tag tag-equo">Equo</span></td>
+              <td>34</td>
+              <td>7.90<span class="trend-up">▲</span></td>
+            </tr>
+            <tr>
+              <td class="name-cell">Vicario <span class="tag tag-new" style="font-size:0.6rem">NEW</span></td>
+              <td>P</td><td>Juventus</td><td>16</td><td>55</td><td>28</td>
+              <td><span class="tag tag-top">Top</span></td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+              <td>—</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <h3>Colonne meno ovvie</h3>
+      <div class="kv-grid">
+        <div class="kv">
+          <div class="term">FVM <span class="mono">vs</span> FVM 500cr</div>
+          <div class="def">Il primo è il valore grezzo di fantacalcio.it (lega da 1000 crediti); il secondo è lo stesso numero riparametrato sul tuo budget di lega — quello da guardare per un prezzo realistico.</div>
+        </div>
+        <div class="kv">
+          <div class="term">Score <span class="mono">×N</span></div>
+          <div class="def">Percentile di rendimento nel ruolo (0–100). L'apice indica su quante stagioni è mediato — assente se è una sola. Pv e Fm accanto restano invece il dato della singola stagione più recente disponibile, non una media.</div>
+        </div>
+        <div class="kv">
+          <div class="term">Fm <span class="mono">▲▼</span></div>
+          <div class="def">Freccia di trend: fantamedia dell'ultima stagione disponibile contro la media pesata delle precedenti.</div>
+        </div>
+      </div>
+
+      <h3>Azioni per riga</h3>
+      <div class="feature-list">
+        <div class="feature"><div class="icon">⭐</div><div><strong>Aggiungi a wishlist</strong><p>Apre il modale con prezzo target e priorità.</p></div></div>
+        <div class="feature"><div class="icon">🛒</div><div><strong>Preso da me</strong><p>Registra il prezzo pagato e sposta il giocatore nella tua rosa.</p></div></div>
+        <div class="feature"><div class="icon">🚫</div><div><strong>Preso da altri</strong><p>Scegli il rivale (o crealo al volo) e il prezzo: il suo budget si aggiorna subito.</p></div></div>
+        <div class="feature"><div class="icon">↩️</div><div><strong>Reset riga</strong><p>Rimette il giocatore tra i disponibili, da qualunque stato parta.</p></div></div>
+      </div>
+    </section>
+
+    <section id="rosa">
+      <h2><span class="num">§5</span>Rosa e rivali</h2>
+      <p class="section-intro">
+        Due schede nella stessa card: la tua rosa acquistata con il totale
+        speso, e l'elenco rivali con budget residuo, slot rimasti e puntata
+        massima teorica di ciascuno — calcolata sullo stesso identico
+        regolamento della tua lega.
+      </p>
+    </section>
+
+    <section id="movimenti">
+      <h2><span class="num">§6</span>Movimenti quotazioni</h2>
+      <p class="section-intro">
+        Rialzi e ribassi di quotazione negli ultimi 3 giorni, dagli snapshot
+        giornalieri automatici. Finestra corta apposta: a ridosso dell'avvio
+        di campionato, con partite ravvicinate, un trend a 7 giorni sarebbe
+        già vecchio quando lo leggi.
+      </p>
+    </section>
+
+    <section id="stato">
+      <h2><span class="num">§7</span>Stato e backup</h2>
+      <p class="section-intro">
+        Rosa, wishlist e rivali vivono solo nel browser (<span class="mono">localStorage</span>):
+        cambiare dispositivo o svuotare la cache li cancella, se non li hai esportati prima.
+      </p>
+      <div class="feature-list">
+        <div class="feature"><div class="icon">⬇️</div><div><strong>Esporta stato</strong><p>Scarica un JSON con tutto: rosa, wishlist, rivali, impostazioni budget.</p></div></div>
+        <div class="feature"><div class="icon">⬆️</div><div><strong>Importa stato</strong><p>Ricarica un JSON esportato in precedenza — utile a inizio asta su un altro schermo.</p></div></div>
+        <div class="feature"><div class="icon">🗑️</div><div><strong>Reset totale</strong><p>Azzera tutto e riparte dai valori di default. Non è reversibile: esporta prima se hai dubbi.</p></div></div>
+      </div>
+    </section>
+
+    <footer class="page-footer">
+      <a href="index.html" class="back-link">← Torna alla dashboard</a><br>
+      Fantaden · dati aggiornati ogni giorno da fantacalcio.it · questa guida riflette la dashboard live
+    </footer>
+  </main>
+</div>
+</body>
+</html>

@@ -179,6 +179,21 @@ button { cursor: pointer; }
 button:hover { filter: brightness(1.08); }
 button.danger { color: var(--danger); border-color: var(--danger); }
 
+/* link che deve avere lo stesso aspetto dei bottoni del footer (es. link alla guida) */
+.link-btn {
+  font: inherit;
+  color: var(--text);
+  background: var(--surface-2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 5px 8px;
+  text-decoration: none;
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+}
+.link-btn:hover { filter: brightness(1.08); }
+
 /* --- waffle bar --- */
 .waffle-bar { display: flex; width: 100%; height: 44px; border-radius: 6px; overflow: hidden; background: var(--surface-2); }
 .bar-segment { display: flex; height: 100%; }
