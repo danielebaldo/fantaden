@@ -133,9 +133,9 @@ export function renderTableBody(tbody, players, state, history, onAction) {
       <td>${p.fvm}</td>
       <td>${p.fvm_500 != null ? p.fvm_500 : '—'}</td>
       <td><span class="tag ${fasciaClass}">${p.fascia}</span></td>
-      <td>${p.score != null ? p.score.toFixed(1) : '—'}</td>
+      <td>${p.score != null ? p.score.toFixed(1) : '—'}${stagioniSup(p)}</td>
       <td>${p.affare_label ? `<span class="tag ${affareClass}">${p.affare_label}</span>` : '—'}</td>
-      <td>${p.presenze != null ? p.presenze : '—'}${stagioniSup(p)}</td>
+      <td>${p.presenze != null ? p.presenze : '—'}</td>
       <td>${p.fantamedia != null ? p.fantamedia.toFixed(2) : '—'}${trendArrow(p)}</td>
       <td>${p.ammonizioni != null ? p.ammonizioni : '—'}</td>
       <td>${statusCell(p, state)}</td>
@@ -147,14 +147,17 @@ export function renderTableBody(tbody, players, state, history, onAction) {
   });
 }
 
-// Apice accanto a Pv con il numero di stagioni su cui è mediata la
-// statistica (score multi-stagione, Fase 3): assente se il campo non c'è
+// Apice accanto a Score con il numero di stagioni su cui è mediato (score
+// multi-stagione, Fase 3): va sullo Score, non su Pv/Fm, perché solo lo
+// score è davvero una media pesata multi-stagione — Pv e Fm mostrati in
+// tabella restano il dato della singola stagione più recente disponibile
+// (vedi display_stat in build_board.py). Assente se il campo non c'è
 // (multi_season disabilitato in config/scoring.json) o se è una sola
 // stagione (nessuna informazione aggiuntiva da mostrare).
 function stagioniSup(p) {
   if (!p.stagioni_disponibili || p.stagioni_disponibili <= 1) return '';
   const seasons = p.stagioni_ids ? p.stagioni_ids.join(', ') : '';
-  return ` <sup class="stagioni-sup" title="Media su ${p.stagioni_disponibili} stagioni (${seasons})">×${p.stagioni_disponibili}</sup>`;
+  return ` <sup class="stagioni-sup" title="Score mediato su ${p.stagioni_disponibili} stagioni (${seasons}); Pv e Fm restano quelli dell'ultima stagione disponibile">×${p.stagioni_disponibili}</sup>`;
 }
 
 // Freccia di trend accanto a Fm: confronta la fantamedia più recente con la
