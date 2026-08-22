@@ -135,21 +135,30 @@ main {
   align-items: flex-start;
   justify-content: space-between;
   gap: 16px;
+  row-gap: 56px; /* > 46px di margin-bottom negativo del logo: se il menu va a
+    capo (schermi stretti) non resta coperto dallo sconfinamento del logo */
   flex-wrap: wrap;
+  position: relative; /* per il logo che sfuma sotto main, vedi .logo-image */
 }
-.topbar h1 { margin: 0 0 4px; }
-/* il logo ha uno sfondo bianco pieno nell'artwork originale (non ritagliabile
-   in trasparenza senza rompere la scritta, che ha un riquadro bianco dietro
-   alle lettere sovrapposte all'orso): lo mostriamo su una card bianca dedicata
-   invece che a sfondo libero, così regge anche sul tema scuro */
+/* logo e meta-info affiancati (non impilati): il logo può sconfinare in
+   basso senza mai sovrapporsi al testo, che resta alla sua destra */
+.topbar-brand { display: flex; align-items: center; gap: 16px; }
+.topbar h1 { margin: 0; line-height: 0; } /* line-height:0: niente spazio
+  fantasma sotto l'img inline che l'h1 aggiungerebbe di suo */
+/* Logo grande, senza sfondo/card: il margine negativo lo fa sconfinare sotto
+   l'header, "sotto" il primo filo di card di main (che hanno sfondo opaco e
+   arrivano dopo nel DOM, quindi lo coprono naturalmente senza z-index).
+   In tema chiaro usa logo.png (sfondo bianco pieno nell'artwork, si confonde
+   bene con --bg quasi bianco); in tema scuro js/ui.js lo scambia con
+   logo-dark.png se presente (fallback automatico su logo.png se manca). */
 .logo-image {
   display: block;
-  height: 44px;
+  height: 96px;
   width: auto;
-  padding: 6px 10px;
-  background: #fff;
-  border-radius: var(--radius);
-  box-shadow: var(--shadow);
+  margin-bottom: -46px;
+}
+@media (max-width: 640px) {
+  .logo-image { height: 64px; margin-bottom: -20px; }
 }
 .meta-info { margin: 0; color: var(--text-muted); font-size: 0.85rem; }
 .topbar-nav { display: flex; align-items: center; gap: 8px; padding-top: 4px; }

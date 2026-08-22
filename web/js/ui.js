@@ -47,6 +47,7 @@ const els = {
   importStateInput: document.getElementById('importStateInput'),
   resetStateBtn: document.getElementById('resetStateBtn'),
   themeToggle: document.getElementById('themeToggle'),
+  logoImage: document.getElementById('logoImage'),
 };
 
 let board = [];
@@ -786,9 +787,19 @@ function wireStaticListeners() {
     } catch (err) {
       console.warn('[ui] impossibile salvare il tema:', err);
     }
-    syncThemeToggleLabel();
+    syncTheme();
   });
-  syncThemeToggleLabel();
+  // il logo torna al chiaro se logo-dark.png manca ancora (404): non deve
+  // restare rotto in attesa che venga caricato su GitHub
+  els.logoImage.addEventListener('error', () => {
+    if (els.logoImage.src.endsWith('logo-dark.png')) els.logoImage.src = 'logo.png';
+  });
+  // se non c'è una scelta esplicita salvata, il logo/etichetta seguono anche
+  // un cambio del tema di sistema fatto a pagina già aperta
+  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
+    if (!localStorage.getItem('fantaden_theme')) syncTheme();
+  });
+  syncTheme();
 }
 
 // tema attivo: scelta esplicita salvata, altrimenti quello di sistema
@@ -799,10 +810,11 @@ function currentTheme() {
   return window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
 }
 
-function syncThemeToggleLabel() {
+function syncTheme() {
   const isDark = currentTheme() === 'dark';
   els.themeToggle.textContent = isDark ? '☀️ Tema chiaro' : '🌙 Tema scuro';
   els.themeToggle.title = isDark ? 'Passa al tema chiaro' : 'Passa al tema scuro';
+  els.logoImage.src = isDark ? 'logo-dark.png' : 'logo.png';
 }
 
 function escapeHtml(str) {
