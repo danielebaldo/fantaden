@@ -45,6 +45,10 @@ BASE_COLUMNS = [
     ("gol_fatti", "Gf"),
     ("assist", "Ass"),
     ("rigori_calciati", "Rc"),
+    ("presenze_corrente", "Pv (corrente)"),
+    ("fantamedia_corrente", "Fm (corrente)"),
+    ("gol_fatti_corrente", "Gf (corrente)"),
+    ("assist_corrente", "Ass (corrente)"),
 ]
 GK_COLUMNS = [("gol_subiti", "Gs"), ("rigori_parati", "Rp")]
 OUTFIELD_COLUMNS = [("ammonizioni", "Amm"), ("espulsioni", "Esp")]

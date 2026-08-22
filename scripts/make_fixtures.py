@@ -90,6 +90,16 @@ STATS_PREV = {
     5522: dict(pv=3, mv=5.80, fm=5.85, gf=0, gs=0, rp=0, rc=0, ass=0, amm=1, esp=0, au=0),
 }
 
+# Terza fixture statistiche, per la stagione CORRENTE (in corso, poche
+# partite giocate): usata da tests/test_current_season.py per verificare i
+# campi *_corrente in build_board.py, mai mescolati con lo scoring. Solo 2
+# giocatori con presenze basse (2-3), gli altri 18 restano "senza dati
+# stagione corrente" (caso più realistico a inizio campionato).
+STATS_CURRENT = {
+    2100: dict(pv=2, mv=6.50, fm=7.20, gf=2, gs=0, rp=0, rc=1, ass=0, amm=0, esp=0, au=0),
+    1200: dict(pv=3, mv=6.10, fm=6.40, gf=1, gs=0, rp=0, rc=0, ass=1, amm=1, esp=0, au=0),
+}
+
 
 def build_prices_df():
     rows = []
@@ -155,15 +165,19 @@ def main():
     prices_path = os.path.join(RAW_DIR, "quotazioni_fixture.xlsx")
     stats_path = os.path.join(RAW_DIR, "statistiche_fixture.xlsx")
     stats_prev_path = os.path.join(RAW_DIR, "statistiche_fixture_prev.xlsx")
+    stats_current_path = os.path.join(RAW_DIR, "statistiche_fixture_current.xlsx")
 
     write_with_banner_row(build_prices_df(), prices_path, "Quotazioni Fantacalcio - FIXTURE DI TEST")
     write_with_banner_row(build_stats_df(), stats_path, "Statistiche Fantacalcio - FIXTURE DI TEST")
     write_with_banner_row(build_stats_df(STATS_PREV), stats_prev_path,
                            "Statistiche Fantacalcio (stagione precedente) - FIXTURE DI TEST")
+    write_with_banner_row(build_stats_df(STATS_CURRENT), stats_current_path,
+                           "Statistiche Fantacalcio (stagione corrente) - FIXTURE DI TEST")
 
     print(f"Scritto {prices_path}")
     print(f"Scritto {stats_path}")
     print(f"Scritto {stats_prev_path}")
+    print(f"Scritto {stats_current_path}")
 
 
 if __name__ == "__main__":

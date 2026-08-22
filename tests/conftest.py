@@ -14,6 +14,7 @@ FIXTURES = [
     os.path.join(SCRIPTS_DIR, "..", "data", "raw", "quotazioni_fixture.xlsx"),
     os.path.join(SCRIPTS_DIR, "..", "data", "raw", "statistiche_fixture.xlsx"),
     os.path.join(SCRIPTS_DIR, "..", "data", "raw", "statistiche_fixture_prev.xlsx"),
+    os.path.join(SCRIPTS_DIR, "..", "data", "raw", "statistiche_fixture_current.xlsx"),
 ]
 if not all(os.path.exists(p) for p in FIXTURES):
     make_fixtures.main()

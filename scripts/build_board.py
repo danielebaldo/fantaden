@@ -252,8 +252,15 @@ def assign_affare_index(players: list, affare_cfg: dict) -> None:
 def build_players(quotazioni: list, statistiche: list, scoring: dict, overrides: dict,
                    image_template: str | None = None, season_id: int | None = None,
                    budget_totale: int | None = None, fvm_reference_budget: int | None = None,
-                   seasons_stats: list | None = None) -> list:
+                   seasons_stats: list | None = None, current_stats: list | None = None) -> list:
     stats_by_id = {s["id"]: s for s in statistiche}
+    # Statistiche della stagione in corso (es. 2026-27): solo per il popup
+    # giocatore in dashboard, MAI per lo scoring — usare stats parziali di
+    # una stagione ancora in corso penalizzerebbe chi ha giocato meno partite
+    # finora. Percorso completamente separato da stats_by_id/seasons_stats:
+    # non tocca compute_raw_indices, _combine_multi_season, compute_scores,
+    # assign_fasce, assign_affare_index.
+    current_stats_by_id = {s["id"]: s for s in (current_stats or [])}
     weights_by_role = scoring["weights"]
     override_players = overrides.get("players", {})
 
@@ -294,6 +301,12 @@ def build_players(quotazioni: list, statistiche: list, scoring: dict, overrides:
             image_template.format(season_id=season_id, player_id=q["id"])
             if image_template and season_id else None
         )
+
+        cur = current_stats_by_id.get(q["id"])
+        p["fantamedia_corrente"] = cur["fantamedia"] if cur else None
+        p["gol_fatti_corrente"] = cur["gol_fatti"] if cur else None
+        p["assist_corrente"] = cur["assist"] if cur else None
+        p["presenze_corrente"] = cur["presenze"] if cur else None
 
         if use_multi_season:
             combo = _combine_multi_season(q["position"], q["id"], seasons_by_id, ms_weights, ms_min_presenze)
@@ -420,6 +433,19 @@ def main():
                     print(f"[build_board] statistiche stagione {sid} non trovate ({season_path}), la salto")
             seasons_stats = loaded or None
 
+    # Statistiche della stagione corrente (in corso): sempre tentate, a
+    # differenza di seasons_stats non dipende da multi_season.enabled — è
+    # per il popup, non per lo score. File assente/non ancora scaricato
+    # (campionato non iniziato) -> lista vuota, nessun errore.
+    current_stats = []
+    template = settings["paths"].get("statistiche_season_json_template")
+    if template:
+        current_season_id = settings["season"]["current_season_id"]
+        current_path = repo_path(template.format(season_id=current_season_id))
+        if os.path.exists(current_path):
+            with open(current_path, "r", encoding="utf-8") as f:
+                current_stats = json.load(f)
+
     board = build_players(
         quotazioni, statistiche, scoring, overrides,
         image_template=settings["endpoints"]["image_template"],
@@ -427,6 +453,7 @@ def main():
         budget_totale=settings["auction_defaults"]["budget_totale"],
         fvm_reference_budget=settings.get("fvm_reference_budget"),
         seasons_stats=seasons_stats,
+        current_stats=current_stats,
     )
 
     board_path = repo_path(settings["paths"]["board_json"])

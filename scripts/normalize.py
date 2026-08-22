@@ -133,6 +133,16 @@ def main():
                 season_stats = normalize_stats(season_file)
                 _write_json(season_stats, repo_path(template.format(season_id=stats_season)))
 
+        # Stagione corrente (in corso, es. 2026-27): stesso template, id
+        # disgiunto da stats_season_ids quindi nessun conflitto. Se il file
+        # non esiste (fetch non ancora riuscito, campionato non iniziato) si
+        # salta senza errore: build_board.py degrada a campi "corrente" nulli.
+        current_season = settings["season"]["current_season_id"]
+        current_file = os.path.join(raw_dir, f"statistiche_{current_season}.xlsx")
+        if os.path.exists(current_file):
+            current_stats = normalize_stats(current_file)
+            _write_json(current_stats, repo_path(template.format(season_id=current_season)))
+
 
 if __name__ == "__main__":
     main()

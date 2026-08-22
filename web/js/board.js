@@ -113,7 +113,7 @@ function statusCell(player, state) {
   </div>`;
 }
 
-export function renderTableBody(tbody, players, state, history, onAction) {
+export function renderTableBody(tbody, players, state, history, onAction, onRowClick) {
   if (players.length === 0) {
     tbody.innerHTML = `<tr><td colspan="${COLUMNS.length}" class="empty-hint">Nessun giocatore corrisponde ai filtri.</td></tr>`;
     return;
@@ -143,8 +143,17 @@ export function renderTableBody(tbody, players, state, history, onAction) {
   }).join('');
 
   tbody.querySelectorAll('[data-action]').forEach((btn) => {
-    btn.addEventListener('click', () => onAction(btn.dataset.action, btn.dataset.id));
+    btn.addEventListener('click', (e) => {
+      e.stopPropagation();
+      onAction(btn.dataset.action, btn.dataset.id);
+    });
   });
+
+  if (onRowClick) {
+    tbody.querySelectorAll('tr.player-row').forEach((tr) => {
+      tr.addEventListener('click', () => onRowClick(tr.dataset.id));
+    });
+  }
 }
 
 // Apice accanto a Score con il numero di stagioni su cui è mediato (score

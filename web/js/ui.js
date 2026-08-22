@@ -19,6 +19,7 @@ const els = {
   waffleBar: document.getElementById('waffleBar'),
   monitorGrid: document.getElementById('monitorGrid'),
   roleTabs: document.getElementById('roleTabs'),
+  boardSeasonsNote: document.getElementById('boardSeasonsNote'),
   rosterTabs: document.getElementById('rosterTabs'),
   rosterPanelMia: document.querySelector('[data-roster-panel="mia"]'),
   rosterPanelRivali: document.querySelector('[data-roster-panel="rivali"]'),
@@ -119,6 +120,25 @@ function renderMetaInfo() {
   els.metaInfo.textContent =
     `Stagione ${meta.season.label} · Dati aggiornati: ${date} · ${meta.total_players} giocatori `
     + `(${meta.no_stats_count} senza statistiche stagione precedente)`;
+
+  if (els.boardSeasonsNote) {
+    const priorLabels = (meta.season.stats_season_ids || [])
+      .map((id) => shiftSeasonLabel(meta.season.label, meta.season.current_season_id - id))
+      .join(', ');
+    els.boardSeasonsNote.textContent =
+      `📌 Il listone (score, fasce, Pv, Fm) è calcolato sulle stagioni ${priorLabels}. `
+      + `Le statistiche della stagione in corso (${meta.season.label}) sono nel popup di ogni `
+      + `giocatore (click sulla riga).`;
+  }
+}
+
+// Sposta indietro di `delta` anni una label stagione "YYYY-YY" (es.
+// "2026-27" -> "2025-26" con delta=1): calcolata dagli id stagione in
+// meta.json invece di essere scritta a mano, così la nota sopra il listone
+// resta corretta ogni anno senza bisogno di toccare il codice.
+function shiftSeasonLabel(label, delta) {
+  const startYear = parseInt(label.split('-')[0], 10) - delta;
+  return `${startYear}-${String((startYear + 1) % 100).padStart(2, '0')}`;
 }
 
 function renderSetupPanel(result) {
@@ -233,7 +253,7 @@ function renderTable() {
     rerenderAll();
   });
   const rows = boardMod.filterAndSortPlayers(board, state, state.ui.activeTab, history);
-  boardMod.renderTableBody(els.playersTableBody, rows, state, history, handleRowAction);
+  boardMod.renderTableBody(els.playersTableBody, rows, state, history, handleRowAction, handleRowClick);
 }
 
 function renderRoster() {
@@ -537,6 +557,51 @@ function handleRowAction(action, id) {
   else if (action === 'buy') openBuyModal(player);
   else if (action === 'taken') openTakenModal(player);
   else if (action === 'remove') { stateMod.resetPlayer(state, id); rerenderAll(); }
+}
+
+function handleRowClick(id) {
+  const player = boardById[id];
+  if (player) openPlayerDetailModal(player);
+}
+
+// Popup di sola lettura al click sulla riga: fantamedia/gol/assist della
+// stagione in corso (meta.season.label, es. "2026-27") — se il campionato
+// non è ancora iniziato o l'update giornaliero non li ha ancora scaricati,
+// i campi *_corrente sono null e si mostra un messaggio onesto invece di
+// finti zeri. Sotto, per confronto immediato, gli stessi valori della
+// stagione precedente già mostrati in tabella.
+function openPlayerDetailModal(player) {
+  const hasCurrent = player.fantamedia_corrente != null || player.gol_fatti_corrente != null
+    || player.assist_corrente != null || player.presenze_corrente != null;
+
+  const currentBlock = hasCurrent
+    ? statRow('Presenze', player.presenze_corrente) + statRow('Fantamedia', fmt(player.fantamedia_corrente))
+      + statRow('Gol', player.gol_fatti_corrente) + statRow('Assist', player.assist_corrente)
+    : `<p class="hint">Dati non ancora disponibili: la stagione non è ancora iniziata o l'aggiornamento non è ancora arrivato.</p>`;
+
+  const bodyHtml = `
+    <div class="stat-block">
+      <h4>Stagione ${escapeHtml(meta.season.label)} (in corso)</h4>
+      ${currentBlock}
+    </div>
+    <div class="stat-block stat-block-prev">
+      <h4>Stagione precedente</h4>
+      ${statRow('Presenze', player.presenze)}
+      ${statRow('Fantamedia', fmt(player.fantamedia))}
+      ${statRow('Gol', player.gol_fatti)}
+      ${statRow('Assist', player.assist)}
+    </div>
+  `;
+
+  openModal(`${player.name} · ${player.team} (${player.position})`, bodyHtml, () => {});
+}
+
+function statRow(label, value) {
+  return `<div class="stat-row"><span>${label}</span><strong>${value != null ? value : '—'}</strong></div>`;
+}
+
+function fmt(n) {
+  return n != null ? n.toFixed(2) : null;
 }
 
 function handleRemoveRival(rivalId) {

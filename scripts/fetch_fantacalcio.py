@@ -133,6 +133,18 @@ def main():
                 "corretto in config/settings.json (vedi README, sezione Limiti noti)."
             )
 
+        # Statistiche della stagione corrente (in corso, es. 2026-27): stesso
+        # endpoint/pattern delle stagioni storiche ma con current_season_id,
+        # completamente indipendente da stats_season_ids (che alimenta solo lo
+        # scoring). fatal=False: a campionato non ancora iniziato l'endpoint
+        # può non rispondere ancora con un xlsx valido, e va bene così — il
+        # popup giocatore in dashboard mostrerà "dati non ancora disponibili"
+        # finché questo file non esiste. Nessun alias statistiche.xlsx: questo
+        # file non deve mai entrare nel ramo statistiche-singola-stagione.
+        current_url = settings["endpoints"]["statistics_url_template"].format(season_id=season)
+        current_dest = os.path.join(raw_dir, f"statistiche_{season}.xlsx")
+        _download(current_url, headers, current_dest, f"Statistiche stagione corrente {season}", fatal=False)
+
 
 if __name__ == "__main__":
     main()
