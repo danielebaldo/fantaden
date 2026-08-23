@@ -90,7 +90,7 @@ main {
    non come figlio diretto di main, evita di sfasare gli indici :nth-child
    del grid desktop qui sotto (tabella/rosa/movimenti selezionati per
    posizione) */
-.section-nav { display: flex; gap: 10px; flex-wrap: wrap; }
+.section-nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 
 /* layout per affiancare piano d'asta + tabella a desktop */
 @media (min-width: 1400px) {
@@ -456,7 +456,7 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 
 .roster-panel.hidden { display: none; }
 
-.board-note { margin: 0 0 10px; color: var(--text-muted); font-size: 0.8rem; }
+.board-note { margin: 0 0 10px; color: var(--text-muted); font-size: 0.9rem; }
 
 /* --- popup dettaglio giocatore (click sulla riga) --- */
 .player-row { cursor: pointer; }
