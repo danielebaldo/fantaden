@@ -1755,6 +1755,36 @@
     "fvm_m": 22
   },
   {
+    "id": 4664,
+    "name": "Badiashile",
+    "position": "D",
+    "position_mantra": "Dc",
+    "team": "Napoli",
+    "qt_att": 7,
+    "qt_i": 7,
+    "diff": 0,
+    "qt_att_m": 7,
+    "qt_i_m": 7,
+    "diff_m": 0,
+    "fvm": 22,
+    "fvm_m": 22
+  },
+  {
+    "id": 7580,
+    "name": "Sutalo J.",
+    "position": "D",
+    "position_mantra": "Dc",
+    "team": "Lazio",
+    "qt_att": 7,
+    "qt_i": 7,
+    "diff": 0,
+    "qt_att_m": 7,
+    "qt_i_m": 7,
+    "diff_m": 0,
+    "fvm": 19,
+    "fvm_m": 19
+  },
+  {
     "id": 6916,
     "name": "Ahanor",
     "position": "D",
@@ -4710,6 +4740,21 @@
     "fvm_m": 17
   },
   {
+    "id": 4479,
+    "name": "Elmas",
+    "position": "C",
+    "position_mantra": "W;T",
+    "team": "Atalanta",
+    "qt_att": 7,
+    "qt_i": 7,
+    "diff": 0,
+    "qt_att_m": 7,
+    "qt_i_m": 7,
+    "diff_m": 0,
+    "fvm": 28,
+    "fvm_m": 28
+  },
+  {
     "id": 5422,
     "name": "Zalewski",
     "position": "C",
@@ -6313,21 +6358,6 @@
     "diff_m": 0,
     "fvm": 4,
     "fvm_m": 4
-  },
-  {
-    "id": 7392,
-    "name": "Camara A.",
-    "position": "C",
-    "position_mantra": "M;C",
-    "team": "Udinese",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 3,
-    "fvm_m": 3
   },
   {
     "id": 6212,
