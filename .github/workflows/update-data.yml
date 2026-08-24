@@ -50,16 +50,6 @@ jobs:
           fi
           python3 scripts/fetch_fantacalcio.py $ARGS
 
-      # TEMPORANEO (Addendum 14, Fase A): indaga se le probabili formazioni
-      # sono leggibili con una GET diretta. continue-on-error così un suo
-      # fallimento non impatta mai la pipeline reale sotto. Da rimuovere
-      # (script + questo step) una volta conclusa l'indagine.
-      - name: "[TEMP] Indaga endpoint probabili formazioni"
-        continue-on-error: true
-        env:
-          FANTACALCIO_COOKIE: ${{ secrets.FANTACALCIO_COOKIE }}
-        run: python3 scripts/debug_inspect_probabili.py
-
       - name: Normalizza in JSON
         run: python3 scripts/normalize.py
 
