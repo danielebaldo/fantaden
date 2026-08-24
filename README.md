@@ -6,8 +6,8 @@ e ci aggiunge il pezzo che di solito si faceva a mano su Excel — una lista
 di scelte **divisa in fasce**, ricavata incrociando le quotazioni correnti
 con le statistiche della stagione precedente.
 
-Il progetto si ispira a due repository open source (nessun codice copiato,
-solo idee reimplementate):
+Il progetto si ispira a tre repository (nessun codice copiato, solo idee
+reimplementate):
 
 - **[bqit/fantaleghe-api-json](https://github.com/bqit/fantaleghe-api-json)** —
   per l'idea di scaricare l'Excel ufficiale delle quotazioni da
@@ -15,6 +15,13 @@ solo idee reimplementate):
 - **[renzullicarmine-ai/FantAsta-Fantacalcio](https://github.com/renzullicarmine-ai/FantAsta-Fantacalcio)** —
   per la matematica del budget d'asta (allocazione dinamica per reparto,
   tesoretto bidirezionale, Max Strategica / Max ALL-IN).
+- **[supermik1988/fantacalcio-mantra](https://github.com/supermik1988/fantacalcio-mantra)** —
+  per l'idea del "Campo" Mantra: schierare la rosa su un campo e vedere
+  quali moduli copre. Repo pubblico ma **senza licenza** (quindi nessun
+  permesso di riuso del codice) e con uno stack diverso dal nostro
+  (React/TypeScript/Tailwind): qui è tutto riscritto in vanilla JS. La
+  tabella moduli→ruoli è il regolamento Mantra di fantacalcio.it e il
+  matching bipartito è un algoritmo classico da manuale.
 
 ## Come funziona (in breve)
 

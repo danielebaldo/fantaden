@@ -3,7 +3,11 @@
 // in localStorage (nessun backend: il tool è pensato per un uso personale,
 // da browser, sia in locale sia da GitHub Pages).
 
+import { DEFAULT_MODULE, MODULES } from './mantra.js';
+
 const STORAGE_KEY = 'fantaden_state_v1';
+
+const ROSTER_TAB_KEYS = new Set(['mia', 'rivali', 'campo']);
 
 // Sentinel condiviso da board.js/ui.js per il tab "Tutti i ruoli" (listone +
 // Piano d'Asta): distinto dai codici ruolo reali (P/D/C/A) come già fa 'all'
@@ -23,6 +27,10 @@ export function createDefaultState(auctionDefaults) {
     wishlist: {},       // playerId -> { base, target, priority, nota }
     lostTargets: {},    // playerId -> { base, target, priority, nota, rivalId, costo, at }
     takenByOthers: {},  // playerId -> { rivalId, costo, ruolo }
+    campo: {            // Campo Mantra: modulo scelto e chi occupa quale slot
+      modulo: DEFAULT_MODULE,
+      schieramento: {}, // slotId -> playerId
+    },
     ui: {
       activeTab: 'P',
       rosterTab: 'mia', // 'mia' | 'rivali'
@@ -91,7 +99,76 @@ function hydrateState(state, fallback) {
     if (hydrated_entry) hydrated.lostTargets[id] = hydrated_entry;
   }
 
+  hydrated.campo = hydrateCampo(state.campo, fallback.campo);
+
+  // un tab sconosciuto (stato salvato da una versione diversa) torna al default
+  if (!ROSTER_TAB_KEYS.has(hydrated.ui.rosterTab)) {
+    hydrated.ui.rosterTab = fallback.ui.rosterTab;
+  }
+
   return hydrated;
+}
+
+// Idratazione del Campo: qui si valida solo la FORMA (modulo esistente,
+// schieramento come mappa slotId -> playerId). La validazione semantica
+// — il giocatore è ancora in rosa? il suo ruolo Mantra è ancora
+// compatibile con quello slot? — richiede la board, che state.js non
+// conosce: la fa ui.js dopo il caricamento dei dati, via pruneCampo().
+function hydrateCampo(raw, fallback) {
+  if (!raw || typeof raw !== 'object') return { ...fallback, schieramento: {} };
+  const known = MODULES.some((m) => m.id === raw.modulo);
+  const schieramento = {};
+  const rawSchieramento = raw.schieramento && typeof raw.schieramento === 'object'
+    ? raw.schieramento
+    : {};
+  const usati = new Set();
+  for (const [slotId, playerId] of Object.entries(rawSchieramento)) {
+    if (playerId == null) continue;
+    const pid = String(playerId);
+    if (usati.has(pid)) continue; // mai lo stesso giocatore in due slot
+    usati.add(pid);
+    schieramento[slotId] = pid;
+  }
+  return { modulo: known ? raw.modulo : fallback.modulo, schieramento };
+}
+
+// Scarta le assegnazioni non più valide (giocatore venduto, uscito dalla
+// wishlist, o con ruolo Mantra cambiato dopo una rigenerazione della
+// board). `isValid(slotId, playerId)` è fornita da ui.js, che ha la board.
+export function pruneCampo(state, isValid) {
+  const pulito = {};
+  for (const [slotId, playerId] of Object.entries(state.campo.schieramento)) {
+    if (isValid(slotId, playerId)) pulito[slotId] = playerId;
+  }
+  state.campo.schieramento = pulito;
+  return state;
+}
+
+export function setCampoModulo(state, moduloId, schieramento = {}) {
+  state.campo.modulo = moduloId;
+  state.campo.schieramento = schieramento;
+  return state;
+}
+
+export function setCampoSchieramento(state, schieramento) {
+  state.campo.schieramento = schieramento;
+  return state;
+}
+
+// Assegna un giocatore a uno slot, liberandolo prima da un eventuale
+// altro slot: sul campo non può esserci due volte.
+export function assignCampoSlot(state, slotId, playerId) {
+  const pid = String(playerId);
+  for (const [sid, existing] of Object.entries(state.campo.schieramento)) {
+    if (String(existing) === pid) delete state.campo.schieramento[sid];
+  }
+  state.campo.schieramento[slotId] = pid;
+  return state;
+}
+
+export function clearCampoSlot(state, slotId) {
+  delete state.campo.schieramento[slotId];
+  return state;
 }
 
 export function loadState(auctionDefaults) {

@@ -7,6 +7,8 @@ import * as historyMod from './history.js';
 import * as rivalsMod from './rivals.js';
 import * as stateMod from './state.js';
 import * as planMod from './plan.js';
+import * as mantraMod from './mantra.js';
+import { renderCampo } from './campo.js';
 
 const els = {
   loadError: document.getElementById('loadError'),
@@ -23,6 +25,8 @@ const els = {
   rosterTabs: document.getElementById('rosterTabs'),
   rosterPanelMia: document.querySelector('[data-roster-panel="mia"]'),
   rosterPanelRivali: document.querySelector('[data-roster-panel="rivali"]'),
+  rosterPanelCampo: document.querySelector('[data-roster-panel="campo"]'),
+  campoPanel: document.getElementById('campoPanel'),
   searchInput: document.getElementById('searchInput'),
   fasciaFilter: document.getElementById('fasciaFilter'),
   onlyAvailable: document.getElementById('onlyAvailable'),
@@ -83,6 +87,15 @@ async function init() {
   if (state.ui.activeTab !== stateMod.ALL_ROLES_TAB && !meta.roles.includes(state.ui.activeTab)) {
     state.ui.activeTab = meta.roles[0];
   }
+  // lo schieramento salvato può puntare a giocatori venduti, tolti dalla
+  // wishlist o con ruolo Mantra cambiato dopo una rigenerazione della board
+  stateMod.pruneCampo(state, (slotId, playerId) => {
+    const player = boardById[String(playerId)];
+    if (!player) return false;
+    if (!state.myTeam[String(playerId)] && !state.wishlist[String(playerId)]) return false;
+    const slot = mantraMod.getModule(state.campo.modulo).slots.find((s) => s.id === slotId);
+    return !!slot && mantraMod.isEligible({ roles: mantraMod.parseRoles(player.position_mantra) }, slot);
+  });
 
   wireStaticListeners();
   rerenderAll();
@@ -110,6 +123,7 @@ function rerenderAll() {
   renderRosterTabs();
   renderRoster();
   rivalsMod.renderRivals(els.rivalsList, state, boardById, { onRemoveRival: handleRemoveRival });
+  renderCampoPanel();
   renderMovements();
 
   stateMod.saveState(state);
@@ -230,6 +244,7 @@ function renderTabs() {
 const ROSTER_TABS = [
   { key: 'mia', label: 'La mia Rosa' },
   { key: 'rivali', label: 'Rivali' },
+  { key: 'campo', label: '⚽ Campo' },
 ];
 
 function renderRosterTabs() {
@@ -246,6 +261,123 @@ function renderRosterTabs() {
   });
   els.rosterPanelMia.classList.toggle('hidden', state.ui.rosterTab !== 'mia');
   els.rosterPanelRivali.classList.toggle('hidden', state.ui.rosterTab !== 'rivali');
+  els.rosterPanelCampo.classList.toggle('hidden', state.ui.rosterTab !== 'campo');
+}
+
+// --- Campo Mantra -------------------------------------------------------
+
+// Avviso one-shot mostrato sotto la striscia di copertura (es. "2 giocatori
+// spostati in panchina" dopo un cambio modulo): si consuma al render
+// successivo, così non resta appiccicato per sempre.
+let campoNotice = null;
+
+// Candidati schierabili: rosa acquistata + obiettivi wishlist. I secondi
+// vengono resi in modo distinto sul campo (tratteggio) perché non sono
+// ancora tuoi: servono a rispondere a "dove arriverei se li comprassi?".
+function campoCandidates() {
+  const byId = new Map();
+  const add = (id, entry, owned) => {
+    const p = boardById[String(id)];
+    if (!p || byId.has(String(id))) return;
+    byId.set(String(id), {
+      id: String(id),
+      name: p.name,
+      team: p.team,
+      roles: mantraMod.parseRoles(p.position_mantra),
+      price: owned ? (entry.costo || 0) : (entry.target || p.fvm_500 || p.qt_att || 0),
+      owned,
+    });
+  };
+  // prima gli acquistati: in caso di doppione vincono loro
+  for (const [id, entry] of Object.entries(state.myTeam)) add(id, entry, true);
+  for (const [id, entry] of Object.entries(state.wishlist)) add(id, entry, false);
+  return [...byId.values()];
+}
+
+function renderCampoPanel() {
+  const players = campoCandidates();
+  renderCampo(els.campoPanel, {
+    moduloId: state.campo.modulo,
+    schieramento: state.campo.schieramento,
+    players,
+    ranking: mantraMod.rankModules(players),
+    notice: campoNotice,
+  }, {
+    onSlotClick: (slotId) => openCampoSlotModal(slotId, players),
+    onModuloChange: (moduloId) => {
+      const target = mantraMod.getModule(moduloId);
+      const { schieramento, inPanchina } = mantraMod.reposition(state.campo.schieramento, target, players);
+      stateMod.setCampoModulo(state, target.id, schieramento);
+      campoNotice = inPanchina.length
+        ? `${inPanchina.length} giocator${inPanchina.length === 1 ? 'e spostato' : 'i spostati'} in panchina: il nuovo modulo non prevede quel ruolo.`
+        : null;
+      rerenderAll();
+    },
+    onAutoFill: () => {
+      // il seme è lo schieramento attuale: le scelte fatte a mano restano
+      const modulo = mantraMod.getModule(state.campo.modulo);
+      const schieramento = mantraMod.maxMatching(players, modulo, { seed: state.campo.schieramento });
+      stateMod.setCampoSchieramento(state, schieramento);
+      rerenderAll();
+    },
+    onClear: () => {
+      stateMod.setCampoSchieramento(state, {});
+      rerenderAll();
+    },
+  });
+  campoNotice = null;
+}
+
+function openCampoSlotModal(slotId, players) {
+  const modulo = mantraMod.getModule(state.campo.modulo);
+  const slot = modulo.slots.find((s) => s.id === slotId);
+  if (!slot) return;
+
+  const currentId = state.campo.schieramento[slotId] != null
+    ? String(state.campo.schieramento[slotId])
+    : null;
+  const schieratiAltrove = new Set(
+    Object.entries(state.campo.schieramento)
+      .filter(([sid]) => sid !== slotId)
+      .map(([, pid]) => String(pid))
+  );
+
+  const eleggibili = players
+    .filter((p) => mantraMod.isEligible(p, slot) && !schieratiAltrove.has(p.id))
+    .sort((a, b) => (Number(b.owned) - Number(a.owned)) || (b.price - a.price));
+
+  const lista = eleggibili.length > 0
+    ? `<ul class="campo-pick">${eleggibili.map((p) => `
+        <li>
+          <button type="button" class="campo-pick-btn${p.id === currentId ? ' is-current' : ''}" data-pick-id="${p.id}">
+            <span class="campo-pick-name">${escapeHtml(p.name)}</span>
+            <span class="tag">${escapeHtml(p.roles.join('/'))}</span>
+            <span class="campo-pick-team">${escapeHtml(p.team)}</span>
+            <span class="campo-pick-flag">${p.owned ? '🛒' : '⭐'}</span>
+          </button>
+        </li>
+      `).join('')}</ul>`
+    : `<p class="hint">Nessun giocatore in rosa o in wishlist può occupare questo slot
+       (${escapeHtml(slot.label)}). È un buco da colmare in asta.</p>`;
+
+  const azioni = currentId
+    ? `<button type="button" class="link-btn danger" data-pick-clear="1">✕ Libera lo slot</button>`
+    : '';
+
+  openModal(`Slot ${slot.label}`, `${lista}${azioni}`, () => {});
+
+  els.modalBody.querySelectorAll('[data-pick-id]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      stateMod.assignCampoSlot(state, slotId, btn.dataset.pickId);
+      closeModal();
+      rerenderAll();
+    });
+  });
+  els.modalBody.querySelector('[data-pick-clear]')?.addEventListener('click', () => {
+    stateMod.clearCampoSlot(state, slotId);
+    closeModal();
+    rerenderAll();
+  });
 }
 
 function renderTable() {

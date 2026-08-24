@@ -458,6 +458,104 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 
 .board-note { margin: 0 0 10px; color: var(--text-muted); font-size: 0.9rem; }
 
+/* --- Campo Mantra (tab della card rosa) --- */
+.campo-controls { display: flex; flex-wrap: wrap; gap: 10px; align-items: end; margin-bottom: 10px; }
+.campo-modulo { display: flex; flex-direction: column; gap: 4px; font-size: 0.85rem; color: var(--text-muted); }
+.campo-modulo select { font: inherit; }
+.campo-coverage { margin: 0 0 8px; padding: 6px 10px; border-radius: 6px; font-size: 0.9rem; }
+.campo-notice { margin: 0 0 8px; font-size: 0.85rem; color: var(--warning); }
+
+/* il campo tiene le proporzioni di un campo visto dall'alto; gli slot sono
+   posizionati in percentuale sopra l'SVG, che a sua volta si stira con il
+   contenitore (viewBox 100x150 + preserveAspectRatio="none") */
+.campo-wrap {
+  position: relative;
+  aspect-ratio: 2 / 3;
+  max-width: 520px;
+  margin: 0 auto;
+  border-radius: var(--radius);
+  overflow: hidden;
+  background: linear-gradient(to top, #2f7d32 0%, #37913b 50%, #2f7d32 100%);
+}
+:root:not([data-theme="light"]) .campo-wrap { background: linear-gradient(to top, #1d4f20 0%, #245e28 50%, #1d4f20 100%); }
+:root[data-theme="dark"] .campo-wrap { background: linear-gradient(to top, #1d4f20 0%, #245e28 50%, #1d4f20 100%); }
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) .campo-wrap { background: linear-gradient(to top, #1d4f20 0%, #245e28 50%, #1d4f20 100%); }
+}
+
+.campo-pitch { position: absolute; inset: 0; width: 100%; height: 100%; color: rgba(255,255,255,0.45); }
+
+.campo-slot {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 1px;
+  width: 76px;
+  padding: 4px 3px;
+  border: 2px solid transparent;
+  border-radius: 6px;
+  background: var(--surface);
+  color: var(--text);
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.68rem;
+  line-height: 1.15;
+  box-shadow: var(--shadow);
+}
+.campo-slot:hover { filter: brightness(1.08); }
+.campo-slot .campo-slot-role { font-weight: 700; font-size: 0.62rem; opacity: 0.75; }
+/* il nome non deve sbordare dal dischetto e finire sotto quello accanto:
+   troncatura con ellissi dentro la larghezza dello slot */
+.campo-slot .campo-slot-name {
+  font-weight: 600;
+  white-space: nowrap;
+  max-width: 100%;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* colore per reparto, riusa le stesse variabili dei tab e delle card budget */
+.campo-slot.role-P { border-color: var(--role-P); }
+.campo-slot.role-D { border-color: var(--role-D); }
+.campo-slot.role-C { border-color: var(--role-C); }
+.campo-slot.role-A { border-color: var(--role-A); }
+
+.campo-slot-empty { background: color-mix(in srgb, var(--surface) 82%, transparent); border-style: dashed; border-color: var(--border); color: var(--text-muted); }
+/* obiettivo wishlist: non è ancora tuo, quindi tratteggiato */
+.campo-slot-wishlist { border-style: dashed; }
+/* Nessuno in rosa può coprire questo slot: è il buco da colmare in asta.
+   Oltre al bordo rosso serve il fondo colorato, altrimenti si confonde con
+   un attaccante in wishlist (anch'esso tratteggiato e rosso di reparto). */
+.campo-slot-uncoverable {
+  border-color: var(--danger);
+  color: var(--danger);
+  background: color-mix(in srgb, var(--danger) 20%, var(--surface));
+}
+
+.campo-legend { margin: 10px 0 0; font-size: 0.8rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
+.campo-legend-item { display: inline-flex; align-items: center; gap: 5px; }
+.campo-legend-box { width: 16px; height: 16px; border: 2px solid var(--text-muted); border-radius: 3px; display: inline-block; flex: none; }
+
+/* lista dei giocatori eleggibili nel modale di scelta slot */
+.campo-pick { list-style: none; padding: 0; margin: 0 0 10px; max-height: 320px; overflow-y: auto; }
+.campo-pick-btn {
+  display: flex; align-items: center; gap: 8px; width: 100%;
+  padding: 7px 8px; margin-bottom: 6px;
+  background: var(--surface-2); border: 1px solid var(--border); border-radius: 6px;
+  cursor: pointer; font: inherit; font-size: 0.85rem; text-align: left; color: var(--text);
+}
+.campo-pick-btn:hover { filter: brightness(1.08); }
+.campo-pick-btn.is-current { border-color: var(--primary); }
+.campo-pick-name { font-weight: 600; flex: 1; }
+.campo-pick-team { color: var(--text-muted); font-size: 0.8rem; }
+
+@media (max-width: 640px) {
+  .campo-wrap { max-width: 100%; }
+  .campo-slot { width: 54px; font-size: 0.62rem; }
+}
+
 /* --- popup dettaglio giocatore (click sulla riga) --- */
 .player-row { cursor: pointer; }
 .popup-status { margin-bottom: 14px; padding-bottom: 12px; border-bottom: 1px solid var(--border); }
