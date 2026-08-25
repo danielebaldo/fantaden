@@ -286,3 +286,50 @@ test('reposition non duplica un giocatore fra due slot', () => {
   assert.equal(schierati.length, new Set(schierati).size);
   assert.equal(schierati.length, 1);
 });
+
+// ---------------------------------------------------------------------------
+// aderenza al grafico ufficiale
+// ---------------------------------------------------------------------------
+
+// Tabella trascritta dal grafico ufficiale "MANTRA EXPERIENCE — Edizione
+// 2026/2027" di fantacalcio.it. È l'unica parte di mantra.js che non si può
+// dedurre né testare per proprietà: sono dati di regolamento. Pinnarla qui
+// significa che qualunque modifica futura alla tabella deve essere una
+// scelta consapevole, non una svista.
+//
+// Notazione del grafico (P, DC, DD, DS, PC maiuscoli) tradotta nei codici
+// usati dai dati di fantacalcio.it (Por, Dc, Dd, Ds, Pc).
+const GRAFICO_UFFICIALE = {
+  '3-4-3':   ['P','DC','DC','DC/B','E','M/C','C','E','W/A','W/A','A/PC'],
+  '3-4-1-2': ['P','DC','DC','DC/B','E','M/C','C','E','T','A/PC','A/PC'],
+  '3-4-2-1': ['P','DC','DC','DC/B','M','E','M/C','E/W','T','T/A','A/PC'],
+  '3-5-2':   ['P','DC','DC','DC/B','M','E','M/C','C','E/W','A/PC','A/PC'],
+  '3-5-1-1': ['P','DC','DC','DC/B','M','M','C','E/W','E/W','T/A','A/PC'],
+  '4-3-3':   ['P','DD','DC','DC','DS','M/C','M','C','W/A','W/A','A/PC'],
+  '4-3-1-2': ['P','DD','DC','DC','DS','M/C','M','C','T','T/A/PC','A/PC'],
+  '4-4-2':   ['P','DD','DC','DC','DS','M/C','E','C','E/W','A/PC','A/PC'],
+  '4-1-4-1': ['P','DD','DC','DC','DS','M','C/T','T','E/W','W','A/PC'],
+  '4-4-1-1': ['P','DD','DC','DC','DS','M','C','E/W','E/W','T/A','A/PC'],
+  '4-2-3-1': ['P','DD','DC','DC','DS','M','M/C','W/T','T','W/A','A/PC'],
+};
+const CODICE_GRAFICO = { P: 'Por', DC: 'Dc', DD: 'Dd', DS: 'Ds', PC: 'Pc' };
+const traduciEtichetta = (e) =>
+  e.split('/').map((r) => CODICE_GRAFICO[r] || r).join('/');
+
+test('i moduli sono esattamente quelli del grafico ufficiale', () => {
+  assert.deepEqual(
+    MODULES.map((m) => m.id).sort(),
+    Object.keys(GRAFICO_UFFICIALE).sort(),
+  );
+});
+
+test('ogni modulo ha gli stessi slot del grafico ufficiale', () => {
+  // confronto come multiset: la posizione sul campo (x/y) è una scelta di
+  // resa nostra, ciò che deve combaciare sono i ruoli ammessi per slot
+  for (const [id, slotsUfficiali] of Object.entries(GRAFICO_UFFICIALE)) {
+    const modulo = getModule(id);
+    const attesi = slotsUfficiali.map(traduciEtichetta).sort();
+    const nostri = modulo.slots.map((s) => s.roles.join('/')).sort();
+    assert.deepEqual(nostri, attesi, `modulo ${id}`);
+  }
+});
