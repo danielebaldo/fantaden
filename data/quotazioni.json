@@ -7125,6 +7125,21 @@
     "fvm_m": 15
   },
   {
+    "id": 7600,
+    "name": "Osmajic",
+    "position": "A",
+    "position_mantra": "Pc",
+    "team": "Genoa",
+    "qt_att": 8,
+    "qt_i": 8,
+    "diff": 0,
+    "qt_att_m": 7,
+    "qt_i_m": 7,
+    "diff_m": 0,
+    "fvm": 30,
+    "fvm_m": 27
+  },
+  {
     "id": 5436,
     "name": "Raimondo",
     "position": "A",
