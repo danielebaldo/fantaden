@@ -3,6 +3,7 @@
 // business qui: le mutazioni di stato passano sempre dai callback forniti
 // da ui.js, board.js si limita a leggere `state` e disegnare.
 import { getPlayerStatus, ALL_ROLES_TAB } from './state.js';
+import { MANTRA_ROLES, parseRoles } from './mantra.js';
 import { sparklineSVG } from './history.js';
 
 const COLUMNS = [
@@ -43,6 +44,12 @@ export function filterAndSortPlayers(board, state, role, history) {
   }
   if (state.ui.fasciaFilter !== 'all') {
     rows = rows.filter((p) => p.fascia === state.ui.fasciaFilter);
+  }
+  // Ruolo Mantra: un polivalente "Ds;E" esce sia filtrando Ds sia filtrando
+  // E — la domanda utile è "chi può giocare lì", non "qual è il suo ruolo
+  // principale". parseRoles arriva da mantra.js, già usata dal Campo.
+  if (state.ui.mantraFilter !== 'all') {
+    rows = rows.filter((p) => parseRoles(p.position_mantra).includes(state.ui.mantraFilter));
   }
   if (state.ui.onlyAvailable) {
     rows = rows.filter((p) => getPlayerStatus(state, p.id) === 'available');
@@ -189,6 +196,52 @@ function trendArrow(p) {
 export function populateFasciaFilter(select, fasciaLabels, current) {
   select.innerHTML = '<option value="all">Tutte le fasce</option>' +
     fasciaLabels.map((f) => `<option value="${f}"${f === current ? ' selected' : ''}>${f}</option>`).join('');
+}
+
+// Ruoli Mantra effettivamente presenti fra i giocatori di un macro ruolo
+// (o di tutta la board col sentinel "tutti i ruoli"). Derivati dai dati e
+// non da una mappatura scritta a mano: i ruoli Mantra sconfinano fra i
+// reparti classici (80 difensori sanno fare E, 46 centrocampisti W), e una
+// tabella fissa non li proporrebbe mai. Ordine canonico di MANTRA_ROLES,
+// più prevedibile dell'ordine per frequenza.
+export function mantraRoleOptions(board, role) {
+  const counts = new Map();
+  for (const p of board) {
+    if (role !== ALL_ROLES_TAB && p.position !== role) continue;
+    for (const r of parseRoles(p.position_mantra)) {
+      counts.set(r, (counts.get(r) || 0) + 1);
+    }
+  }
+  return Object.keys(MANTRA_ROLES)
+    .filter((r) => counts.has(r))
+    .map((r) => ({
+      value: r,
+      label: MANTRA_ROLES[r].label,
+      count: counts.get(r),
+      reparto: MANTRA_ROLES[r].reparto,
+    }));
+}
+
+// Gemella di populateFasciaFilter. Le opzioni sono raggruppate per reparto
+// del ruolo Mantra: anche dentro un singolo macro ruolo il raggruppamento
+// dice qualcosa ("questi difensori sanno fare anche E o W").
+export function populateMantraFilter(select, options, current, roleNames = {}) {
+  const groups = [];
+  for (const opt of options) {
+    const last = groups[groups.length - 1];
+    if (last && last.reparto === opt.reparto) last.items.push(opt);
+    else groups.push({ reparto: opt.reparto, items: [opt] });
+  }
+  const optionHtml = (o) =>
+    `<option value="${o.value}"${o.value === current ? ' selected' : ''}>`
+    + `${escapeHtml(o.value)} · ${escapeHtml(o.label)} (${o.count})</option>`;
+
+  select.innerHTML = '<option value="all">Tutti i ruoli Mantra</option>'
+    + groups.map((g) => (
+      groups.length > 1
+        ? `<optgroup label="${escapeHtml(roleNames[g.reparto] || g.reparto)}">${g.items.map(optionHtml).join('')}</optgroup>`
+        : g.items.map(optionHtml).join('')
+    )).join('');
 }
 
 function escapeHtml(str) {

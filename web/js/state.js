@@ -37,6 +37,7 @@ export function createDefaultState(auctionDefaults) {
       planCollapsed: false,
       search: '',
       fasciaFilter: 'all',
+      mantraFilter: 'all',  // ruolo Mantra selezionato nel listone ('all' = nessun filtro)
       onlyAvailable: false,
       onlyWishlist: false,
       onlyRigoristi: false,

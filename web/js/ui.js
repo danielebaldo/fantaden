@@ -29,6 +29,7 @@ const els = {
   campoPanel: document.getElementById('campoPanel'),
   searchInput: document.getElementById('searchInput'),
   fasciaFilter: document.getElementById('fasciaFilter'),
+  mantraFilter: document.getElementById('mantraFilter'),
   onlyAvailable: document.getElementById('onlyAvailable'),
   onlyWishlist: document.getElementById('onlyWishlist'),
   onlyRigoristi: document.getElementById('onlyRigoristi'),
@@ -382,6 +383,15 @@ function openCampoSlotModal(slotId, players) {
 
 function renderTable() {
   boardMod.populateFasciaFilter(els.fasciaFilter, boardMod.FASCIA_ORDER, state.ui.fasciaFilter);
+  // Il filtro Mantra è contestuale al macro ruolo attivo: cambiando tab il
+  // ruolo selezionato può non esistere più (es. "Por" passando ai Difensori).
+  // Si azzera invece di lasciare una tabella vuota senza spiegazione.
+  const mantraOptions = boardMod.mantraRoleOptions(board, state.ui.activeTab);
+  if (state.ui.mantraFilter !== 'all'
+      && !mantraOptions.some((o) => o.value === state.ui.mantraFilter)) {
+    state.ui.mantraFilter = 'all';
+  }
+  boardMod.populateMantraFilter(els.mantraFilter, mantraOptions, state.ui.mantraFilter, meta.role_names);
   boardMod.renderTableHead(els.playersTableHead, state, (col) => {
     if (state.ui.sortBy === col) {
       state.ui.sortDir = state.ui.sortDir === 'asc' ? 'desc' : 'asc';
@@ -935,6 +945,11 @@ function wireStaticListeners() {
   });
   els.fasciaFilter.addEventListener('change', () => {
     state.ui.fasciaFilter = els.fasciaFilter.value;
+    renderTable();
+    stateMod.saveState(state);
+  });
+  els.mantraFilter.addEventListener('change', () => {
+    state.ui.mantraFilter = els.mantraFilter.value;
     renderTable();
     stateMod.saveState(state);
   });
