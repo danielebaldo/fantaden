@@ -110,7 +110,27 @@ function roleConfigFromState() {
   return cfg;
 }
 
+// Un errore qui dentro interrompeva il rendering a metà lasciando la pagina
+// mezza vuota senza dire nulla: budget e tab disegnati (vengono prima),
+// listone e sezioni successive no. Capita in modo tipico dopo un deploy, se
+// il browser tiene in cache una versione mista dei moduli JS (index.html
+// nuova + board.js vecchio -> "X is not a function"). Meglio un messaggio
+// che spiega cosa fare di una schermata muta.
 function rerenderAll() {
+  try {
+    renderEverything();
+  } catch (err) {
+    console.error('[ui] rendering fallito:', err);
+    els.loadError.hidden = false;
+    els.loadError.textContent =
+      `Errore nel disegnare la pagina: ${err.message}. `
+      + 'Se il sito è stato appena aggiornato, il browser può avere in cache una '
+      + 'versione mista dei file: ricarica forzando il refresh '
+      + '(Ctrl+Shift+R, oppure Cmd+Shift+R su Mac).';
+  }
+}
+
+function renderEverything() {
   const squadStats = stateMod.squadStatsByRole(state, meta.roles, boardById);
   const result = computeAuctionState(state.auction.budgetTotale, meta.roles, roleConfigFromState(), squadStats);
 
