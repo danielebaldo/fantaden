@@ -7,6 +7,7 @@ import {
   MANTRA_ROLES, MODULES, DEFAULT_MODULE, getModule,
   parseRoles, isEligible, occupiedRole, isSlotCoverable,
   maxMatching, countFilled, rankModules, uncoveredSummary, reposition,
+  adaptableRoles, adaptCandidates,
 } from '../web/js/mantra.js';
 
 // helper: costruisce un giocatore normalizzato come fa ui.js
@@ -332,4 +333,58 @@ test('ogni modulo ha gli stessi slot del grafico ufficiale', () => {
     const nostri = modulo.slots.map((s) => s.roles.join('/')).sort();
     assert.deepEqual(nostri, attesi, `modulo ${id}`);
   }
+});
+
+// ---------------------------------------------------------------------------
+// adattamenti (tabella sostituzioni ufficiale)
+// ---------------------------------------------------------------------------
+
+// Valori trascritti dalla "Tabella sostituzioni per schema" di
+// fantacalcio.it. Solo le celle "-1" semplici: le "-1*" (gialle) sono
+// escluse perché il regolamento le vieta in fase di inserimento formazione.
+test('adaptableRoles rispetta la tabella sostituzioni ufficiale', () => {
+  const casi = [
+    // [modulo, etichetta slot, ruoli adattabili attesi]
+    ['4-3-3', 'Ds', ['Dc']],                 // un centrale fa il terzino con -1
+    ['4-3-3', 'Dd', ['Dc']],
+    ['3-4-3', 'Dc', []],                     // in difesa a 3 nessun adattamento
+    ['3-4-3', 'Dc/B', []],
+    ['3-5-2', 'Por', []],                    // il portiere non si adatta mai
+    ['3-4-3', 'E', ['Dd', 'Ds', 'Dc', 'B']],
+    ['3-5-2', 'M', ['Dd', 'Ds', 'Dc', 'B']], // E->M è -1*, quindi escluso
+    ['3-4-3', 'M/C', ['Dd', 'Ds', 'Dc', 'B', 'E']],
+    ['3-4-3', 'C', ['Dd', 'Ds', 'Dc', 'B', 'E', 'M']],
+    ['3-4-3', 'A/Pc', ['Dd', 'Ds', 'Dc', 'B', 'E', 'M', 'C', 'T', 'W']],
+  ];
+  for (const [moduloId, label, attesi] of casi) {
+    const slot = getModule(moduloId).slots.find((s) => s.label === label);
+    assert.ok(slot, `${moduloId}: manca lo slot ${label}`);
+    assert.deepEqual(adaptableRoles(moduloId, slot), attesi, `${moduloId} / ${label}`);
+  }
+});
+
+test('il 4-1-4-1 ha le sue eccezioni: T e W non si adattano a vicenda', () => {
+  // nella tabella sono le celle "no" in rosso, non dei -1*
+  const ew414 = getModule('4-1-4-1').slots.find((s) => s.label === 'E/W');
+  assert.ok(!adaptableRoles('4-1-4-1', ew414).includes('T'),
+    'nel 4-1-4-1 un T non può adattarsi su E/W');
+  // negli altri moduli lo stesso slot accetta il T con malus
+  const ew442 = getModule('4-4-2').slots.find((s) => s.label === 'E/W');
+  assert.ok(adaptableRoles('4-4-2', ew442).includes('T'),
+    'nel 4-4-2 un T si adatta su E/W');
+});
+
+test('adaptCandidates esclude chi è già eleggibile a ruolo nativo', () => {
+  const slotDs = getModule('4-3-3').slots.find((s) => s.id === 'd1'); // ['Ds']
+  const terzino = p(1, 'Ds');   // nativo: non è un adattamento
+  const centrale = p(2, 'Dc');  // adattabile con -1
+  const ala = p(3, 'W');        // non può proprio
+  const cand = adaptCandidates('4-3-3', slotDs, [terzino, centrale, ala]);
+  assert.deepEqual(cand.map((c) => c.id), [2]);
+});
+
+test('adaptCandidates è vuoto dove il regolamento non ammette adattamenti', () => {
+  const slotDc = getModule('3-4-3').slots.find((s) => s.id === 'd1'); // ['Dc']
+  const cand = adaptCandidates('3-4-3', slotDc, [p(1, 'Ds'), p(2, 'Dd'), p(3, 'B')]);
+  assert.deepEqual(cand, [], 'in difesa a 3 gli scambi fra difensori sono -1*, non -1');
 });

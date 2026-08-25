@@ -2,7 +2,7 @@
 // percentuale, selettore modulo e riepilogo copertura. Nessuna logica di
 // dominio qui (sta in mantra.js) e nessuna mutazione di stato: le azioni
 // passano dai callback forniti da ui.js, come già fa board.js.
-import { MANTRA_ROLES, getModule, isEligible, isSlotCoverable, occupiedRole } from './mantra.js';
+import { MANTRA_ROLES, getModule, isEligible, isSlotCoverable, occupiedRole, adaptCandidates } from './mantra.js';
 
 // Campo disegnato in SVG invece che con un'immagine: scala senza sfocare,
 // pesa nulla e prende i colori dal tema via `currentColor` (stesso
@@ -65,8 +65,16 @@ export function renderCampo(container, { moduloId, schieramento, players, rankin
       `;
     } else {
       classes.push('campo-slot-empty');
-      // nessuno in rosa/wishlist può giocare qui: è il buco da colmare in asta
-      if (!isSlotCoverable(s, players)) classes.push('campo-slot-uncoverable');
+      // Tre stati per uno slot vuoto, dal migliore al peggiore:
+      // 1. qualcuno in rosa ci gioca a ruolo -> vuoto e basta
+      // 2. nessuno a ruolo, ma qualcuno si adatterebbe con -1 (tabella
+      //    sostituzioni ufficiale) -> lo si segnala, senza permetterlo:
+      //    schierarlo davvero resta fuori dal Campo
+      // 3. nessuno in nessun modo -> è il buco da colmare in asta
+      if (!isSlotCoverable(s, players)) {
+        const adattabili = adaptCandidates(modulo.id, s, players);
+        classes.push(adattabili.length > 0 ? 'campo-slot-adattabile' : 'campo-slot-uncoverable');
+      }
       inner = `
         <span class="campo-slot-role">${escapeHtml(s.label)}</span>
         <span class="campo-slot-name">—</span>
@@ -74,9 +82,19 @@ export function renderCampo(container, { moduloId, schieramento, players, rankin
     }
 
     const eleggibili = players.filter((p) => isEligible(p, s)).length;
-    const title = player
-      ? `${player.name} — ${s.label}${player.owned ? '' : ' (obiettivo wishlist)'}`
-      : `${s.label}: ${eleggibili} giocatori disponibili`;
+    let title;
+    if (player) {
+      title = `${player.name} — ${s.label}${player.owned ? '' : ' (obiettivo wishlist)'}`;
+    } else if (eleggibili > 0) {
+      title = `${s.label}: ${eleggibili} giocatori disponibili a ruolo`;
+    } else {
+      const adattabili = adaptCandidates(modulo.id, s, players);
+      title = adattabili.length > 0
+        ? `${s.label}: nessuno a ruolo. Con adattamento (−1): `
+          + adattabili.slice(0, 4).map((a) => `${a.name} (${a.roles.join('/')})`).join(', ')
+          + (adattabili.length > 4 ? ` e altri ${adattabili.length - 4}` : '')
+        : `${s.label}: nessuno in rosa può coprirlo, nemmeno adattandosi`;
+    }
 
     return `
       <button type="button" class="${classes.join(' ')}" data-slot-id="${s.id}"
@@ -105,6 +123,7 @@ export function renderCampo(container, { moduloId, schieramento, players, rankin
     <p class="campo-legend">
       Clicca uno slot per schierare un giocatore.
       <span class="campo-legend-item"><span class="campo-legend-box campo-slot-wishlist"></span> obiettivo wishlist (non ancora tuo)</span>
+      <span class="campo-legend-item"><span class="campo-legend-box campo-slot-adattabile"></span> copribile solo con adattamento (−1)</span>
       <span class="campo-legend-item"><span class="campo-legend-box campo-slot-uncoverable"></span> nessuno in rosa può coprirlo</span>
     </p>
   `;

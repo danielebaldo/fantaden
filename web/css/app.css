@@ -533,6 +533,14 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
   color: var(--danger);
   background: color-mix(in srgb, var(--danger) 20%, var(--surface));
 }
+/* copribile solo adattando un giocatore (malus -1, tabella sostituzioni
+   ufficiale): meno grave del rosso, ma è comunque un posto da sistemare */
+.campo-slot-adattabile {
+  border-color: var(--warning);
+  color: var(--warning);
+  background: color-mix(in srgb, var(--warning) 18%, var(--surface));
+}
+.campo-adapt-hint { margin: 0 0 10px; }
 
 .campo-legend { margin: 10px 0 0; font-size: 0.8rem; color: var(--text-muted); display: flex; flex-wrap: wrap; gap: 12px; align-items: center; }
 .campo-legend-item { display: inline-flex; align-items: center; gap: 5px; }

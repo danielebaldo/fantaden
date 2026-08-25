@@ -197,9 +197,13 @@ export function getModule(moduloId) {
   return MODULES.find((m) => m.id === moduloId) || MODULES.find((m) => m.id === DEFAULT_MODULE);
 }
 
-// Eleggibilità: intersezione secca fra i ruoli del giocatore e quelli
-// ammessi dallo slot. In Mantra non esiste "adattamento": o il ruolo c'è
-// o non c'è.
+// Eleggibilità a RUOLO NATIVO: intersezione secca fra i ruoli del giocatore
+// e quelli ammessi dallo slot, senza malus.
+//
+// Gli adattamenti esistono (vedi ADAPT_BY_SLOT più sotto: un difensore può
+// fare il centrocampista con -1), ma restano fuori da qui di proposito: il
+// Campo li segnala senza permettere di schierarli, così lo schieramento
+// costruito è sempre quello a punteggio pieno.
 export function isEligible(player, slot) {
   if (!player || !Array.isArray(player.roles)) return false;
   return player.roles.some((r) => slot.roles.includes(r));
@@ -217,6 +221,62 @@ export function occupiedRole(player, slot) {
 // d'asta più utile (nessuno in rosa può fare quel ruolo → va comprato).
 export function isSlotCoverable(slot, players) {
   return players.some((p) => isEligible(p, slot));
+}
+
+// --- adattamenti (malus -1) ---------------------------------------------
+//
+// Dalla "Tabella sostituzioni per schema" ufficiale di fantacalcio.it.
+// Chiave: etichetta dello slot. Valore: ruoli che NON sono nativi per quello
+// slot ma possono comunque occuparlo pagando un malus di 1 punto.
+//
+// Sono esclusi di proposito i "-1*" (celle gialle nella tabella): il
+// regolamento li vieta in fase di inserimento formazione e li ammette solo
+// nel calcolo finale, dopo sostituzioni obbligate non ottimali. Il Campo
+// simula proprio l'inserimento formazione, quindi per noi valgono come "no".
+//
+// La regolarità di fondo è "si adatta in avanti": un difensore può fare il
+// centrocampista con -1, il contrario è vietato o solo post-sostituzione.
+const ADAPT_BY_SLOT = {
+  Por: [],
+  Dc: [],
+  'Dc/B': [],
+  Ds: ['Dc'],
+  Dd: ['Dc'],
+  E: ['Dd', 'Ds', 'Dc', 'B'],
+  M: ['Dd', 'Ds', 'Dc', 'B'],
+  'M/C': ['Dd', 'Ds', 'Dc', 'B', 'E'],
+  C: ['Dd', 'Ds', 'Dc', 'B', 'E', 'M'],
+  'E/W': ['Dd', 'Ds', 'Dc', 'B', 'M', 'C', 'T'],
+  T: ['Dd', 'Ds', 'Dc', 'B', 'E', 'M', 'C'],
+  'T/A': ['Dd', 'Ds', 'Dc', 'B', 'E', 'M', 'C', 'W'],
+  'W/A': ['Dd', 'Ds', 'Dc', 'B', 'E', 'M', 'C', 'T'],
+  'A/Pc': ['Dd', 'Ds', 'Dc', 'B', 'E', 'M', 'C', 'T', 'W'],
+  'T/A/Pc': ['Dd', 'Ds', 'Dc', 'B', 'E', 'M', 'C', 'W'],
+  'C/T': ['Dd', 'Ds', 'Dc', 'B', 'E', 'M'],
+  W: ['Dd', 'Ds', 'Dc', 'B', 'E', 'M', 'C'],
+  'W/T': ['Dd', 'Ds', 'Dc', 'B', 'E', 'M', 'C'],
+};
+
+// Eccezioni per modulo (celle "no" in rosso nella tabella). Nel 4-1-4-1 gli
+// slot avanzati T e W si rifiutano a vicenda; l'unica differenza pratica
+// rispetto alla tabella base è che lì E/W non accetta un T.
+const ADAPT_OVERRIDES = {
+  '4-1-4-1': { 'E/W': ['Dd', 'Ds', 'Dc', 'B', 'M', 'C'] },
+};
+
+// Ruoli che possono occupare lo slot con malus (esclusi quelli nativi).
+export function adaptableRoles(moduloId, slot) {
+  const override = ADAPT_OVERRIDES[moduloId]?.[slot.label];
+  return override || ADAPT_BY_SLOT[slot.label] || [];
+}
+
+// Giocatori in rosa che potrebbero coprire lo slot adattandosi (-1).
+// Usato per SEGNALARE l'opzione: lo schieramento vero resta a ruolo nativo.
+export function adaptCandidates(moduloId, slot, players) {
+  const ammessi = adaptableRoles(moduloId, slot);
+  if (ammessi.length === 0) return [];
+  return players.filter((p) =>
+    !isEligible(p, slot) && p.roles.some((r) => ammessi.includes(r)));
 }
 
 // Ordine di preferenza deterministico per il matching:

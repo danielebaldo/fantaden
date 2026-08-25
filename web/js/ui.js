@@ -379,13 +379,23 @@ function openCampoSlotModal(slotId, players) {
         </li>
       `).join('')}</ul>`
     : `<p class="hint">Nessun giocatore in rosa o in wishlist può occupare questo slot
-       (${escapeHtml(slot.label)}). È un buco da colmare in asta.</p>`;
+       (${escapeHtml(slot.label)}) a ruolo.</p>`;
+
+  // Chi ci giocherebbe adattandosi (malus -1, tabella sostituzioni
+  // ufficiale). Solo informativo: il Campo costruisce schieramenti a
+  // punteggio pieno, quindi questi non sono selezionabili.
+  const adattabili = mantraMod.adaptCandidates(modulo.id, slot, players)
+    .filter((p) => !schieratiAltrove.has(p.id));
+  const notaAdattamenti = adattabili.length > 0
+    ? `<p class="hint campo-adapt-hint">↔️ Con un adattamento (−1) potrebbero giocarci:
+       ${adattabili.map((p) => `<strong>${escapeHtml(p.name)}</strong> (${escapeHtml(p.roles.join('/'))})`).join(', ')}.</p>`
+    : '';
 
   const azioni = currentId
     ? `<button type="button" class="link-btn danger" data-pick-clear="1">✕ Libera lo slot</button>`
     : '';
 
-  openModal(`Slot ${slot.label}`, `${lista}${azioni}`, () => {});
+  openModal(`Slot ${slot.label}`, `${lista}${notaAdattamenti}${azioni}`, () => {});
 
   els.modalBody.querySelectorAll('[data-pick-id]').forEach((btn) => {
     btn.addEventListener('click', () => {
