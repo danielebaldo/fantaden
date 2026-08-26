@@ -33,6 +33,7 @@ const els = {
   onlyAvailable: document.getElementById('onlyAvailable'),
   onlyWishlist: document.getElementById('onlyWishlist'),
   onlyRigoristi: document.getElementById('onlyRigoristi'),
+  resetFiltersBtn: document.getElementById('resetFiltersBtn'),
   playersTableHead: document.getElementById('playersTableHead'),
   playersTableBody: document.getElementById('playersTableBody'),
   myRosterList: document.getElementById('myRosterList'),
@@ -411,7 +412,20 @@ function openCampoSlotModal(slotId, players) {
   });
 }
 
+// I controlli del listone non erano mai sincronizzati dallo stato al DOM:
+// ricaricando la pagina con un filtro salvato la tabella lo applicava ma la
+// casella appariva vuota. La guardia su activeElement è la stessa già usata
+// per il campo budget: non si sovrascrive un input mentre ci si scrive.
+function syncTableControls() {
+  if (document.activeElement !== els.searchInput) els.searchInput.value = state.ui.search;
+  els.onlyAvailable.checked = state.ui.onlyAvailable;
+  els.onlyWishlist.checked = state.ui.onlyWishlist;
+  els.onlyRigoristi.checked = state.ui.onlyRigoristi;
+  els.resetFiltersBtn.hidden = !stateMod.hasActiveTableFilters(state);
+}
+
 function renderTable() {
+  syncTableControls();
   boardMod.populateFasciaFilter(els.fasciaFilter, boardMod.FASCIA_ORDER, state.ui.fasciaFilter);
   // Il filtro Mantra è contestuale al macro ruolo attivo: cambiando tab il
   // ruolo selezionato può non esistere più (es. "Por" passando ai Difensori).
@@ -990,6 +1004,11 @@ function wireStaticListeners() {
   });
   els.onlyWishlist.addEventListener('change', () => {
     state.ui.onlyWishlist = els.onlyWishlist.checked;
+    renderTable();
+    stateMod.saveState(state);
+  });
+  els.resetFiltersBtn.addEventListener('click', () => {
+    stateMod.resetTableFilters(state);
     renderTable();
     stateMod.saveState(state);
   });

@@ -5,7 +5,7 @@
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
 import { filterAndSortPlayers, mantraRoleOptions } from '../web/js/board.js';
-import { ALL_ROLES_TAB } from '../web/js/state.js';
+import { ALL_ROLES_TAB, resetTableFilters, hasActiveTableFilters } from '../web/js/state.js';
 
 // board minima ma realistica: include i polivalenti che sconfinano fra
 // reparti classici (un difensore che sa fare E, un centrocampista che sa
@@ -115,4 +115,47 @@ test('mantraRoleOptions sul sentinel copre tutta la board', () => {
 
 test('mantraRoleOptions su board vuota non esplode', () => {
   assert.deepEqual(mantraRoleOptions([], 'D'), []);
+});
+
+// ---------------------------------------------------------------------------
+// azzeramento dei filtri
+// ---------------------------------------------------------------------------
+
+test('resetTableFilters riporta ai default solo i filtri, non tab e ordinamento', () => {
+  const state = makeState({
+    search: 'lauta', fasciaFilter: 'Top', mantraFilter: 'W',
+    onlyAvailable: true, onlyWishlist: true, onlyRigoristi: true,
+    sortBy: 'score', sortDir: 'asc',
+  });
+  state.ui.activeTab = 'A';
+  resetTableFilters(state);
+  assert.equal(state.ui.search, '');
+  assert.equal(state.ui.fasciaFilter, 'all');
+  assert.equal(state.ui.mantraFilter, 'all');
+  assert.equal(state.ui.onlyAvailable, false);
+  assert.equal(state.ui.onlyWishlist, false);
+  assert.equal(state.ui.onlyRigoristi, false);
+  // navigazione e ordinamento non sono filtri: restano dove sono
+  assert.equal(state.ui.activeTab, 'A');
+  assert.equal(state.ui.sortBy, 'score');
+  assert.equal(state.ui.sortDir, 'asc');
+});
+
+test('dopo il reset la tabella torna a mostrare tutto il reparto', () => {
+  const filtrato = makeState({ mantraFilter: 'Ds', search: 'spina' });
+  assert.equal(filterAndSortPlayers(BOARD, filtrato, 'D', {}).length, 1);
+  resetTableFilters(filtrato);
+  assert.equal(filterAndSortPlayers(BOARD, filtrato, 'D', {}).length, 3);
+});
+
+test('hasActiveTableFilters distingue lo stato pulito da quello filtrato', () => {
+  assert.equal(hasActiveTableFilters(makeState()), false);
+  // anche l'ordinamento diverso dal default non conta come filtro
+  assert.equal(hasActiveTableFilters(makeState({ sortBy: 'score' })), false);
+  for (const attivo of [
+    { search: 'x' }, { fasciaFilter: 'Top' }, { mantraFilter: 'W' },
+    { onlyAvailable: true }, { onlyWishlist: true }, { onlyRigoristi: true },
+  ]) {
+    assert.equal(hasActiveTableFilters(makeState(attivo)), true, JSON.stringify(attivo));
+  }
 });

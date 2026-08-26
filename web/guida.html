@@ -391,6 +391,7 @@
     <a href="#piano" style="--dot:var(--role-c)"><span class="dot"></span>Piano d'asta</a>
     <a href="#tabella" style="--dot:var(--role-d)"><span class="dot"></span>Tabella giocatori</a>
     <a href="#rosa" style="--dot:var(--role-a)"><span class="dot"></span>Rosa e rivali</a>
+    <a href="#campo" style="--dot:var(--role-d)"><span class="dot"></span>Campo Mantra</a>
     <a href="#movimenti" style="--dot:var(--fascia-2)"><span class="dot"></span>Movimenti</a>
     <a href="#stato" style="--dot:var(--text-muted)"><span class="dot"></span>Stato e backup</a>
   </nav>
@@ -558,9 +559,11 @@
     <section id="tabella">
       <h2><span class="num">§4</span>Tabella giocatori</h2>
       <p class="section-intro">
-        Il cuore della dashboard: filtrabile per ruolo, fascia, ricerca testuale
-        e tre interruttori (solo disponibili / solo wishlist / solo rigoristi).
-        Ogni intestazione cliccabile ordina la colonna.
+        Il cuore della dashboard: filtrabile per macro ruolo (con un tab
+        <strong>Tutti i ruoli</strong> per vederli insieme), per ruolo Mantra,
+        per fascia, con ricerca testuale e tre interruttori (solo disponibili /
+        solo wishlist / solo rigoristi). Ogni intestazione cliccabile ordina la
+        colonna.
       </p>
 
       <div class="table-scroll">
@@ -574,7 +577,7 @@
           <tbody>
             <tr>
               <td class="name-cell">Lautaro Martinez <span class="tag tag-rigorista" style="font-size:0.6rem">🎯</span></td>
-              <td>A</td><td>Inter</td><td>34</td><td>340</td><td>170</td>
+              <td>Pc</td><td>Inter</td><td>34</td><td>340</td><td>170</td>
               <td><span class="tag tag-f1">1ª Fascia</span></td>
               <td>97.9<sup class="stag">×2</sup></td>
               <td><span class="tag tag-equo">Equo</span></td>
@@ -583,7 +586,7 @@
             </tr>
             <tr>
               <td class="name-cell">Vicario <span class="tag tag-new" style="font-size:0.6rem">NEW</span></td>
-              <td>P</td><td>Juventus</td><td>16</td><td>55</td><td>28</td>
+              <td>Por</td><td>Juventus</td><td>16</td><td>55</td><td>28</td>
               <td><span class="tag tag-top">Top</span></td>
               <td>—</td>
               <td>—</td>
@@ -603,6 +606,10 @@
         <div class="kv">
           <div class="term">Score <span class="mono">×N</span></div>
           <div class="def">Percentile di rendimento nel ruolo (0–100). L'apice indica su quante stagioni è mediato — assente se è una sola. Pv e Fm accanto restano invece il dato della singola stagione più recente disponibile, non una media.</div>
+        </div>
+        <div class="kv">
+          <div class="term">Ruolo M <span class="mono">Mantra</span></div>
+          <div class="def">Il ruolo Mantra granulare, molto più preciso della P/D/C/A classica: <span class="mono">Por, Dd, Dc, Ds, B, E, M, C, W, T, A, Pc</span>. Un giocatore può averne più di uno, separati da punto e virgola (<span class="mono">W;A</span> = ala <em>o</em> attaccante). Il menu a tendina accanto alla ricerca filtra per questi ruoli, mostrando solo quelli presenti nel reparto che stai guardando.</div>
         </div>
         <div class="kv">
           <div class="term">Fm <span class="mono">▲▼</span></div>
@@ -629,8 +636,58 @@
       </p>
     </section>
 
+    <section id="campo">
+      <h2><span class="num">§6</span>Campo Mantra</h2>
+      <p class="section-intro">
+        La terza scheda della card rosa: un campo dove schierare i giocatori
+        che hai comprato e provare gli undici moduli Mantra. Serve a rispondere
+        alla domanda che conta in asta — <em>con quello che ho in mano, che
+        formazione riesco a fare, e cosa mi manca?</em>
+      </p>
+
+      <h3>I dodici ruoli</h3>
+      <p class="section-intro" style="margin-bottom:10px;">
+        Il Mantra sostituisce le quattro caselle classiche con dodici ruoli
+        precisi. Un giocatore può averne più d'uno: quelli polivalenti sono i
+        più preziosi, perché coprono buchi diversi a seconda del modulo.
+      </p>
+      <div class="legend-grid">
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-p)"></span><div><strong>Por</strong><small>portiere</small></div></div>
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-d)"></span><div><strong>Dd · Ds</strong><small>terzino destro / sinistro</small></div></div>
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-d)"></span><div><strong>Dc · B</strong><small>centrale / braccetto</small></div></div>
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-c)"></span><div><strong>E · M · C</strong><small>esterno / mediano / centrocampista</small></div></div>
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-a)"></span><div><strong>W · T</strong><small>ala / trequartista</small></div></div>
+        <div class="legend-item"><span class="swatch" style="--c:var(--role-a)"></span><div><strong>A · Pc</strong><small>attaccante / punta centrale</small></div></div>
+      </div>
+
+      <h3>Come si legge il campo</h3>
+      <div class="feature-list">
+        <div class="feature"><div class="icon">🟢</div><div><strong>Slot occupato</strong><p>Il dischetto porta il ruolo con cui il giocatore sta giocando e il colore del suo reparto. Clicca su uno slot per scegliere fra i soli giocatori davvero eleggibili per quella posizione.</p></div></div>
+        <div class="feature"><div class="icon">⬜</div><div><strong>Slot vuoto</strong><p>Qualcuno in rosa potrebbe giocarci a ruolo: è solo da riempire.</p></div></div>
+        <div class="feature"><div class="icon">🟠</div><div><strong>Copribile solo adattando</strong><p>Nessuno può occuparlo nel suo ruolo, ma qualcuno ci giocherebbe adattandosi, pagando un malus di 1 punto. Il Campo te lo segnala — passa il mouse per sapere chi — ma non lo schiera: la formazione che costruisci qui è sempre a punteggio pieno.</p></div></div>
+        <div class="feature"><div class="icon">🔴</div><div><strong>Scoperto del tutto</strong><p>Nessuno in rosa può coprirlo, nemmeno adattandosi. È il buco da colmare in asta: l'informazione più utile della scheda.</p></div></div>
+        <div class="feature"><div class="icon">⭐</div><div><strong>Bordo tratteggiato</strong><p>È un obiettivo della wishlist, non un giocatore già tuo: serve a vedere dove arriveresti comprandolo.</p></div></div>
+      </div>
+
+      <h3>Moduli e riempimento automatico</h3>
+      <div class="kv-grid">
+        <div class="kv">
+          <div class="term">Classifica moduli <span class="mono">n/11</span></div>
+          <div class="def">Il menu a tendina elenca tutti gli undici moduli ordinati per quanti slot la tua rosa riesce a coprire: la prima voce è sempre il tuo modulo naturale. Cambiando modulo i giocatori compatibili restano in campo, e ti viene detto quanti sono finiti in panchina.</div>
+        </div>
+        <div class="kv">
+          <div class="term">Schiera al meglio <span class="mono">⚡</span></div>
+          <div class="def">Riempie il massimo di slot possibile, rispettando le scelte che hai già fatto a mano. Non procede a tentoni: se serve, sposta un polivalente su un'altra posizione per liberare quella che solo lui poteva coprire.</div>
+        </div>
+        <div class="kv">
+          <div class="term">Adattamenti <span class="mono">−1</span></div>
+          <div class="def">Il regolamento Mantra ammette di schierare un giocatore fuori ruolo con un malus, ma solo in certe combinazioni (un difensore può fare il centrocampista, non viceversa). Alcune sono ammesse solo dopo sostituzioni automatiche obbligate, mai in fase di formazione: quelle il Campo non le propone affatto.</div>
+        </div>
+      </div>
+    </section>
+
     <section id="movimenti">
-      <h2><span class="num">§6</span>Movimenti quotazioni</h2>
+      <h2><span class="num">§7</span>Movimenti quotazioni</h2>
       <p class="section-intro">
         Rialzi e ribassi di quotazione negli ultimi 3 giorni, dagli snapshot
         giornalieri automatici. Finestra corta apposta: a ridosso dell'avvio
@@ -640,7 +697,7 @@
     </section>
 
     <section id="stato">
-      <h2><span class="num">§7</span>Stato e backup</h2>
+      <h2><span class="num">§8</span>Stato e backup</h2>
       <p class="section-intro">
         Rosa, wishlist e rivali vivono solo nel browser (<span class="mono">localStorage</span>):
         cambiare dispositivo o svuotare la cache li cancella, se non li hai esportati prima.

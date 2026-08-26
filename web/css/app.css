@@ -61,6 +61,12 @@
 
 * { box-sizing: border-box; }
 
+/* L'attributo `hidden` vale come regola del browser a bassa priorità:
+   qualunque `display` dichiarato qui dentro lo batte (è il caso di
+   .link-btn, che è inline-flex). Senza questa riga un elemento marcato
+   hidden resterebbe visibile. */
+[hidden] { display: none !important; }
+
 html {
   /* base 16px -> 18px: fa scalare in proporzione tutti i font-size in rem
      del resto del foglio di stile, senza doverli toccare uno per uno. */

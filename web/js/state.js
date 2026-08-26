@@ -9,6 +9,18 @@ const STORAGE_KEY = 'fantaden_state_v1';
 
 const ROSTER_TAB_KEYS = new Set(['mia', 'rivali', 'campo']);
 
+// Filtri del listone, in un posto solo: li usano sia lo stato iniziale sia
+// il bottone "azzera filtri". Fuori restano activeTab (è navigazione, non
+// un filtro) e sortBy/sortDir (è ordinamento).
+const TABLE_FILTER_DEFAULTS = {
+  search: '',
+  fasciaFilter: 'all',
+  mantraFilter: 'all',  // ruolo Mantra selezionato ('all' = nessun filtro)
+  onlyAvailable: false,
+  onlyWishlist: false,
+  onlyRigoristi: false,
+};
+
 // Sentinel condiviso da board.js/ui.js per il tab "Tutti i ruoli" (listone +
 // Piano d'Asta): distinto dai codici ruolo reali (P/D/C/A) come già fa 'all'
 // per il filtro fascia. Non è mai il default di ui.activeTab.
@@ -35,12 +47,7 @@ export function createDefaultState(auctionDefaults) {
       activeTab: 'P',
       rosterTab: 'mia', // 'mia' | 'rivali'
       planCollapsed: false,
-      search: '',
-      fasciaFilter: 'all',
-      mantraFilter: 'all',  // ruolo Mantra selezionato nel listone ('all' = nessun filtro)
-      onlyAvailable: false,
-      onlyWishlist: false,
-      onlyRigoristi: false,
+      ...TABLE_FILTER_DEFAULTS,
       sortBy: 'fvm',
       sortDir: 'desc',
     },
@@ -170,6 +177,19 @@ export function assignCampoSlot(state, slotId, playerId) {
 export function clearCampoSlot(state, slotId) {
   delete state.campo.schieramento[slotId];
   return state;
+}
+
+// Riporta i filtri del listone ai default, lasciando stare tab e ordinamento.
+export function resetTableFilters(state) {
+  Object.assign(state.ui, TABLE_FILTER_DEFAULTS);
+  return state;
+}
+
+// Serve a mostrare il bottone "azzera" solo quando c'è davvero qualcosa da
+// azzerare, invece di tenere un pulsante morto nella riga dei controlli.
+export function hasActiveTableFilters(state) {
+  return Object.entries(TABLE_FILTER_DEFAULTS)
+    .some(([k, def]) => state.ui[k] !== def);
 }
 
 export function loadState(auctionDefaults) {
