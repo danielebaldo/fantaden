@@ -368,6 +368,21 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 .roster-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
 @media (max-width: 560px) { .roster-cols { grid-template-columns: 1fr; } }
 .list { list-style: none; padding: 0; margin: 0; max-height: 320px; overflow-y: auto; }
+/* Gruppi per reparto dentro Obiettivi/Acquistati. Lo scroll passa dal
+   singolo elenco al contenitore: con 4 gruppi, quattro scroll annidati
+   sarebbero ingestibili. */
+.roster-groups { max-height: 360px; overflow-y: auto; }
+.roster-group { border-left: 3px solid var(--role-color, var(--border)); padding-left: 10px; margin-bottom: 12px; }
+.roster-group:last-child { margin-bottom: 0; }
+.roster-group .list { max-height: none; overflow: visible; }
+.roster-group-head { display: flex; align-items: center; gap: 6px; font-size: 0.82rem; margin-bottom: 2px; }
+.roster-group-head strong { color: var(--role-color, var(--text)); }  /* stessa resa dei reparti nel Piano d'Asta */
+.roster-group-meta { margin-left: auto; color: var(--text-muted); font-size: 0.78rem; }
+.role-dot { width: 9px; height: 9px; border-radius: 50%; background: var(--role-color, var(--border)); flex: none; }
+.roster-group.role-P { --role-color: var(--role-P); }
+.roster-group.role-D { --role-color: var(--role-D); }
+.roster-group.role-C { --role-color: var(--role-C); }
+.roster-group.role-A { --role-color: var(--role-A); }
 .list li { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
 
 .rival-add { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }

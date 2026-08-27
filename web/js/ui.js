@@ -449,6 +449,44 @@ function renderTable() {
   boardMod.renderTableBody(els.playersTableBody, rows, state, history, handleRowAction, handleRowClick);
 }
 
+// Le due liste della card "La mia Rosa" sono raggruppate per reparto: a rosa
+// piena sono 25 nomi, e senza raggruppamento capire "quanti difensori ho
+// preso e quanto ho speso lì" richiede di contarli a occhio. Il ruolo
+// classico sparisce dalla riga (lo dice il gruppo) mentre resta il ruolo
+// Mantra, che il gruppo non implica.
+function renderRosterGroups(entries, priceKey, emptyText) {
+  if (entries.length === 0) return `<p class="empty-hint">${emptyText}</p>`;
+  const azioni = priceKey === 'target'
+    ? (id) => `
+        <button data-action="buy" data-id="${id}" class="icon-btn" title="Segna come comprato">🛒</button>
+        <button data-action="remove" data-id="${id}" class="icon-btn" title="Rimuovi">✕</button>`
+    : (id) => `<button data-action="remove" data-id="${id}" class="icon-btn" title="Rimuovi dalla rosa">✕</button>`;
+
+  const gruppi = meta.roles.map((r) => {
+    const dellRuolo = entries.filter((e) => e.player.position === r);
+    if (dellRuolo.length === 0) return '';
+    const totale = dellRuolo.reduce((sum, e) => sum + (e[priceKey] || 0), 0);
+    return `
+      <div class="roster-group role-${r}">
+        <div class="roster-group-head">
+          <span class="role-dot"></span>
+          <strong>${meta.role_names[r]}</strong>
+          <span class="roster-group-meta">${dellRuolo.length} · € ${totale}</span>
+        </div>
+        <ul class="list">
+          ${dellRuolo.map((e) => `
+            <li>
+              <span>${escapeHtml(e.player.name)} ${mantraTag(e.player)}</span>
+              <span>${e[priceKey] != null ? '€ ' + e[priceKey] : ''}</span>
+              ${azioni(e.id)}
+            </li>`).join('')}
+        </ul>
+      </div>`;
+  }).join('');
+
+  return `<div class="roster-groups">${gruppi}</div>`;
+}
+
 function renderRoster() {
   const wishlistEntries = Object.entries(state.wishlist)
     .map(([id, w]) => ({ id, ...w, player: boardById[id] }))
@@ -462,26 +500,11 @@ function renderRoster() {
     <div class="roster-cols">
       <div>
         <h3>⭐ Obiettivi (${wishlistEntries.length})</h3>
-        <ul class="list">
-          ${wishlistEntries.length ? wishlistEntries.map((e) => `
-            <li>
-              <span>${escapeHtml(e.player.name)} <span class="tag">${e.player.position}</span>${mantraTag(e.player)}</span>
-              <span>${e.target != null ? '€ ' + e.target : ''}</span>
-              <button data-action="buy" data-id="${e.id}" class="icon-btn" title="Segna come comprato">🛒</button>
-              <button data-action="remove" data-id="${e.id}" class="icon-btn" title="Rimuovi">✕</button>
-            </li>`).join('') : '<li class="empty-hint">Nessun obiettivo</li>'}
-        </ul>
+        ${renderRosterGroups(wishlistEntries, 'target', 'Nessun obiettivo')}
       </div>
       <div>
         <h3>🛒 Acquistati (${myTeamEntries.length}) — Speso: € ${totalSpeso}</h3>
-        <ul class="list">
-          ${myTeamEntries.length ? myTeamEntries.map((e) => `
-            <li>
-              <span>${escapeHtml(e.player.name)} <span class="tag">${e.player.position}</span>${mantraTag(e.player)}</span>
-              <span>€ ${e.costo}</span>
-              <button data-action="remove" data-id="${e.id}" class="icon-btn" title="Rimuovi dalla rosa">✕</button>
-            </li>`).join('') : '<li class="empty-hint">Nessun acquisto</li>'}
-        </ul>
+        ${renderRosterGroups(myTeamEntries, 'costo', 'Nessun acquisto')}
       </div>
     </div>
   `;
