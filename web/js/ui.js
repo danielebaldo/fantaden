@@ -465,7 +465,7 @@ function renderRoster() {
         <ul class="list">
           ${wishlistEntries.length ? wishlistEntries.map((e) => `
             <li>
-              <span>${escapeHtml(e.player.name)} <span class="tag">${e.player.position}</span></span>
+              <span>${escapeHtml(e.player.name)} <span class="tag">${e.player.position}</span>${mantraTag(e.player)}</span>
               <span>${e.target != null ? '€ ' + e.target : ''}</span>
               <button data-action="buy" data-id="${e.id}" class="icon-btn" title="Segna come comprato">🛒</button>
               <button data-action="remove" data-id="${e.id}" class="icon-btn" title="Rimuovi">✕</button>
@@ -477,7 +477,7 @@ function renderRoster() {
         <ul class="list">
           ${myTeamEntries.length ? myTeamEntries.map((e) => `
             <li>
-              <span>${escapeHtml(e.player.name)} <span class="tag">${e.player.position}</span></span>
+              <span>${escapeHtml(e.player.name)} <span class="tag">${e.player.position}</span>${mantraTag(e.player)}</span>
               <span>€ ${e.costo}</span>
               <button data-action="remove" data-id="${e.id}" class="icon-btn" title="Rimuovi dalla rosa">✕</button>
             </li>`).join('') : '<li class="empty-hint">Nessun acquisto</li>'}
