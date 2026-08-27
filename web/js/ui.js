@@ -519,6 +519,17 @@ function renderMovements() {
 // ("Tutti i ruoli") ed evita di ripetere il nome ruolo due volte. Estratto
 // da renderPlan così può essere chiamato una volta sola (un ruolo attivo) o
 // in loop su meta.roles senza duplicare markup/logica.
+// Tag con i ruoli Mantra di un giocatore ("Dc/B"). In Mantra il ruolo
+// classico non dice dove uno può davvero giocare: un "D" che è Ds;E e un "D"
+// che è Dc non sono intercambiabili, quindi nel piano d'asta e fra le
+// alternative il ruolo granulare è l'informazione che decide.
+function mantraTag(player) {
+  const roles = mantraMod.parseRoles(player?.position_mantra);
+  if (roles.length === 0) return '';
+  const esteso = roles.map((r) => mantraMod.MANTRA_ROLES[r].label).join(', ');
+  return `<span class="tag tag-mantra" title="${escapeHtml(esteso)}">${roles.join('/')}</span>`;
+}
+
 function renderRoleBlock(role, coverage, wishlistEntries) {
   const roleCov = coverage.perRole[role];
   const coverageClass = `cov-${roleCov.copertura}`;
@@ -562,6 +573,7 @@ function renderRoleBlock(role, coverage, wishlistEntries) {
             <li class="plan-item prio-${w.priority}">
               <div class="plan-item-header">
                 <span>${escapeHtml(boardById[w.id].name)}</span>
+                ${mantraTag(boardById[w.id])}
                 <span class="tag">${boardById[w.id].fascia}</span>
                 <span class="prio-badge">P${w.priority}</span>
                 <span class="target-price">€${w.target}</span>
@@ -716,6 +728,7 @@ function renderPlan(auctionState) {
             <div class="alt-header">
               <strong>${escapeHtml(alt.player.name)}</strong>
               <span class="tag">${alt.player.position}</span>
+              ${mantraTag(alt.player)}
               <span class="tag">${alt.player.fascia}</span>
             </div>
             <div class="alt-stats">
@@ -939,6 +952,7 @@ function openAlternativesModal(player) {
       <div class="alt-header">
         <strong>${escapeHtml(alt.player.name)}</strong>
         <span class="tag">${alt.player.position}</span>
+        ${mantraTag(alt.player)}
         <span class="tag">${alt.player.fascia}</span>
       </div>
       <div class="alt-stats">

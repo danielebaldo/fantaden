@@ -333,8 +333,11 @@ tr.status-mine { background: color-mix(in srgb, var(--success) 10%, transparent)
 tr.status-taken { background: color-mix(in srgb, var(--danger) 8%, transparent); opacity: 0.75; }
 tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transparent); }
 
-.tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; background: var(--surface-2); }
+.tag { display: inline-block; padding: 1px 8px; border-radius: 10px; font-size: 0.72rem; font-weight: 600; background: var(--surface-2); white-space: nowrap; }
 .tag-nostats { background: var(--text-muted); color: #fff; }
+/* I ruoli Mantra sono un dato diverso dalle fasce: tag delineato invece che
+   pieno, così non compete visivamente con Top/1ª/2ª accanto a cui sta. */
+.tag-mantra { background: transparent; border: 1px solid var(--border); color: var(--text-muted); font-weight: 700; letter-spacing: 0.02em; }
 .tag-rigorista { background: var(--warning); color: #1b2430; }
 .tag-affare { background: var(--success); color: #fff; }
 .tag-trappola { background: var(--danger); color: #fff; }
