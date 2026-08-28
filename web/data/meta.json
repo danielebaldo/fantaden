@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-27T15:13:15.894890+00:00",
+  "generated_at": "2026-08-28T16:36:11.833705+00:00",
   "season": {
     "label": "2026-27",
     "current_season_id": 21,
@@ -39,16 +39,16 @@
     }
   },
   "image_template": "https://content.fantacalcio.it/web/campioncini/{season_id}/medium/{player_id}.png?v=640",
-  "total_players": 517,
+  "total_players": 518,
   "counts_by_role": {
-    "A": 87,
+    "A": 89,
     "C": 184,
-    "D": 184,
+    "D": 183,
     "P": 62
   },
-  "no_stats_count": 97,
-  "no_stats_recent_count": 141,
-  "quotazioni_source_count": 517,
+  "no_stats_count": 99,
+  "no_stats_recent_count": 142,
+  "quotazioni_source_count": 518,
   "statistiche_source_count": 663,
   "multi_season_enabled": true,
   "seasons_used": [
