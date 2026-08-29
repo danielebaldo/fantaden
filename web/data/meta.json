@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-08-28T16:36:11.833705+00:00",
+  "generated_at": "2026-08-29T11:03:28.202537+00:00",
   "season": {
     "label": "2026-27",
     "current_season_id": 21,
@@ -42,12 +42,12 @@
   "total_players": 518,
   "counts_by_role": {
     "A": 89,
-    "C": 184,
-    "D": 183,
+    "C": 183,
+    "D": 184,
     "P": 62
   },
-  "no_stats_count": 99,
-  "no_stats_recent_count": 142,
+  "no_stats_count": 101,
+  "no_stats_recent_count": 144,
   "quotazioni_source_count": 518,
   "statistiche_source_count": 663,
   "multi_season_enabled": true,

@@ -2561,8 +2561,8 @@
     "qt_att_m": 4,
     "qt_i_m": 4,
     "diff_m": 0,
-    "fvm": 12,
-    "fvm_m": 12
+    "fvm": 11,
+    "fvm_m": 11
   },
   {
     "id": 5838,
@@ -2936,7 +2936,7 @@
     "qt_att_m": 3,
     "qt_i_m": 3,
     "diff_m": 0,
-    "fvm": 9,
+    "fvm": 14,
     "fvm_m": 10
   },
   {
@@ -3635,6 +3635,21 @@
     "position": "D",
     "position_mantra": "Dc",
     "team": "Frosinone",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 1,
+    "fvm_m": 1
+  },
+  {
+    "id": 7396,
+    "name": "Macchioni",
+    "position": "D",
+    "position_mantra": "Dc",
+    "team": "Sassuolo",
     "qt_att": 1,
     "qt_i": 1,
     "diff": 0,
@@ -4526,8 +4541,8 @@
     "qt_att_m": 7,
     "qt_i_m": 7,
     "diff_m": 0,
-    "fvm": 25,
-    "fvm_m": 22
+    "fvm": 15,
+    "fvm_m": 13
   },
   {
     "id": 4287,
@@ -5006,8 +5021,8 @@
     "qt_att_m": 6,
     "qt_i_m": 6,
     "diff_m": 0,
-    "fvm": 16,
-    "fvm_m": 16
+    "fvm": 12,
+    "fvm_m": 12
   },
   {
     "id": 4349,
@@ -5081,8 +5096,8 @@
     "qt_att_m": 8,
     "qt_i_m": 8,
     "diff_m": 0,
-    "fvm": 15,
-    "fvm_m": 19
+    "fvm": 14,
+    "fvm_m": 17
   },
   {
     "id": 7528,
@@ -5689,15 +5704,15 @@
     "name": "Folorunsho",
     "position": "C",
     "position_mantra": "C;T",
-    "team": "Napoli",
+    "team": "Monza",
     "qt_att": 4,
     "qt_i": 4,
     "diff": 0,
     "qt_att_m": 4,
     "qt_i_m": 4,
     "diff_m": 0,
-    "fvm": 5,
-    "fvm_m": 5
+    "fvm": 17,
+    "fvm_m": 17
   },
   {
     "id": 6207,
@@ -5880,21 +5895,6 @@
     "fvm_m": 9
   },
   {
-    "id": 5813,
-    "name": "Miretti",
-    "position": "C",
-    "position_mantra": "C;T",
-    "team": "Juventus",
-    "qt_att": 3,
-    "qt_i": 3,
-    "diff": 0,
-    "qt_att_m": 3,
-    "qt_i_m": 3,
-    "diff_m": 0,
-    "fvm": 7,
-    "fvm_m": 7
-  },
-  {
     "id": 7248,
     "name": "Gorter",
     "position": "C",
@@ -5951,8 +5951,8 @@
     "qt_att_m": 3,
     "qt_i_m": 3,
     "diff_m": 0,
-    "fvm": 7,
-    "fvm_m": 8
+    "fvm": 4,
+    "fvm_m": 5
   },
   {
     "id": 5131,
@@ -6431,8 +6431,8 @@
     "qt_att_m": 1,
     "qt_i_m": 1,
     "diff_m": 0,
-    "fvm": 2,
-    "fvm_m": 2
+    "fvm": 12,
+    "fvm_m": 12
   },
   {
     "id": 5585,
@@ -7001,8 +7001,8 @@
     "qt_att_m": 10,
     "qt_i_m": 10,
     "diff_m": 0,
-    "fvm": 27,
-    "fvm_m": 30
+    "fvm": 23,
+    "fvm_m": 25
   },
   {
     "id": 5544,
@@ -7046,8 +7046,23 @@
     "qt_att_m": 8,
     "qt_i_m": 8,
     "diff_m": 0,
-    "fvm": 33,
-    "fvm_m": 30
+    "fvm": 30,
+    "fvm_m": 27
+  },
+  {
+    "id": 7612,
+    "name": "Bobcek",
+    "position": "A",
+    "position_mantra": "Pc",
+    "team": "Frosinone",
+    "qt_att": 9,
+    "qt_i": 9,
+    "diff": 0,
+    "qt_att_m": 9,
+    "qt_i_m": 9,
+    "diff_m": 0,
+    "fvm": 38,
+    "fvm_m": 38
   },
   {
     "id": 4359,
@@ -7136,8 +7151,8 @@
     "qt_att_m": 6,
     "qt_i_m": 6,
     "diff_m": 0,
-    "fvm": 22,
-    "fvm_m": 19
+    "fvm": 15,
+    "fvm_m": 15
   },
   {
     "id": 6669,
@@ -7316,8 +7331,8 @@
     "qt_att_m": 5,
     "qt_i_m": 5,
     "diff_m": 0,
-    "fvm": 18,
-    "fvm_m": 18
+    "fvm": 10,
+    "fvm_m": 10
   },
   {
     "id": 7523,
@@ -7331,8 +7346,8 @@
     "qt_att_m": 5,
     "qt_i_m": 3,
     "diff_m": 2,
-    "fvm": 7,
-    "fvm_m": 6
+    "fvm": 20,
+    "fvm_m": 17
   },
   {
     "id": 7213,
@@ -7440,21 +7455,6 @@
     "fvm_m": 11
   },
   {
-    "id": 313,
-    "name": "Morata",
-    "position": "A",
-    "position_mantra": "Pc",
-    "team": "Como",
-    "qt_att": 4,
-    "qt_i": 4,
-    "diff": 0,
-    "qt_att_m": 3,
-    "qt_i_m": 3,
-    "diff_m": 0,
-    "fvm": 7,
-    "fvm_m": 7
-  },
-  {
     "id": 6204,
     "name": "Kvernadze",
     "position": "A",
@@ -7466,8 +7466,8 @@
     "qt_att_m": 5,
     "qt_i_m": 5,
     "diff_m": 0,
-    "fvm": 16,
-    "fvm_m": 19
+    "fvm": 17,
+    "fvm_m": 20
   },
   {
     "id": 7453,
@@ -7571,8 +7571,8 @@
     "qt_att_m": 4,
     "qt_i_m": 4,
     "diff_m": 0,
-    "fvm": 10,
-    "fvm_m": 10
+    "fvm": 5,
+    "fvm_m": 5
   },
   {
     "id": 7602,
