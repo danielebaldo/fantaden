@@ -225,6 +225,21 @@
     "fvm_m": 26
   },
   {
+    "id": 6344,
+    "name": "Sanchez Ro.",
+    "position": "P",
+    "position_mantra": "Por",
+    "team": "Como",
+    "qt_att": 8,
+    "qt_i": 8,
+    "diff": 0,
+    "qt_att_m": 8,
+    "qt_i_m": 8,
+    "diff_m": 0,
+    "fvm": 25,
+    "fvm_m": 25
+  },
+  {
     "id": 4236,
     "name": "Muric",
     "position": "P",
@@ -810,21 +825,6 @@
     "fvm_m": 1
   },
   {
-    "id": 7545,
-    "name": "Vismara",
-    "position": "P",
-    "position_mantra": "Por",
-    "team": "Atalanta",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 1,
-    "fvm_m": 1
-  },
-  {
     "id": 2127,
     "name": "Satalino",
     "position": "P",
@@ -935,6 +935,21 @@
     "position": "P",
     "position_mantra": "Por",
     "team": "Udinese",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 1,
+    "fvm_m": 1
+  },
+  {
+    "id": 2874,
+    "name": "Ghidotti",
+    "position": "P",
+    "position_mantra": "Por",
+    "team": "Parma",
     "qt_att": 1,
     "qt_i": 1,
     "diff": 0,
@@ -1365,21 +1380,6 @@
     "fvm_m": 23
   },
   {
-    "id": 6814,
-    "name": "Norton-Cuffy",
-    "position": "D",
-    "position_mantra": "Dd;E",
-    "team": "Genoa",
-    "qt_att": 8,
-    "qt_i": 8,
-    "diff": 0,
-    "qt_att_m": 8,
-    "qt_i_m": 8,
-    "diff_m": 0,
-    "fvm": 15,
-    "fvm_m": 15
-  },
-  {
     "id": 4657,
     "name": "Celik",
     "position": "D",
@@ -1558,6 +1558,21 @@
     "diff_m": 0,
     "fvm": 20,
     "fvm_m": 22
+  },
+  {
+    "id": 4137,
+    "name": "Diego Carlos",
+    "position": "D",
+    "position_mantra": "Dc",
+    "team": "Parma",
+    "qt_att": 8,
+    "qt_i": 8,
+    "diff": 0,
+    "qt_att_m": 8,
+    "qt_i_m": 8,
+    "diff_m": 0,
+    "fvm": 26,
+    "fvm_m": 26
   },
   {
     "id": 6046,
@@ -1828,21 +1843,6 @@
     "diff_m": 1,
     "fvm": 8,
     "fvm_m": 10
-  },
-  {
-    "id": 6916,
-    "name": "Ahanor",
-    "position": "D",
-    "position_mantra": "B;Ds;E",
-    "team": "Atalanta",
-    "qt_att": 6,
-    "qt_i": 6,
-    "diff": 0,
-    "qt_att_m": 6,
-    "qt_i_m": 7,
-    "diff_m": -1,
-    "fvm": 13,
-    "fvm_m": 15
   },
   {
     "id": 4887,
@@ -2235,6 +2235,21 @@
     "fvm_m": 15
   },
   {
+    "id": 7621,
+    "name": "Sugawara",
+    "position": "D",
+    "position_mantra": "Dd;E",
+    "team": "Cagliari",
+    "qt_att": 6,
+    "qt_i": 6,
+    "diff": 0,
+    "qt_att_m": 6,
+    "qt_i_m": 6,
+    "diff_m": 0,
+    "fvm": 15,
+    "fvm_m": 15
+  },
+  {
     "id": 7532,
     "name": "Kofler",
     "position": "D",
@@ -2418,7 +2433,7 @@
     "id": 4845,
     "name": "Correia T.",
     "position": "D",
-    "position_mantra": "Dd;E",
+    "position_mantra": "Dd;Ds;E",
     "team": "Venezia",
     "qt_att": 5,
     "qt_i": 4,
@@ -2443,6 +2458,21 @@
     "diff_m": 0,
     "fvm": 10,
     "fvm_m": 10
+  },
+  {
+    "id": 5751,
+    "name": "Patterson",
+    "position": "D",
+    "position_mantra": "Dd;E",
+    "team": "Torino",
+    "qt_att": 5,
+    "qt_i": 5,
+    "diff": 0,
+    "qt_att_m": 5,
+    "qt_i_m": 5,
+    "diff_m": 0,
+    "fvm": 12,
+    "fvm_m": 12
   },
   {
     "id": 5578,
@@ -2623,21 +2653,6 @@
     "diff_m": 0,
     "fvm": 12,
     "fvm_m": 12
-  },
-  {
-    "id": 2115,
-    "name": "Delli Carri",
-    "position": "D",
-    "position_mantra": "Dc",
-    "team": "Monza",
-    "qt_att": 4,
-    "qt_i": 4,
-    "diff": 0,
-    "qt_att_m": 4,
-    "qt_i_m": 4,
-    "diff_m": 0,
-    "fvm": 11,
-    "fvm_m": 11
   },
   {
     "id": 5838,
@@ -3180,6 +3195,21 @@
     "fvm_m": 9
   },
   {
+    "id": 5742,
+    "name": "Drameh",
+    "position": "D",
+    "position_mantra": "Dd;Ds;E",
+    "team": "Genoa",
+    "qt_att": 3,
+    "qt_i": 3,
+    "diff": 0,
+    "qt_att_m": 4,
+    "qt_i_m": 4,
+    "diff_m": 0,
+    "fvm": 10,
+    "fvm_m": 12
+  },
+  {
     "id": 7483,
     "name": "Alhassane",
     "position": "D",
@@ -3435,6 +3465,21 @@
     "fvm_m": 5
   },
   {
+    "id": 6537,
+    "name": "Goglichidze",
+    "position": "D",
+    "position_mantra": "Dd;Dc",
+    "team": "Monza",
+    "qt_att": 2,
+    "qt_i": 2,
+    "diff": 0,
+    "qt_att_m": 3,
+    "qt_i_m": 3,
+    "diff_m": 0,
+    "fvm": 5,
+    "fvm_m": 7
+  },
+  {
     "id": 7573,
     "name": "Cinquegrano",
     "position": "D",
@@ -3675,21 +3720,6 @@
     "fvm_m": 1
   },
   {
-    "id": 7356,
-    "name": "Mlacic",
-    "position": "D",
-    "position_mantra": "Dc",
-    "team": "Udinese",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 3,
-    "fvm_m": 3
-  },
-  {
     "id": 7454,
     "name": "Gomes",
     "position": "D",
@@ -3918,7 +3948,7 @@
     "id": 4973,
     "name": "McKennie",
     "position": "C",
-    "position_mantra": "C",
+    "position_mantra": "C;T",
     "team": "Juventus",
     "qt_att": 17,
     "qt_i": 17,
@@ -4054,7 +4084,7 @@
     "name": "Gudmundsson A.",
     "position": "C",
     "position_mantra": "T;A",
-    "team": "Fiorentina",
+    "team": "Lazio",
     "qt_att": 12,
     "qt_i": 13,
     "diff": -1,
@@ -4155,6 +4185,21 @@
     "fvm_m": 47
   },
   {
+    "id": 7625,
+    "name": "Goncalves P.",
+    "position": "C",
+    "position_mantra": "W;T",
+    "team": "Fiorentina",
+    "qt_att": 12,
+    "qt_i": 12,
+    "diff": 0,
+    "qt_att_m": 12,
+    "qt_i_m": 12,
+    "diff_m": 0,
+    "fvm": 50,
+    "fvm_m": 50
+  },
+  {
     "id": 7129,
     "name": "Rodriguez Je.",
     "position": "C",
@@ -4233,7 +4278,7 @@
     "id": 6372,
     "name": "Moreira",
     "position": "C",
-    "position_mantra": "W",
+    "position_mantra": "E;W",
     "team": "Milan",
     "qt_att": 11,
     "qt_i": 12,
@@ -4264,7 +4309,7 @@
     "name": "Rowe",
     "position": "C",
     "position_mantra": "W;T",
-    "team": "Bologna",
+    "team": "Atalanta",
     "qt_att": 10,
     "qt_i": 11,
     "diff": -1,
@@ -4594,7 +4639,7 @@
     "name": "Mandragora",
     "position": "C",
     "position_mantra": "C",
-    "team": "Fiorentina",
+    "team": "Torino",
     "qt_att": 8,
     "qt_i": 9,
     "diff": -1,
@@ -4623,7 +4668,7 @@
     "id": 4856,
     "name": "Chukwueze",
     "position": "C",
-    "position_mantra": "W",
+    "position_mantra": "E;W",
     "team": "Milan",
     "qt_att": 8,
     "qt_i": 6,
@@ -4693,6 +4738,21 @@
     "diff_m": 0,
     "fvm": 25,
     "fvm_m": 22
+  },
+  {
+    "id": 6833,
+    "name": "Mbangula",
+    "position": "C",
+    "position_mantra": "W;A",
+    "team": "Bologna",
+    "qt_att": 8,
+    "qt_i": 8,
+    "diff": 0,
+    "qt_att_m": 8,
+    "qt_i_m": 8,
+    "diff_m": 0,
+    "fvm": 28,
+    "fvm_m": 28
   },
   {
     "id": 4364,
@@ -4978,6 +5038,21 @@
     "diff_m": 0,
     "fvm": 23,
     "fvm_m": 23
+  },
+  {
+    "id": 5680,
+    "name": "Sarr P.",
+    "position": "C",
+    "position_mantra": "M;C",
+    "team": "Juventus",
+    "qt_att": 7,
+    "qt_i": 7,
+    "diff": 0,
+    "qt_att_m": 8,
+    "qt_i_m": 8,
+    "diff_m": 0,
+    "fvm": 25,
+    "fvm_m": 27
   },
   {
     "id": 5298,
@@ -5295,6 +5370,21 @@
     "fvm_m": 17
   },
   {
+    "id": 7624,
+    "name": "Braganca",
+    "position": "C",
+    "position_mantra": "C",
+    "team": "Torino",
+    "qt_att": 6,
+    "qt_i": 6,
+    "diff": 0,
+    "qt_att_m": 6,
+    "qt_i_m": 6,
+    "diff_m": 0,
+    "fvm": 20,
+    "fvm_m": 20
+  },
+  {
     "id": 7528,
     "name": "Amondarain",
     "position": "C",
@@ -5373,7 +5463,7 @@
     "id": 7203,
     "name": "Jashari",
     "position": "C",
-    "position_mantra": "C",
+    "position_mantra": "M;C",
     "team": "Milan",
     "qt_att": 5,
     "qt_i": 4,
@@ -5745,21 +5835,6 @@
     "fvm_m": 10
   },
   {
-    "id": 4686,
-    "name": "Fofana Y.",
-    "position": "C",
-    "position_mantra": "M;C",
-    "team": "Milan",
-    "qt_att": 4,
-    "qt_i": 5,
-    "diff": -1,
-    "qt_att_m": 6,
-    "qt_i_m": 6,
-    "diff_m": 0,
-    "fvm": 10,
-    "fvm_m": 12
-  },
-  {
     "id": 5453,
     "name": "Ricci S.",
     "position": "C",
@@ -5818,21 +5893,6 @@
     "diff_m": 0,
     "fvm": 11,
     "fvm_m": 11
-  },
-  {
-    "id": 6271,
-    "name": "El Aynaoui",
-    "position": "C",
-    "position_mantra": "M;C",
-    "team": "Roma",
-    "qt_att": 4,
-    "qt_i": 4,
-    "diff": 0,
-    "qt_att_m": 4,
-    "qt_i_m": 5,
-    "diff_m": -1,
-    "fvm": 13,
-    "fvm_m": 16
   },
   {
     "id": 6005,
@@ -5914,7 +5974,7 @@
     "name": "Sulemana I.",
     "position": "C",
     "position_mantra": "M;C",
-    "team": "Atalanta",
+    "team": "Sassuolo",
     "qt_att": 3,
     "qt_i": 3,
     "diff": 0,
@@ -6090,21 +6150,6 @@
     "fvm_m": 13
   },
   {
-    "id": 7209,
-    "name": "Sorensen O.",
-    "position": "C",
-    "position_mantra": "C",
-    "team": "Parma",
-    "qt_att": 3,
-    "qt_i": 3,
-    "diff": 0,
-    "qt_att_m": 3,
-    "qt_i_m": 3,
-    "diff_m": 0,
-    "fvm": 12,
-    "fvm_m": 12
-  },
-  {
     "id": 7536,
     "name": "Diallo O.",
     "position": "C",
@@ -6163,6 +6208,21 @@
     "diff_m": 0,
     "fvm": 8,
     "fvm_m": 9
+  },
+  {
+    "id": 7232,
+    "name": "Fernandez T.",
+    "position": "C",
+    "position_mantra": "T;A",
+    "team": "Venezia",
+    "qt_att": 3,
+    "qt_i": 3,
+    "diff": 0,
+    "qt_att_m": 2,
+    "qt_i_m": 2,
+    "diff_m": 0,
+    "fvm": 8,
+    "fvm_m": 6
   },
   {
     "id": 6225,
@@ -6375,6 +6435,21 @@
     "fvm_m": 2
   },
   {
+    "id": 7092,
+    "name": "Jovanovic",
+    "position": "C",
+    "position_mantra": "W;T",
+    "team": "Udinese",
+    "qt_att": 2,
+    "qt_i": 2,
+    "diff": 0,
+    "qt_att_m": 2,
+    "qt_i_m": 2,
+    "diff_m": 0,
+    "fvm": 5,
+    "fvm_m": 5
+  },
+  {
     "id": 7165,
     "name": "Liteta",
     "position": "C",
@@ -6480,25 +6555,10 @@
     "fvm_m": 1
   },
   {
-    "id": 7157,
-    "name": "Iannoni",
-    "position": "C",
-    "position_mantra": "M;C",
-    "team": "Sassuolo",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 1,
-    "fvm_m": 1
-  },
-  {
     "id": 5007,
     "name": "Ilic",
     "position": "C",
-    "position_mantra": "C",
+    "position_mantra": "M;C",
     "team": "Lecce",
     "qt_att": 1,
     "qt_i": 1,
@@ -6694,7 +6754,7 @@
     "name": "Kean",
     "position": "A",
     "position_mantra": "Pc",
-    "team": "Fiorentina",
+    "team": "Como",
     "qt_att": 24,
     "qt_i": 25,
     "diff": -1,
@@ -6703,6 +6763,21 @@
     "diff_m": -1,
     "fvm": 183,
     "fvm_m": 183
+  },
+  {
+    "id": 6752,
+    "name": "Woltemade",
+    "position": "A",
+    "position_mantra": "A",
+    "team": "Juventus",
+    "qt_att": 23,
+    "qt_i": 23,
+    "diff": 0,
+    "qt_att_m": 23,
+    "qt_i_m": 23,
+    "diff_m": 0,
+    "fvm": 160,
+    "fvm_m": 160
   },
   {
     "id": 7017,
@@ -6945,6 +7020,21 @@
     "fvm_m": 77
   },
   {
+    "id": 5694,
+    "name": "Beto",
+    "position": "A",
+    "position_mantra": "Pc",
+    "team": "Fiorentina",
+    "qt_att": 14,
+    "qt_i": 14,
+    "diff": 0,
+    "qt_att_m": 14,
+    "qt_i_m": 14,
+    "diff_m": 0,
+    "fvm": 50,
+    "fvm_m": 50
+  },
+  {
     "id": 5734,
     "name": "Soulè",
     "position": "A",
@@ -7050,21 +7140,6 @@
     "fvm_m": 35
   },
   {
-    "id": 5672,
-    "name": "Dia",
-    "position": "A",
-    "position_mantra": "A",
-    "team": "Lazio",
-    "qt_att": 10,
-    "qt_i": 10,
-    "diff": 0,
-    "qt_att_m": 11,
-    "qt_i_m": 11,
-    "diff_m": 0,
-    "fvm": 20,
-    "fvm_m": 20
-  },
-  {
     "id": 6646,
     "name": "Adams C.",
     "position": "A",
@@ -7123,21 +7198,6 @@
     "diff_m": 2,
     "fvm": 27,
     "fvm_m": 24
-  },
-  {
-    "id": 7313,
-    "name": "Ratkov",
-    "position": "A",
-    "position_mantra": "Pc",
-    "team": "Lazio",
-    "qt_att": 9,
-    "qt_i": 10,
-    "diff": -1,
-    "qt_att_m": 8,
-    "qt_i_m": 9,
-    "diff_m": -1,
-    "fvm": 22,
-    "fvm_m": 19
   },
   {
     "id": 2155,
@@ -7245,21 +7305,6 @@
     "fvm_m": 13
   },
   {
-    "id": 5544,
-    "name": "David",
-    "position": "A",
-    "position_mantra": "Pc",
-    "team": "Juventus",
-    "qt_att": 8,
-    "qt_i": 9,
-    "diff": -1,
-    "qt_att_m": 7,
-    "qt_i_m": 8,
-    "diff_m": -1,
-    "fvm": 25,
-    "fvm_m": 25
-  },
-  {
     "id": 5029,
     "name": "Geubbels",
     "position": "A",
@@ -7348,6 +7393,21 @@
     "diff_m": -1,
     "fvm": 13,
     "fvm_m": 10
+  },
+  {
+    "id": 7623,
+    "name": "Gnonto",
+    "position": "A",
+    "position_mantra": "W;A",
+    "team": "Fiorentina",
+    "qt_att": 7,
+    "qt_i": 7,
+    "diff": 0,
+    "qt_att_m": 8,
+    "qt_i_m": 8,
+    "diff_m": 0,
+    "fvm": 25,
+    "fvm_m": 27
   },
   {
     "id": 5918,
@@ -7453,6 +7513,21 @@
     "diff_m": 0,
     "fvm": 12,
     "fvm_m": 10
+  },
+  {
+    "id": 7620,
+    "name": "Zeballos",
+    "position": "A",
+    "position_mantra": "A",
+    "team": "Monza",
+    "qt_att": 6,
+    "qt_i": 6,
+    "diff": 0,
+    "qt_att_m": 6,
+    "qt_i_m": 6,
+    "diff_m": 0,
+    "fvm": 18,
+    "fvm_m": 18
   },
   {
     "id": 4896,
@@ -7740,19 +7815,19 @@
     "fvm_m": 14
   },
   {
-    "id": 7128,
-    "name": "Kuhn",
+    "id": 5336,
+    "name": "Nzola",
     "position": "A",
-    "position_mantra": "W;A",
-    "team": "Como",
-    "qt_att": 3,
-    "qt_i": 3,
+    "position_mantra": "Pc",
+    "team": "Cagliari",
+    "qt_att": 4,
+    "qt_i": 4,
     "diff": 0,
     "qt_att_m": 4,
     "qt_i_m": 4,
     "diff_m": 0,
-    "fvm": 5,
-    "fvm_m": 7
+    "fvm": 10,
+    "fvm_m": 10
   },
   {
     "id": 6822,
@@ -7815,36 +7890,6 @@
     "fvm_m": 2
   },
   {
-    "id": 7027,
-    "name": "Azon",
-    "position": "A",
-    "position_mantra": "Pc",
-    "team": "Como",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 1,
-    "fvm_m": 1
-  },
-  {
-    "id": 6981,
-    "name": "Vaz",
-    "position": "A",
-    "position_mantra": "Pc",
-    "team": "Roma",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 4,
-    "fvm_m": 3
-  },
-  {
     "id": 7161,
     "name": "Bayo V.",
     "position": "A",
@@ -7903,5 +7948,20 @@
     "diff_m": 0,
     "fvm": 1,
     "fvm_m": 1
+  },
+  {
+    "id": 7622,
+    "name": "Robinho Junior",
+    "position": "A",
+    "position_mantra": "A",
+    "team": "Genoa",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 3,
+    "fvm_m": 3
   }
 ]
