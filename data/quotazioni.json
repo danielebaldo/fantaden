@@ -960,6 +960,21 @@
     "fvm_m": 1
   },
   {
+    "id": 7626,
+    "name": "Pompei",
+    "position": "P",
+    "position_mantra": "Por",
+    "team": "Atalanta",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 1,
+    "fvm_m": 1
+  },
+  {
     "id": 254,
     "name": "Dimarco",
     "position": "D",
@@ -5055,6 +5070,21 @@
     "fvm_m": 27
   },
   {
+    "id": 795,
+    "name": "El Shaarawy",
+    "position": "C",
+    "position_mantra": "W",
+    "team": "Genoa",
+    "qt_att": 7,
+    "qt_i": 7,
+    "diff": 0,
+    "qt_att_m": 6,
+    "qt_i_m": 6,
+    "diff_m": 0,
+    "fvm": 25,
+    "fvm_m": 23
+  },
+  {
     "id": 5298,
     "name": "Pobega",
     "position": "C",
@@ -7425,21 +7455,6 @@
     "fvm_m": 8
   },
   {
-    "id": 6598,
-    "name": "Mutandwa",
-    "position": "A",
-    "position_mantra": "Pc",
-    "team": "Cagliari",
-    "qt_att": 6,
-    "qt_i": 6,
-    "diff": 0,
-    "qt_att_m": 6,
-    "qt_i_m": 6,
-    "diff_m": 0,
-    "fvm": 7,
-    "fvm_m": 7
-  },
-  {
     "id": 6204,
     "name": "Kvernadze",
     "position": "A",
@@ -7873,6 +7888,21 @@
     "diff_m": 2,
     "fvm": 11,
     "fvm_m": 11
+  },
+  {
+    "id": 7627,
+    "name": "Enem",
+    "position": "A",
+    "position_mantra": "Pc",
+    "team": "Bologna",
+    "qt_att": 2,
+    "qt_i": 2,
+    "diff": 0,
+    "qt_att_m": 2,
+    "qt_i_m": 2,
+    "diff_m": 0,
+    "fvm": 4,
+    "fvm_m": 4
   },
   {
     "id": 7317,
