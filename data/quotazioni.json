@@ -735,21 +735,6 @@
     "fvm_m": 5
   },
   {
-    "id": 5320,
-    "name": "Paleari",
-    "position": "P",
-    "position_mantra": "Por",
-    "team": "Torino",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 1,
-    "fvm_m": 1
-  },
-  {
     "id": 7363,
     "name": "Siviero",
     "position": "P",
@@ -5715,21 +5700,6 @@
     "fvm_m": 15
   },
   {
-    "id": 7474,
-    "name": "Koutsoupias",
-    "position": "C",
-    "position_mantra": "C",
-    "team": "Frosinone",
-    "qt_att": 4,
-    "qt_i": 4,
-    "diff": 0,
-    "qt_att_m": 4,
-    "qt_i_m": 4,
-    "diff_m": 0,
-    "fvm": 11,
-    "fvm_m": 11
-  },
-  {
     "id": 6506,
     "name": "Fini",
     "position": "C",
@@ -6615,21 +6585,6 @@
     "fvm_m": 13
   },
   {
-    "id": 6889,
-    "name": "Anjorin",
-    "position": "C",
-    "position_mantra": "C;T",
-    "team": "Torino",
-    "qt_att": 1,
-    "qt_i": 1,
-    "diff": 0,
-    "qt_att_m": 1,
-    "qt_i_m": 1,
-    "diff_m": 0,
-    "fvm": 4,
-    "fvm_m": 4
-  },
-  {
     "id": 7481,
     "name": "Dagasso",
     "position": "C",
@@ -6695,6 +6650,21 @@
     "position": "C",
     "position_mantra": "W",
     "team": "Cagliari",
+    "qt_att": 1,
+    "qt_i": 1,
+    "diff": 0,
+    "qt_att_m": 1,
+    "qt_i_m": 1,
+    "diff_m": 0,
+    "fvm": 1,
+    "fvm_m": 1
+  },
+  {
+    "id": 7628,
+    "name": "Sierro",
+    "position": "C",
+    "position_mantra": "M;C",
+    "team": "Parma",
     "qt_att": 1,
     "qt_i": 1,
     "diff": 0,
@@ -7603,21 +7573,6 @@
     "diff_m": 0,
     "fvm": 13,
     "fvm_m": 13
-  },
-  {
-    "id": 6243,
-    "name": "Borrelli",
-    "position": "A",
-    "position_mantra": "Pc",
-    "team": "Cagliari",
-    "qt_att": 4,
-    "qt_i": 4,
-    "diff": 0,
-    "qt_att_m": 3,
-    "qt_i_m": 3,
-    "diff_m": 0,
-    "fvm": 9,
-    "fvm_m": 7
   },
   {
     "id": 7374,
