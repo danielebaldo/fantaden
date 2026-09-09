@@ -2190,6 +2190,21 @@
     "fvm_m": 15
   },
   {
+    "id": 6319,
+    "name": "Leite",
+    "position": "D",
+    "position_mantra": "Dc",
+    "team": "Lazio",
+    "qt_att": 6,
+    "qt_i": 6,
+    "diff": 0,
+    "qt_att_m": 6,
+    "qt_i_m": 6,
+    "diff_m": 0,
+    "fvm": 14,
+    "fvm_m": 14
+  },
+  {
     "id": 4887,
     "name": "Bellanova",
     "position": "D",

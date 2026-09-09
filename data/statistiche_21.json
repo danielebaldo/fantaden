@@ -3078,6 +3078,25 @@
     "autogol": 0
   },
   {
+    "id": 6319,
+    "name": "Leite",
+    "position": "D",
+    "team": "Lazio",
+    "presenze": 0,
+    "media_voto": 0.0,
+    "fantamedia": 0.0,
+    "gol_fatti": 0,
+    "gol_subiti": 0,
+    "rigori_parati": 0,
+    "rigori_calciati": 0,
+    "rigori_segnati": 0,
+    "rigori_sbagliati": 0,
+    "assist": 0,
+    "ammonizioni": 0,
+    "espulsioni": 0,
+    "autogol": 0
+  },
+  {
     "id": 4887,
     "name": "Bellanova",
     "position": "D",
