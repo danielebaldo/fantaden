@@ -11322,5 +11322,24 @@
     "ammonizioni": 0,
     "espulsioni": 0,
     "autogol": 0
+  },
+  {
+    "id": 7647,
+    "name": "Esteban",
+    "position": "A",
+    "team": "Lecce",
+    "presenze": 1,
+    "media_voto": 6.0,
+    "fantamedia": 6.0,
+    "gol_fatti": 0,
+    "gol_subiti": 0,
+    "rigori_parati": 0,
+    "rigori_calciati": 0,
+    "rigori_segnati": 0,
+    "rigori_sbagliati": 0,
+    "assist": 0,
+    "ammonizioni": 0,
+    "espulsioni": 0,
+    "autogol": 0
   }
 ]
