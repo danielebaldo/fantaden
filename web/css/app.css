@@ -384,6 +384,10 @@ tr.status-wishlist { background: color-mix(in srgb, var(--warning) 10%, transpar
 .roster-group.role-C { --role-color: var(--role-C); }
 .roster-group.role-A { --role-color: var(--role-A); }
 .list li { display: flex; align-items: center; justify-content: space-between; gap: 6px; padding: 5px 0; border-bottom: 1px solid var(--border); font-size: 0.85rem; }
+/* Il pannello movimenti è il contenuto principale della sua card (non una
+   lista laterale come Obiettivi/Acquistati): un po' più alta prima di
+   scrollare. */
+.movements-list { max-height: 420px; }
 
 .rival-add { display: flex; gap: 8px; margin-bottom: 12px; flex-wrap: wrap; }
 .rival-add input { flex: 1; min-width: 100px; }

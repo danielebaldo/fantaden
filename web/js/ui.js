@@ -535,11 +535,16 @@ function renderMovementsWindowTabs() {
   });
 }
 
+// Prima erano 6 per lista (12 in tutto): con lo storico che ora copre tutta
+// la stagione ha senso mostrarne di più, e la lista scrolla (vedi .list in
+// app.css) invece di allargare la card all'infinito.
+const MOVEMENTS_LIST_SIZE = 30;
+
 function renderMovements() {
   const isSeason = state.ui.movementsWindow === 'season';
   const { rialzi, ribassi } = isSeason
-    ? historyMod.topMovementsSeason(history, board, 6)
-    : historyMod.topMovements(history, board, 6);
+    ? historyMod.topMovementsSeason(history, board, MOVEMENTS_LIST_SIZE)
+    : historyMod.topMovements(history, board, MOVEMENTS_LIST_SIZE);
   const daysAvailable = historyMod.daysOfHistoryAvailable(history);
   const windowDays = historyMod.MOVEMENT_WINDOW_DAYS;
 
@@ -552,9 +557,9 @@ function renderMovements() {
       + `Servono almeno ${windowDays} giorni di snapshot per calcolare i movimenti.</p>`
     : `<p class="empty-hint">Nessun movimento significativo${isSeason ? ' da inizio stagione' : ` negli ultimi ${windowDays} giorni`}.</p>`;
   const renderList = (rows, cls) => rows.length
-    ? `<ul class="list">${rows.map((r) => `
+    ? `<ul class="list movements-list">${rows.map((r) => `
         <li>
-          <span>${escapeHtml(r.player.name)} <span class="tag">${r.player.position}</span></span>
+          <span>${escapeHtml(r.player.name)} <span class="campo-pick-team">${escapeHtml(r.player.team)}</span> <span class="tag">${r.player.position}</span></span>
           <span class="${cls}">${r.deltaQt > 0 ? '+' : ''}${r.deltaQt}</span>
         </li>`).join('')}</ul>`
     : emptyHint;
