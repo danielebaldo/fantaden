@@ -42,6 +42,8 @@ const els = {
   addRivalBtn: document.getElementById('addRivalBtn'),
   rivalsList: document.getElementById('rivalsList'),
   movementsPanel: document.getElementById('movementsPanel'),
+  movementsTitle: document.getElementById('movementsTitle'),
+  movementsWindowTabs: document.getElementById('movementsWindowTabs'),
   planCard: document.getElementById('planCard'),
   planContent: document.getElementById('planContent'),
   planToggle: document.getElementById('planToggle'),
@@ -146,6 +148,7 @@ function renderEverything() {
   renderRoster();
   rivalsMod.renderRivals(els.rivalsList, state, boardById, { onRemoveRival: handleRemoveRival });
   renderCampoPanel();
+  renderMovementsWindowTabs();
   renderMovements();
 
   stateMod.saveState(state);
@@ -513,14 +516,41 @@ function renderRoster() {
   });
 }
 
+const MOVEMENTS_WINDOWS = [
+  { key: 'recent', label: `Ultimi ${historyMod.MOVEMENT_WINDOW_DAYS}gg` },
+  { key: 'season', label: 'Dall\'inizio stagione' },
+];
+
+function renderMovementsWindowTabs() {
+  els.movementsWindowTabs.innerHTML = MOVEMENTS_WINDOWS.map(({ key, label }) => `
+    <button type="button" class="tab-btn${state.ui.movementsWindow === key ? ' active' : ''}" data-movements-window="${key}">
+      ${label}
+    </button>
+  `).join('');
+  els.movementsWindowTabs.querySelectorAll('button').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      state.ui.movementsWindow = btn.dataset.movementsWindow;
+      rerenderAll();
+    });
+  });
+}
+
 function renderMovements() {
-  const { rialzi, ribassi } = historyMod.topMovements(history, board, 6);
+  const isSeason = state.ui.movementsWindow === 'season';
+  const { rialzi, ribassi } = isSeason
+    ? historyMod.topMovementsSeason(history, board, 6)
+    : historyMod.topMovements(history, board, 6);
   const daysAvailable = historyMod.daysOfHistoryAvailable(history);
   const windowDays = historyMod.MOVEMENT_WINDOW_DAYS;
-  const emptyHint = daysAvailable < windowDays
+
+  els.movementsTitle.textContent = isSeason
+    ? 'Movimenti quotazioni (dall\'inizio stagione)'
+    : `Movimenti quotazioni (ultimi ${windowDays} giorni)`;
+
+  const emptyHint = !isSeason && daysAvailable < windowDays
     ? `<p class="empty-hint">Storico disponibile: ${daysAvailable} ${daysAvailable === 1 ? 'giorno' : 'giorni'}. `
       + `Servono almeno ${windowDays} giorni di snapshot per calcolare i movimenti.</p>`
-    : `<p class="empty-hint">Nessun movimento significativo negli ultimi ${windowDays} giorni.</p>`;
+    : `<p class="empty-hint">Nessun movimento significativo${isSeason ? ' da inizio stagione' : ` negli ultimi ${windowDays} giorni`}.</p>`;
   const renderList = (rows, cls) => rows.length
     ? `<ul class="list">${rows.map((r) => `
         <li>

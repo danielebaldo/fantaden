@@ -77,9 +77,47 @@ export function topMovements(history, players, n = 8) {
   return { rialzi, ribassi };
 }
 
-/** Piccola sparkline SVG inline (nessuna dipendenza) per la colonna quotazione. */
+/**
+ * Variazione di quotazione dall'inizio della stagione (primo punto della
+ * serie del giocatore) all'ultimo disponibile. A differenza di deltaRecent
+ * non richiede una finestra fissa: un giocatore arrivato a stagione
+ * iniziata (nuovo tesserato) ha semplicemente uno storico più corto, e il
+ * confronto resta "dal suo primo giorno tracciato a oggi" invece di null.
+ */
+export function deltaSeason(history, playerId) {
+  const series = seriesFor(history, playerId);
+  if (series.length < 2) return null;
+  const first = series[0];
+  const last = series[series.length - 1];
+  if (first[0] === last[0]) return null;
+  return {
+    from: first[0],
+    to: last[0],
+    deltaQt: last[1] - first[1],
+    deltaFvm: last[2] - first[2],
+  };
+}
+
+/** Come topMovements, ma sull'intero storico disponibile invece degli
+ * ultimi MOVEMENT_WINDOW_DAYS giorni (vedi deltaSeason). */
+export function topMovementsSeason(history, players, n = 8) {
+  const rows = [];
+  for (const p of players) {
+    const d = deltaSeason(history, p.id);
+    if (d && d.deltaQt !== 0) rows.push({ player: p, ...d });
+  }
+  rows.sort((a, b) => b.deltaQt - a.deltaQt);
+  const rialzi = rows.slice(0, n).filter((r) => r.deltaQt > 0);
+  const ribassi = rows.slice(-n).reverse().filter((r) => r.deltaQt < 0);
+  return { rialzi, ribassi };
+}
+
+/** Piccola sparkline SVG inline (nessuna dipendenza) per la colonna quotazione.
+ * Usa l'intera serie disponibile (dall'inizio dello storico, non solo gli
+ * ultimi giorni): a inizio stagione sono pochi punti, ma la stessa riga
+ * resta valida man mano che lo storico si allunga, senza tagliare nulla. */
 export function sparklineSVG(history, playerId, { width = 64, height = 20 } = {}) {
-  const series = seriesFor(history, playerId).slice(-14);
+  const series = seriesFor(history, playerId);
   if (series.length < 2) return '';
   const values = series.map((p) => p[1]);
   const min = Math.min(...values);

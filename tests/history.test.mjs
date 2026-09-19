@@ -3,7 +3,7 @@
 // Esegui con: node --test tests/history.test.mjs
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
-import { deltaRecent, topMovements, MOVEMENT_WINDOW_DAYS } from '../web/js/history.js';
+import { deltaRecent, topMovements, deltaSeason, topMovementsSeason, sparklineSVG, MOVEMENT_WINDOW_DAYS } from '../web/js/history.js';
 
 function series(pairs) {
   // pairs: [[date, qt_att, fvm], ...]
@@ -70,4 +70,55 @@ test('topMovements: ordina rialzi e ribassi ed esclude i delta zero', () => {
   assert.equal(rialzi[0].player.name, 'A');
   assert.equal(ribassi.length, 1);
   assert.equal(ribassi[0].player.name, 'B');
+});
+
+test('deltaSeason: null se la serie ha meno di 2 punti', () => {
+  const history = { '1': series([['2026-08-18', 10, 100]]) };
+  assert.equal(deltaSeason(history, '1'), null);
+});
+
+test('deltaSeason: confronta il primo e l\'ultimo punto della serie, non una finestra fissa', () => {
+  const history = {
+    '1': series([
+      ['2026-08-19', 30, 300], // primo giorno tracciato
+      ['2026-08-25', 32, 310],
+      ['2026-09-18', 25, 260], // ultimo giorno disponibile
+    ]),
+  };
+  const d = deltaSeason(history, '1');
+  assert.equal(d.from, '2026-08-19');
+  assert.equal(d.to, '2026-09-18');
+  assert.equal(d.deltaQt, 25 - 30);
+  assert.equal(d.deltaFvm, 260 - 300);
+});
+
+test('deltaSeason: un nuovo tesserato con storico corto usa comunque il suo primo punto', () => {
+  // arrivato a stagione iniziata: la serie parte tardi, non deve tornare null
+  // solo perché è più corta di quella degli altri giocatori
+  const history = { '1': series([['2026-09-10', 8, 80], ['2026-09-18', 10, 95]]) };
+  const d = deltaSeason(history, '1');
+  assert.equal(d.from, '2026-09-10');
+  assert.equal(d.deltaQt, 2);
+});
+
+test('topMovementsSeason: usa l\'intero storico invece della finestra recente', () => {
+  const history = {
+    // grande salita in stagione ma stabile negli ultimi 3 giorni: solo
+    // topMovementsSeason deve vederla, topMovements no
+    '1': series([['2026-08-19', 10, 100], ['2026-09-15', 20, 200], ['2026-09-16', 20, 200], ['2026-09-18', 20, 200]]),
+  };
+  const players = [{ id: '1', name: 'A' }];
+  assert.equal(topMovements(history, players, 5).rialzi.length, 0);
+  const { rialzi } = topMovementsSeason(history, players, 5);
+  assert.equal(rialzi.length, 1);
+  assert.equal(rialzi[0].deltaQt, 10);
+});
+
+test('sparklineSVG: usa l\'intera serie disponibile, non solo gli ultimi 14 punti', () => {
+  const long = Array.from({ length: 20 }, (_, i) => [`2026-01-${String(1 + i).padStart(2, '0')}`, 10 + i, 100]);
+  const history = { '1': long };
+  const svg = sparklineSVG(history, '1');
+  const match = svg.match(/points="([^"]+)"/);
+  assert.ok(match);
+  assert.equal(match[1].trim().split(' ').length, 20);
 });

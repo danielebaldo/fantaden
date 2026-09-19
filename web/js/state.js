@@ -8,6 +8,7 @@ import { DEFAULT_MODULE, MODULES } from './mantra.js';
 const STORAGE_KEY = 'fantaden_state_v1';
 
 const ROSTER_TAB_KEYS = new Set(['mia', 'rivali', 'campo']);
+const MOVEMENTS_WINDOW_KEYS = new Set(['recent', 'season']);
 
 // Filtri del listone, in un posto solo: li usano sia lo stato iniziale sia
 // il bottone "azzera filtri". Fuori restano activeTab (è navigazione, non
@@ -46,6 +47,7 @@ export function createDefaultState(auctionDefaults) {
     ui: {
       activeTab: 'P',
       rosterTab: 'mia', // 'mia' | 'rivali'
+      movementsWindow: 'season', // 'recent' (ultimi 3gg) | 'season' (dall'inizio stagione)
       planCollapsed: false,
       ...TABLE_FILTER_DEFAULTS,
       sortBy: 'fvm',
@@ -112,6 +114,9 @@ function hydrateState(state, fallback) {
   // un tab sconosciuto (stato salvato da una versione diversa) torna al default
   if (!ROSTER_TAB_KEYS.has(hydrated.ui.rosterTab)) {
     hydrated.ui.rosterTab = fallback.ui.rosterTab;
+  }
+  if (!MOVEMENTS_WINDOW_KEYS.has(hydrated.ui.movementsWindow)) {
+    hydrated.ui.movementsWindow = fallback.ui.movementsWindow;
   }
 
   return hydrated;
