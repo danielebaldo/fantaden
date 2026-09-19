@@ -92,37 +92,13 @@ main {
 /* setup budget e allocazione (waffle) impilati, ognuno a piena larghezza */
 .top-row { display: flex; flex-direction: column; gap: 16px; margin: 16px 0; min-width: 0; }
 .top-row > .card { margin: 0; min-width: 0; } /* la spaziatura la dà il gap del contenitore, non i margini della card */
-/* terzo elemento flex di .top-row (non una .card): tenerlo dentro .top-row,
-   non come figlio diretto di main, evita di sfasare gli indici :nth-child
-   del grid desktop qui sotto (tabella/rosa/movimenti selezionati per
-   posizione) */
 .section-nav { display: flex; gap: 10px; flex-wrap: wrap; justify-content: center; }
 
-/* layout per affiancare piano d'asta + tabella a desktop */
-@media (min-width: 1400px) {
-  main {
-    display: grid;
-    grid-template-columns: minmax(350px, 1fr) 2fr; /* stessa proporzione 1:2 del top-row (setup/allocazione) */
-    gap: 16px;
-    grid-auto-flow: dense;
-  }
-  main > .top-row { /* setup+waffle+monitor: piena larghezza */
-    grid-column: 1 / -1;
-  }
-  main > #planCard { /* piano d'asta: colonna 1 */
-    grid-column: 1;
-  }
-  main > :nth-child(3) { /* tabella: colonna 2 */
-    grid-column: 2;
-    min-width: 0; /* impedisce alla card di forzare la colonna a espandersi oltre la traccia
-                     assegnata dal grid quando la tabella interna è larga: .table-wrap gestisce
-                     già lo scroll orizzontale, ma senza questo la card si comporta come se
-                     dovesse contenere la tabella per intero, sforando la larghezza pagina */
-  }
-  main > :nth-child(n+4) { /* rosa, movimenti: piena larghezza */
-    grid-column: 1 / -1;
-  }
-}
+/* Piano d'Asta e Listone sono entrambi sezioni figlie dirette di main, a
+   piena larghezza e impilate nell'ordine del markup (nessun grid a due
+   colonne: il Piano d'Asta stava affiancato alla tabella a desktop, ma
+   questo lasciava il listone compresso in una sola colonna — spostato
+   sopra, in piena larghezza come tutte le altre sezioni). */
 
 @media (max-width: 1399px) {
   main {
