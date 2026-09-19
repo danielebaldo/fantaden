@@ -1,5 +1,5 @@
 // Test dello storico quotazioni (web/js/history.js): delta nella finestra
-// recente (3 giorni) e classifica dei movimenti.
+// recente (7 giorni) e classifica dei movimenti.
 // Esegui con: node --test tests/history.test.mjs
 import assert from 'node:assert/strict';
 import { test } from 'node:test';
@@ -10,8 +10,8 @@ function series(pairs) {
   return pairs;
 }
 
-test('MOVEMENT_WINDOW_DAYS: finestra impostata a 3 giorni', () => {
-  assert.equal(MOVEMENT_WINDOW_DAYS, 3);
+test('MOVEMENT_WINDOW_DAYS: finestra impostata a 7 giorni', () => {
+  assert.equal(MOVEMENT_WINDOW_DAYS, 7);
 });
 
 test('deltaRecent: null se la serie ha meno di 2 punti', () => {
@@ -28,14 +28,14 @@ test('deltaRecent: calcola la variazione usando il punto più vicino all\'inizio
   const history = {
     '1': series([
       ['2026-08-01', 10, 100],
-      ['2026-08-12', 11, 102],  // esattamente 3 giorni prima dell'ultimo punto
-      ['2026-08-14', 14, 110],  // 1 giorno prima, troppo recente per essere il riferimento
+      ['2026-08-08', 11, 102],  // esattamente 7 giorni prima dell'ultimo punto
+      ['2026-08-12', 14, 110],  // 3 giorni prima, troppo recente per essere il riferimento
       ['2026-08-15', 16, 120],  // ultimo punto
     ]),
   };
   const d = deltaRecent(history, '1');
   assert.ok(d);
-  assert.equal(d.from, '2026-08-12');
+  assert.equal(d.from, '2026-08-08');
   assert.equal(d.to, '2026-08-15');
   assert.equal(d.deltaQt, 16 - 11);
   assert.equal(d.deltaFvm, 120 - 102);
@@ -45,20 +45,20 @@ test('deltaRecent: con storico lungo prende il punto valido più recente (non il
   const history = {
     '1': series([
       ['2026-07-01', 5, 50],   // molto vecchio: non deve essere scelto come riferimento
-      ['2026-08-10', 9, 90],   // 5 giorni prima dell'ultimo: valido (>=3gg) e più recente del precedente
+      ['2026-08-07', 9, 90],   // 8 giorni prima dell'ultimo: valido (>=7gg) e più recente del precedente
       ['2026-08-15', 16, 120], // ultimo punto
     ]),
   };
   const d = deltaRecent(history, '1');
-  assert.equal(d.from, '2026-08-10');
+  assert.equal(d.from, '2026-08-07');
   assert.equal(d.deltaQt, 16 - 9);
 });
 
 test('topMovements: ordina rialzi e ribassi ed esclude i delta zero', () => {
   const history = {
-    '1': series([['2026-08-12', 10, 100], ['2026-08-15', 15, 100]]), // +5
-    '2': series([['2026-08-12', 20, 100], ['2026-08-15', 12, 100]]), // -8
-    '3': series([['2026-08-12', 30, 100], ['2026-08-15', 30, 100]]), // 0, escluso
+    '1': series([['2026-08-08', 10, 100], ['2026-08-15', 15, 100]]), // +5
+    '2': series([['2026-08-08', 20, 100], ['2026-08-15', 12, 100]]), // -8
+    '3': series([['2026-08-08', 30, 100], ['2026-08-15', 30, 100]]), // 0, escluso
   };
   const players = [
     { id: '1', name: 'A' },
@@ -103,9 +103,9 @@ test('deltaSeason: un nuovo tesserato con storico corto usa comunque il suo prim
 
 test('topMovementsSeason: usa l\'intero storico invece della finestra recente', () => {
   const history = {
-    // grande salita in stagione ma stabile negli ultimi 3 giorni: solo
+    // grande salita in stagione ma stabile nella finestra recente (7gg): solo
     // topMovementsSeason deve vederla, topMovements no
-    '1': series([['2026-08-19', 10, 100], ['2026-09-15', 20, 200], ['2026-09-16', 20, 200], ['2026-09-18', 20, 200]]),
+    '1': series([['2026-08-19', 10, 100], ['2026-09-08', 20, 200], ['2026-09-16', 20, 200], ['2026-09-18', 20, 200]]),
   };
   const players = [{ id: '1', name: 'A' }];
   assert.equal(topMovements(history, players, 5).rialzi.length, 0);

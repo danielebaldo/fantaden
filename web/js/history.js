@@ -2,10 +2,10 @@
 // (top rialzi/ribassi di quotazione), calcolati dagli snapshot giornalieri
 // in web/data/history.json (scritti da scripts/snapshot_history.py).
 
-// Finestra di confronto per i movimenti: 3 giorni invece dei 7 classici,
-// per uno sguardo più reattivo durante l'avvio di campionato (partite
-// ravvicinate, quotazioni che si muovono più spesso).
-export const MOVEMENT_WINDOW_DAYS = 3;
+// Finestra di confronto per i movimenti "reattivi": una settimana, la
+// classica finestra da settimana di campionato (l'altra vista, "dall'inizio
+// stagione", copre il lungo periodo — vedi topMovementsSeason).
+export const MOVEMENT_WINDOW_DAYS = 7;
 const MOVEMENT_WINDOW_MS = MOVEMENT_WINDOW_DAYS * 24 * 60 * 60 * 1000;
 
 /** Serie [ [date, qt_att, fvm], ... ] per un giocatore, o []. */
