@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-09-28T10:50:52.663088+00:00",
+  "generated_at": "2026-09-29T10:39:03.693911+00:00",
   "season": {
     "label": "2026-27",
     "current_season_id": 21,
@@ -43,11 +43,11 @@
   "counts_by_role": {
     "A": 87,
     "C": 194,
-    "D": 191,
-    "P": 63
+    "D": 190,
+    "P": 64
   },
-  "no_stats_count": 128,
-  "no_stats_recent_count": 172,
+  "no_stats_count": 129,
+  "no_stats_recent_count": 173,
   "quotazioni_source_count": 535,
   "statistiche_source_count": 663,
   "multi_season_enabled": true,
